@@ -1,1 +1,108 @@
-# LosSantosRadio
+# Los Santos Radio
+
+A modern Laravel 12 application for **Los Santos Radio**, powered by AzuraCast as the single source of truth for all radio data.
+
+## Features
+
+- **Now Playing & History** - Real-time display of currently playing songs with auto-refresh and song history
+- **Song Request System** - Browse the song library and request tracks with configurable rate limits
+- **Social Login** - Sign in with Discord, Twitch, Steam, or Battle.net with multi-provider account linking
+- **Admin Panel** - Full-featured Filament admin panel for managing users, requests, and settings
+- **Icecast Integration** - Stream status and listener statistics
+- **Activity Logging** - Audit trail for important events
+- **Copilot Dark Theme** - GitHub Copilot-inspired dark theme with responsive design
+
+## Requirements
+
+- PHP 8.2+
+- Composer
+- Node.js 20+
+- SQLite/MySQL/PostgreSQL
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/Git-Cosmo/LosSantosRadio.git
+cd LosSantosRadio
+```
+
+2. Install dependencies:
+```bash
+composer install
+npm install
+```
+
+3. Configure environment:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4. Configure your `.env` file with:
+   - AzuraCast API credentials
+   - Icecast connection details
+   - OAuth provider credentials (Discord, Twitch, Steam, Battle.net)
+
+5. Run migrations and seed the database:
+```bash
+php artisan migrate --seed
+```
+
+6. Build frontend assets:
+```bash
+npm run build
+```
+
+7. Start the development server:
+```bash
+php artisan serve
+```
+
+## Configuration
+
+### Environment Variables
+
+```env
+# AzuraCast
+AZURACAST_BASE_URL=https://your-azuracast-instance.com
+AZURACAST_API_KEY=your-api-key
+AZURACAST_STATION_ID=1
+
+# Icecast
+ICECAST_HOST=localhost
+ICECAST_PORT=8000
+ICECAST_MOUNT=/stream
+
+# OAuth Providers
+DISCORD_CLIENT_ID=
+DISCORD_CLIENT_SECRET=
+TWITCH_CLIENT_ID=
+TWITCH_CLIENT_SECRET=
+STEAM_CLIENT_SECRET=
+BATTLENET_CLIENT_ID=
+BATTLENET_CLIENT_SECRET=
+```
+
+### Request Limits
+
+Default limits (configurable via admin panel):
+- **Guests**: 2 requests per 24 hours
+- **Users**: 1 request per minute, max 10 requests per 20-minute window
+
+## Admin Panel
+
+Access the admin panel at `/admin`. Default admin credentials:
+- Email: admin@lossantosradio.com
+- Password: password
+
+## Architecture
+
+- **Services**: `AzuraCastService`, `IcecastService`, `RequestLimitService`
+- **DTOs**: Type-safe data transfer objects for API responses
+- **Filament**: Admin panel built with Filament 4
+- **Spatie Packages**: Permissions, Activity Logging
+
+## License
+
+This project is open-source.
