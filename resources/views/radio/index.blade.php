@@ -220,7 +220,6 @@
                             <p style="color: var(--color-text-secondary);">
                                 Welcome to Los Santos Radio! Your 24/7 source for the best music. Tune in and enjoy!
                             </p>
-                            </p>
                         @endif
                     </div>
                 </div>

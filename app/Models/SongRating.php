@@ -75,17 +75,30 @@ class SongRating extends Model
 
     /**
      * Check if a user or IP has already rated a song.
+     * Returns the user's rating first if they are authenticated,
+     * otherwise returns any guest rating from the same IP.
      */
     public static function hasRated(string $songId, ?int $userId, ?string $ipAddress): ?static
     {
-        return static::where('song_id', $songId)
-            ->where(function ($query) use ($userId, $ipAddress) {
-                if ($userId) {
-                    $query->where('user_id', $userId);
-                } elseif ($ipAddress) {
-                    $query->whereNull('user_id')->where('ip_address', $ipAddress);
-                }
-            })
-            ->first();
+        // First check for authenticated user's rating
+        if ($userId) {
+            $userRating = static::where('song_id', $songId)
+                ->where('user_id', $userId)
+                ->first();
+
+            if ($userRating) {
+                return $userRating;
+            }
+        }
+
+        // Then check for guest rating by IP (only if not authenticated)
+        if (! $userId && $ipAddress) {
+            return static::where('song_id', $songId)
+                ->whereNull('user_id')
+                ->where('ip_address', $ipAddress)
+                ->first();
+        }
+
+        return null;
     }
 }
