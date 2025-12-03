@@ -450,6 +450,348 @@
             color: var(--color-text-muted);
             font-size: 0.875rem;
         }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-brand {
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--color-accent), #a855f7);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-accent), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-tagline {
+            color: var(--color-text-secondary);
+            font-size: 1.125rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-status {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hero-listeners {
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .btn-lg {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Song Rating */
+        .song-rating {
+            display: flex;
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .rating-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .rating-btn:hover {
+            background-color: var(--color-bg-hover);
+            color: var(--color-text-primary);
+        }
+
+        .rating-btn.upvote:hover, .rating-btn.upvote.active {
+            background-color: rgba(63, 185, 80, 0.2);
+            border-color: var(--color-success);
+            color: var(--color-success);
+        }
+
+        .rating-btn.downvote:hover, .rating-btn.downvote.active {
+            background-color: rgba(248, 81, 73, 0.2);
+            border-color: var(--color-danger);
+            color: var(--color-danger);
+        }
+
+        /* Schedule */
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background-color: var(--color-bg-tertiary);
+            border-radius: 8px;
+            border: 1px solid transparent;
+        }
+
+        .schedule-item.active {
+            border-color: var(--color-accent);
+            background-color: rgba(88, 166, 255, 0.1);
+        }
+
+        .schedule-time {
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .schedule-hour {
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+
+        .schedule-info {
+            flex: 1;
+        }
+
+        .schedule-title {
+            font-weight: 500;
+            margin-bottom: 0.125rem;
+        }
+
+        .schedule-desc {
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+        }
+
+        /* Trending Songs */
+        .trending-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .trending-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            transition: background-color 0.15s ease;
+        }
+
+        .trending-item:hover {
+            background-color: var(--color-bg-hover);
+        }
+
+        .trending-rank {
+            font-weight: 700;
+            color: var(--color-accent);
+            min-width: 30px;
+        }
+
+        .trending-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .trending-title {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .trending-artist {
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+        }
+
+        .trending-score {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: 500;
+        }
+
+        /* DJ Profiles */
+        .dj-profiles {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .dj-profile {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--color-bg-tertiary);
+            border-radius: 8px;
+        }
+
+        .dj-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-accent), #a855f7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .dj-info {
+            flex: 1;
+        }
+
+        .dj-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .dj-bio {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+        }
+
+        /* News */
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .news-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--color-bg-tertiary);
+            border-radius: 8px;
+        }
+
+        .news-date {
+            font-size: 1.25rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .news-content {
+            flex: 1;
+        }
+
+        .news-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .news-desc {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        /* Discord Widget */
+        .discord-widget {
+            text-align: center;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 1rem;
+            }
+
+            .hero-title {
+                font-size: 1.75rem;
+            }
+
+            .hero-tagline {
+                font-size: 1rem;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .hero-status {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .song-rating {
+                justify-content: center;
+            }
+
+            .schedule-item {
+                flex-wrap: wrap;
+            }
+
+            .trending-item {
+                padding: 0.5rem;
+            }
+
+            .dj-profile {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .dj-avatar {
+                margin: 0 auto;
+            }
+
+            .news-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
