@@ -1,9 +1,14 @@
 <?php
 
 use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\CommentsController;
+use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\RadioController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SongRatingController;
 use App\Http\Controllers\SongRequestController;
+use App\Http\Controllers\SongsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +19,18 @@ use Illuminate\Support\Facades\Route;
 
 // Main radio page
 Route::get('/', [RadioController::class, 'index'])->name('home');
+
+// News pages
+Route::prefix('news')->name('news.')->group(function () {
+    Route::get('/', [NewsController::class, 'index'])->name('index');
+    Route::get('/{slug}', [NewsController::class, 'show'])->name('show');
+});
+
+// Schedule page
+Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule');
+
+// Songs page
+Route::get('/songs', [SongsController::class, 'index'])->name('songs');
 
 // Radio API endpoints
 Route::prefix('api/radio')->name('radio.')->group(function () {
@@ -58,6 +75,20 @@ Route::prefix('auth')->name('auth.')->group(function () {
 Route::middleware('auth')->group(function () {
     // Request history for logged-in users
     Route::get('/my-requests', [SongRequestController::class, 'history'])->name('requests.history');
+
+    // Comments
+    Route::post('/news/{slug}/comments', [CommentsController::class, 'store'])->name('comments.store');
+    Route::delete('/comments/{comment}', [CommentsController::class, 'destroy'])->name('comments.destroy');
+
+    // Messaging
+    Route::prefix('messages')->name('messages.')->group(function () {
+        Route::get('/', [MessagesController::class, 'index'])->name('index');
+        Route::get('/create', [MessagesController::class, 'create'])->name('create');
+        Route::post('/', [MessagesController::class, 'store'])->name('store');
+        Route::get('/{id}', [MessagesController::class, 'show'])->name('show');
+        Route::put('/{id}', [MessagesController::class, 'update'])->name('update');
+        Route::get('/api/unread', [MessagesController::class, 'unreadCount'])->name('unread');
+    });
 
     // Unlink social accounts
     Route::delete('/auth/{provider}/unlink', [SocialAuthController::class, 'unlink'])->name('auth.unlink');

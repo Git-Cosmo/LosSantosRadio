@@ -452,9 +452,19 @@
                         if (rating === 1) upvoteBtn.classList.add('active');
                         if (rating === -1) downvoteBtn.classList.add('active');
                     }
+
+                    // Show toast notification
+                    if (data.action === 'removed') {
+                        showToast('info', 'Rating removed');
+                    } else if (data.action === 'created' || data.action === 'updated') {
+                        showToast('success', rating === 1 ? 'Song liked!' : 'Song disliked');
+                    }
                 }
             })
-            .catch(console.error);
+            .catch(err => {
+                console.error(err);
+                showToast('error', 'Failed to rate song. Please try again.');
+            });
         }
 
         // Load rating data for current song

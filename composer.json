@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "cmgmyr/messenger": "^2.31",
         "filament/filament": "^4.2",
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.23",
@@ -16,7 +17,10 @@
         "socialiteproviders/steam": "^4.3",
         "socialiteproviders/twitch": "^5.4",
         "spatie/laravel-activitylog": "^4.10",
-        "spatie/laravel-permission": "^6.23"
+        "spatie/laravel-medialibrary": "^11.17",
+        "spatie/laravel-permission": "^6.23",
+        "spatie/laravel-sluggable": "^3.7",
+        "spatie/laravel-tags": "^4.10"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
