@@ -102,7 +102,7 @@ Route::middleware('auth')->group(function () {
 
     // Analytics (for staff only)
     Route::get('/analytics', function () {
-        if (! auth()->user()->hasAnyRole(['admin', 'staff'])) {
+        if (! auth()->check() || ! auth()->user()->hasAnyRole(['admin', 'staff'])) {
             abort(403);
         }
 

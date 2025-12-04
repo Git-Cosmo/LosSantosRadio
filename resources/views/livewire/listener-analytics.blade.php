@@ -328,7 +328,7 @@
     </style>
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js" integrity="sha384-RIvv8kW3pN2ELOLfhVHsQWQI3pbMNEYCkLOOkdYhlhbKNxjx8FU2n7T1XNXN2kPL" crossorigin="anonymous"></script>
     <script>
         document.addEventListener('livewire:init', function() {
             let chart = null;
@@ -416,14 +416,14 @@
                 }
             }
 
-            // Initial render
-            const initialData = @json($dailyRequests);
+            // Initial render with XSS-safe JSON encoding
+            const initialData = @json($dailyRequests, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
             if (initialData && initialData.length > 0) {
                 setTimeout(() => renderChart(initialData), 100);
             }
 
             // Update chart when Livewire updates
-            Livewire.hook('morph.updated', ({ component, toEl }) => {
+            Livewire.hook('morphed', ({ component, el }) => {
                 const data = component.snapshot.data.dailyRequests;
                 if (data && data.length > 0) {
                     renderChart(data);
