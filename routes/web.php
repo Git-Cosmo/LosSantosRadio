@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\RadioController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SongRatingController;
 use App\Http\Controllers\SongRequestController;
+use App\Http\Controllers\SongsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +17,18 @@ use Illuminate\Support\Facades\Route;
 
 // Main radio page
 Route::get('/', [RadioController::class, 'index'])->name('home');
+
+// News pages
+Route::prefix('news')->name('news.')->group(function () {
+    Route::get('/', [NewsController::class, 'index'])->name('index');
+    Route::get('/{slug}', [NewsController::class, 'show'])->name('show');
+});
+
+// Schedule page
+Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule');
+
+// Songs page
+Route::get('/songs', [SongsController::class, 'index'])->name('songs');
 
 // Radio API endpoints
 Route::prefix('api/radio')->name('radio.')->group(function () {
