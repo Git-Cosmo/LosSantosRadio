@@ -13,6 +13,7 @@ readonly class SongHistoryDTO
         public int $duration,
         public ?string $playlist,
         public ?string $dj,
+        public bool $isRequest,
     ) {}
 
     public static function fromApi(array $data): self
@@ -24,6 +25,7 @@ readonly class SongHistoryDTO
             duration: (int) ($data['duration'] ?? $data['song']['duration'] ?? 0),
             playlist: $data['playlist'] ?? null,
             dj: $data['streamer'] ?? null,
+            isRequest: (bool) ($data['is_request'] ?? false),
         );
     }
 
@@ -36,6 +38,7 @@ readonly class SongHistoryDTO
             'duration' => $this->duration,
             'playlist' => $this->playlist,
             'dj' => $this->dj,
+            'is_request' => $this->isRequest,
         ];
     }
 }

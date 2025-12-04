@@ -14,6 +14,8 @@ readonly class SongDTO
         public ?int $duration,
         public ?bool $isRequestable,
         public ?string $uniqueId,
+        public ?string $genre,
+        public ?string $isrc,
     ) {}
 
     public static function fromApi(array $data): self
@@ -28,6 +30,8 @@ readonly class SongDTO
             duration: isset($data['duration']) ? (int) $data['duration'] : null,
             isRequestable: $data['song_request_enabled'] ?? $data['is_requestable'] ?? null,
             uniqueId: $data['unique_id'] ?? null,
+            genre: $data['genre'] ?? null,
+            isrc: $data['isrc'] ?? null,
         );
     }
 
@@ -43,6 +47,8 @@ readonly class SongDTO
             'duration' => $this->duration,
             'is_requestable' => $this->isRequestable,
             'unique_id' => $this->uniqueId,
+            'genre' => $this->genre,
+            'isrc' => $this->isrc,
         ];
     }
 }
