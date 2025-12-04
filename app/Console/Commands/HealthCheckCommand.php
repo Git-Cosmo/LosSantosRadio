@@ -132,7 +132,6 @@ class HealthCheckCommand extends Command
     {
         try {
             DB::connection()->getPdo();
-            $tables = DB::select('SELECT name FROM sqlite_master WHERE type="table"');
 
             if (DB::connection()->getDriverName() === 'sqlite') {
                 $tables = DB::select('SELECT name FROM sqlite_master WHERE type="table"');

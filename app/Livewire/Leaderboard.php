@@ -46,8 +46,10 @@ class Leaderboard extends Component
         $leaders = $query->groupBy('user_id')
             ->orderByDesc('request_count')
             ->limit($this->limit)
-            ->with('user')
             ->get();
+
+        // Eager load users for the results
+        $leaders->load('user');
 
         return $leaders->map(function ($item, $index) {
             return [
