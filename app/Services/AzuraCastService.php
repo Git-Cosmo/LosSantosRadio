@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\NowPlayingDTO;
+use App\DTOs\PlaylistDTO;
 use App\DTOs\SongDTO;
 use App\DTOs\SongHistoryDTO;
 use App\DTOs\StationDTO;
@@ -77,6 +78,29 @@ class AzuraCastService
         });
 
         return StationDTO::fromApi($data);
+    }
+
+    /**
+     * Get station playlists.
+     *
+     * Fetches all playlists for the station using the AzuraCast API.
+     *
+     * @return Collection<int, PlaylistDTO>
+     */
+    public function getPlaylists(): Collection
+    {
+        $cacheKey = "azuracast.playlists.{$this->stationId}";
+
+        $data = Cache::remember($cacheKey, 300, function () {
+            return $this->makeRequest("/api/station/{$this->stationId}/playlists");
+        });
+
+        // Handle paginated response format (with 'items' key) or plain array
+        $items = $this->extractItems($data);
+
+        return collect($items)
+            ->filter(fn ($item) => is_array($item))
+            ->map(fn ($item) => PlaylistDTO::fromApi($item));
     }
 
     /**

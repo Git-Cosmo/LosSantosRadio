@@ -5,65 +5,19 @@
         </div>
     @endif
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <div class="hero-brand">
-                <div class="hero-logo">
-                    <i class="fas fa-radio"></i>
-                </div>
-                <h1 class="hero-title">Los Santos Radio</h1>
-                <p class="hero-tagline">Your 24/7 source for the best music from Los Santos and beyond</p>
-            </div>
-            <div class="hero-actions">
-                <button id="hero-play-btn" class="btn btn-primary btn-lg" onclick="togglePlayback()">
-                    <div class="equalizer paused" id="hero-equalizer">
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                    </div>
-                    <span id="hero-play-text">Listen Live</span>
-                </button>
-                <a href="{{ route('requests.index') }}" class="btn btn-secondary btn-lg">
-                    <i class="fas fa-music"></i> Request a Song
-                </a>
-            </div>
-            @if(isset($streamStatus) && $streamStatus['is_online'])
-                <div class="hero-status">
-                    <span class="badge badge-live pulse-animation">
-                        <i class="fas fa-circle"></i> LIVE NOW
-                    </span>
-                    <div class="equalizer" id="status-equalizer">
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                    </div>
-                    <span class="hero-listeners">
-                        <i class="fas fa-headphones"></i>
-                        <span id="hero-listener-count">{{ $nowPlaying?->listeners ?? 0 }}</span> listeners tuned in
-                    </span>
-                </div>
-            @endif
-        </div>
-    </section>
-
     <div class="grid grid-cols-3" style="grid-template-columns: 2fr 1fr;">
         <!-- Main Content -->
         <div>
-            <!-- Now Playing Card -->
-            <div class="card" style="margin-bottom: 1.5rem;">
-                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <h2 class="card-title">
+            <!-- Enhanced Now Playing Card -->
+            <div class="card now-playing-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(88, 166, 255, 0.05) 100%);">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border);">
+                    <h2 class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
                         <i class="fas fa-play-circle" style="color: var(--color-accent);"></i>
                         Now Playing
                     </h2>
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         @if(isset($streamStatus) && $streamStatus['is_online'])
-                            <span class="badge badge-live">
+                            <span class="badge badge-live pulse-animation">
                                 <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 0.25rem;"></i>
                                 LIVE
                             </span>
@@ -77,15 +31,25 @@
                 <div class="card-body">
                     @if($nowPlaying)
                         <div class="now-playing" id="now-playing">
-                            <img src="{{ $nowPlaying->currentSong->art ?? '/images/default-album.png' }}"
-                                 alt="Album Art"
-                                 class="now-playing-art"
-                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2230%22>🎵</text></svg>'">
+                            <div class="now-playing-album-container" style="position: relative;">
+                                <img src="{{ $nowPlaying->currentSong->art ?? '/images/default-album.png' }}"
+                                     alt="Album Art"
+                                     class="now-playing-art"
+                                     onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2230%22>🎵</text></svg>'">
+                                <div class="now-playing-equalizer" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 3px; height: 20px;">
+                                    <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.5s ease-in-out infinite alternate; height: 8px;"></div>
+                                    <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.5s ease-in-out infinite alternate 0.1s; height: 16px;"></div>
+                                    <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.5s ease-in-out infinite alternate 0.2s; height: 12px;"></div>
+                                    <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.5s ease-in-out infinite alternate 0.3s; height: 20px;"></div>
+                                    <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.5s ease-in-out infinite alternate 0.4s; height: 10px;"></div>
+                                </div>
+                            </div>
                             <div class="now-playing-info">
                                 <h3 class="now-playing-title" id="song-title">{{ $nowPlaying->currentSong->title }}</h3>
                                 <p class="now-playing-artist" id="song-artist">{{ $nowPlaying->currentSong->artist }}</p>
                                 @if($nowPlaying->currentSong->album)
-                                    <p style="color: var(--color-text-muted); font-size: 0.875rem;">
+                                    <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">
+                                        <i class="fas fa-compact-disc" style="margin-right: 0.25rem;"></i>
                                         {{ $nowPlaying->currentSong->album }}
                                     </p>
                                 @endif
@@ -115,24 +79,49 @@
 
                                 @if($nowPlaying->nextSong)
                                     <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-border);">
-                                        <p style="color: var(--color-text-muted); font-size: 0.75rem; margin-bottom: 0.25rem;">UP NEXT</p>
-                                        <p style="font-size: 0.875rem;">
-                                            <strong>{{ $nowPlaying->nextSong->title }}</strong>
-                                            <span style="color: var(--color-text-secondary);">by {{ $nowPlaying->nextSong->artist }}</span>
+                                        <p style="color: var(--color-text-muted); font-size: 0.75rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-forward"></i> UP NEXT
                                         </p>
+                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                            <img src="{{ $nowPlaying->nextSong->art ?? '' }}"
+                                                 alt=""
+                                                 style="width: 48px; height: 48px; border-radius: 6px; background: var(--color-bg-tertiary);"
+                                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2220%22>🎵</text></svg>'">
+                                            <div>
+                                                <p style="font-size: 0.875rem; font-weight: 500;">{{ $nowPlaying->nextSong->title }}</p>
+                                                <p style="font-size: 0.8125rem; color: var(--color-text-secondary);">{{ $nowPlaying->nextSong->artist }}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 @endif
                             </div>
                         </div>
 
                         <!-- Audio Player Controls -->
-                        <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                        <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-border);">
                             <button id="play-btn" class="btn btn-primary" onclick="togglePlayback()">
                                 <i class="fas fa-play"></i> Listen Live
                             </button>
                             <a href="{{ route('requests.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-music"></i> Request a Song
                             </a>
+                        </div>
+
+                        <!-- DJ/Host Info -->
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: var(--color-bg-tertiary); border-radius: 8px; display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fas fa-{{ $nowPlaying->isLive ? 'microphone' : 'robot' }}" style="color: white; font-size: 1.25rem;"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <p style="font-weight: 600; font-size: 0.9375rem;">{{ $nowPlaying->isLive ? 'Live DJ' : 'AutoDJ' }}</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.8125rem;">{{ $nowPlaying->isLive ? 'Broadcasting live right now!' : 'Playing your favorite tracks 24/7' }}</p>
+                            </div>
+                            @if(isset($streamStatus))
+                                <div style="text-align: right;">
+                                    <p style="font-size: 0.8125rem; color: var(--color-text-muted);">Peak Today</p>
+                                    <p style="font-weight: 600; color: var(--color-accent);">{{ $streamStatus['peak_listeners'] ?? 0 }}</p>
+                                </div>
+                            @endif
                         </div>
                     @else
                         <p style="color: var(--color-text-muted); text-align: center; padding: 2rem;">
@@ -364,9 +353,6 @@
 
         function togglePlayback() {
             const btn = document.getElementById('play-btn');
-            const heroBtn = document.getElementById('hero-play-btn');
-            const heroPlayText = document.getElementById('hero-play-text');
-            const heroEqualizer = document.getElementById('hero-equalizer');
             const nowPlayingEl = document.getElementById('now-playing');
             const streamUrl = '{{ $streamUrl ?? '' }}';
 
@@ -392,26 +378,18 @@
         function updatePlayState() {
             isPlaying = true;
             const btn = document.getElementById('play-btn');
-            const heroPlayText = document.getElementById('hero-play-text');
-            const heroEqualizer = document.getElementById('hero-equalizer');
             const nowPlayingEl = document.getElementById('now-playing');
 
             if (btn) btn.innerHTML = '<i class="fas fa-pause"></i> Stop Listening';
-            if (heroPlayText) heroPlayText.textContent = 'Now Playing';
-            if (heroEqualizer) heroEqualizer.classList.remove('paused');
             if (nowPlayingEl) nowPlayingEl.classList.add('is-playing');
         }
 
         function updatePauseState() {
             isPlaying = false;
             const btn = document.getElementById('play-btn');
-            const heroPlayText = document.getElementById('hero-play-text');
-            const heroEqualizer = document.getElementById('hero-equalizer');
             const nowPlayingEl = document.getElementById('now-playing');
 
             if (btn) btn.innerHTML = '<i class="fas fa-play"></i> Listen Live';
-            if (heroPlayText) heroPlayText.textContent = 'Listen Live';
-            if (heroEqualizer) heroEqualizer.classList.add('paused');
             if (nowPlayingEl) nowPlayingEl.classList.remove('is-playing');
         }
 
@@ -531,10 +509,10 @@
             if (songTitle) songTitle.textContent = data.current_song.title;
             if (songArtist) songArtist.textContent = data.current_song.artist;
 
-            // Update listener count in hero section
-            const listenerCount = document.getElementById('hero-listener-count');
+            // Update listener count
+            const listenerCount = document.querySelector('.listeners-count');
             if (listenerCount && data.listeners !== undefined) {
-                listenerCount.textContent = data.listeners;
+                listenerCount.innerHTML = '<i class="fas fa-headphones"></i> ' + data.listeners + ' listeners';
             }
 
             // Update rating data attributes and reload
@@ -629,5 +607,38 @@
             addEntranceAnimations();
         });
     </script>
+    <style>
+        /* Equalizer bar animation for Now Playing */
+        @keyframes eqBounce {
+            0% { transform: scaleY(0.3); }
+            100% { transform: scaleY(1); }
+        }
+
+        .now-playing-card {
+            overflow: hidden;
+        }
+
+        .now-playing-album-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* Responsive adjustments for Now Playing */
+        @media (max-width: 768px) {
+            .now-playing {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .now-playing-album-container {
+                margin-bottom: 1rem;
+            }
+
+            .now-playing-art {
+                width: 180px !important;
+                height: 180px !important;
+            }
+        }
+    </style>
     @endpush
 </x-layouts.app>

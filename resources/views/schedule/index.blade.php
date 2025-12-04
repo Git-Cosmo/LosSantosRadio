@@ -52,6 +52,70 @@
                 </div>
             @endif
 
+            <!-- Playlist Schedule -->
+            @if(isset($playlists) && $playlists->count() > 0)
+                <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">
+                    <i class="fas fa-list-music" style="color: var(--color-accent); margin-right: 0.5rem;"></i>
+                    Active Playlists
+                </h2>
+
+                <div class="playlist-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    @foreach($playlists->filter(fn($p) => $p->isEnabled && !$p->isJingle)->take(8) as $playlist)
+                        @php
+                            $iconMap = [
+                                'scheduled' => 'clock',
+                                'once_per_day' => 'star',
+                                'once_per_x_songs' => 'random',
+                                'once_per_x_minutes' => 'stopwatch',
+                                'once_per_hour' => 'hourglass-half',
+                            ];
+                            $icon = $iconMap[$playlist->type] ?? 'music';
+                        @endphp
+                        <div class="playlist-card" style="background: var(--color-bg-tertiary); border-radius: 8px; padding: 1rem; border: 1px solid {{ $playlist->isCurrentlyActive() ? 'var(--color-accent)' : 'var(--color-border)' }}; {{ $playlist->isCurrentlyActive() ? 'box-shadow: 0 0 15px rgba(88, 166, 255, 0.2);' : '' }}">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-{{ e($icon) }}" style="color: white;"></i>
+                                </div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <h3 style="font-weight: 600; font-size: 0.9375rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        {{ $playlist->name }}
+                                    </h3>
+                                    <p style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: capitalize;">
+                                        {{ str_replace('_', ' ', $playlist->type) }}
+                                    </p>
+                                </div>
+                                @if($playlist->isCurrentlyActive())
+                                    <span class="badge badge-live" style="font-size: 0.625rem;">
+                                        <i class="fas fa-circle"></i> ACTIVE
+                                    </span>
+                                @endif
+                            </div>
+                            @php $scheduleItems = $playlist->getFormattedSchedule(); @endphp
+                            @if(count($scheduleItems) > 0)
+                                <div style="font-size: 0.8125rem; color: var(--color-text-secondary);">
+                                    @foreach(array_slice($scheduleItems, 0, 2) as $item)
+                                        <div style="display: flex; justify-content: space-between; padding: 0.25rem 0;">
+                                            <span>{{ $item['day'] }}</span>
+                                            <span style="color: var(--color-text-muted);">{{ $item['start_time'] }} - {{ $item['end_time'] }}</span>
+                                        </div>
+                                    @endforeach
+                                    @if(count($scheduleItems) > 2)
+                                        <p style="color: var(--color-text-muted); font-size: 0.75rem; margin-top: 0.25rem;">
+                                            +{{ count($scheduleItems) - 2 }} more time slots
+                                        </p>
+                                    @endif
+                                </div>
+                            @else
+                                <p style="font-size: 0.8125rem; color: var(--color-text-muted);">
+                                    <i class="fas fa-infinity" style="margin-right: 0.25rem;"></i>
+                                    Always in rotation
+                                </p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
             <!-- Schedule Grid -->
             <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">
                 <i class="fas fa-clock" style="color: var(--color-accent); margin-right: 0.5rem;"></i>
@@ -60,18 +124,28 @@
 
             @if(count($schedule) > 0)
                 <div class="schedule-grid" style="display: grid; gap: 0.75rem;">
-                    @foreach($schedule as $item)
-                        <div class="schedule-item {{ $item['is_current'] ?? false ? 'active' : '' }}">
-                            <div class="schedule-time">
-                                <span class="schedule-hour">{{ $item['time'] }}</span>
-                            </div>
-                            <div class="schedule-info">
-                                <h4 class="schedule-title">{{ $item['title'] }}</h4>
-                                <p class="schedule-desc">{{ $item['description'] ?? '' }}</p>
-                            </div>
-                            @if($item['is_current'] ?? false)
-                                <span class="badge badge-live">ON AIR</span>
-                            @endif
+                    @php
+                        $groupedSchedule = collect($schedule)->groupBy('day');
+                    @endphp
+                    @foreach($groupedSchedule as $day => $items)
+                        <div style="margin-bottom: 1rem;">
+                            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-accent);">
+                                {{ $day }}
+                            </h3>
+                            @foreach($items as $item)
+                                <div class="schedule-item {{ $item['is_current'] ?? false ? 'active' : '' }}" style="margin-bottom: 0.5rem;">
+                                    <div class="schedule-time">
+                                        <span class="schedule-hour">{{ $item['time'] ?? '' }}</span>
+                                    </div>
+                                    <div class="schedule-info">
+                                        <h4 class="schedule-title">{{ $item['title'] }}</h4>
+                                        <p class="schedule-desc">{{ $item['description'] ?? '' }}</p>
+                                    </div>
+                                    @if($item['is_current'] ?? false)
+                                        <span class="badge badge-live">ON AIR</span>
+                                    @endif
+                                </div>
+                            @endforeach
                         </div>
                     @endforeach
                 </div>
@@ -127,4 +201,21 @@
             </a>
         </div>
     </div>
+
+    <style>
+        .playlist-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .playlist-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .playlist-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
 </x-layouts.app>

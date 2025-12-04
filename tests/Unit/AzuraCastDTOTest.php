@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\DTOs\NowPlayingDTO;
+use App\DTOs\PlaylistDTO;
 use App\DTOs\SongDTO;
 use App\DTOs\SongHistoryDTO;
 use App\DTOs\StationDTO;
@@ -272,5 +273,217 @@ class AzuraCastDTOTest extends TestCase
         $this->assertArrayHasKey('genre', $array);
         $this->assertArrayHasKey('isrc', $array);
         $this->assertEquals('test', $array['id']);
+    }
+
+    public function test_playlist_dto_maps_api_response(): void
+    {
+        $apiData = [
+            'id' => 1,
+            'name' => 'Top Hits',
+            'short_name' => 'top_hits',
+            'type' => 'default',
+            'source' => 'songs',
+            'order' => 1,
+            'is_enabled' => true,
+            'is_jingle' => false,
+            'weight' => 3,
+            'schedule_items' => [
+                [
+                    'start_time' => '0800',
+                    'end_time' => '1200',
+                    'days' => [1, 2, 3, 4, 5],
+                ],
+            ],
+        ];
+
+        $playlist = PlaylistDTO::fromApi($apiData);
+
+        $this->assertEquals(1, $playlist->id);
+        $this->assertEquals('Top Hits', $playlist->name);
+        $this->assertEquals('top_hits', $playlist->shortName);
+        $this->assertEquals('default', $playlist->type);
+        $this->assertEquals('songs', $playlist->source);
+        $this->assertEquals(1, $playlist->order);
+        $this->assertTrue($playlist->isEnabled);
+        $this->assertFalse($playlist->isJingle);
+        $this->assertEquals(3, $playlist->weight);
+        $this->assertCount(1, $playlist->scheduleItems);
+    }
+
+    public function test_playlist_dto_handles_missing_fields(): void
+    {
+        $apiData = [
+            'id' => 2,
+            'name' => 'Simple Playlist',
+        ];
+
+        $playlist = PlaylistDTO::fromApi($apiData);
+
+        $this->assertEquals(2, $playlist->id);
+        $this->assertEquals('Simple Playlist', $playlist->name);
+        $this->assertNull($playlist->shortName);
+        $this->assertEquals('default', $playlist->type);
+        $this->assertEquals('songs', $playlist->source);
+        $this->assertEquals(0, $playlist->order);
+        $this->assertFalse($playlist->isEnabled);
+        $this->assertFalse($playlist->isJingle);
+        $this->assertNull($playlist->weight);
+    }
+
+    public function test_playlist_dto_formatted_schedule(): void
+    {
+        $apiData = [
+            'id' => 1,
+            'name' => 'Morning Show',
+            'is_enabled' => true,
+            'schedule_items' => [
+                [
+                    'start_time' => '0800',
+                    'end_time' => '1200',
+                    'days' => [1, 2, 3],
+                ],
+            ],
+        ];
+
+        $playlist = PlaylistDTO::fromApi($apiData);
+        $schedule = $playlist->getFormattedSchedule();
+
+        $this->assertCount(3, $schedule);
+        $this->assertEquals('Monday', $schedule[0]['day']);
+        $this->assertEquals('8:00 AM', $schedule[0]['start_time']);
+        $this->assertEquals('12:00 PM', $schedule[0]['end_time']);
+    }
+
+    public function test_playlist_dto_to_array(): void
+    {
+        $apiData = [
+            'id' => 1,
+            'name' => 'Test Playlist',
+            'is_enabled' => true,
+            'is_jingle' => false,
+        ];
+
+        $playlist = PlaylistDTO::fromApi($apiData);
+        $array = $playlist->toArray();
+
+        $this->assertArrayHasKey('id', $array);
+        $this->assertArrayHasKey('name', $array);
+        $this->assertArrayHasKey('is_enabled', $array);
+        $this->assertArrayHasKey('is_jingle', $array);
+        $this->assertArrayHasKey('formatted_schedule', $array);
+        $this->assertArrayHasKey('is_currently_active', $array);
+    }
+
+    public function test_playlist_dto_handles_invalid_time_formats(): void
+    {
+        $apiData = [
+            'id' => 1,
+            'name' => 'Test Playlist',
+            'is_enabled' => true,
+            'schedule_items' => [
+                [
+                    'start_time' => '9999', // Invalid hours
+                    'end_time' => '2560',   // Invalid minutes
+                    'days' => [1],
+                ],
+            ],
+        ];
+
+        $playlist = PlaylistDTO::fromApi($apiData);
+        $schedule = $playlist->getFormattedSchedule();
+
+        // Should handle gracefully with corrected values
+        $this->assertCount(1, $schedule);
+        $this->assertEquals('Monday', $schedule[0]['day']);
+    }
+
+    public function test_playlist_dto_handles_non_numeric_time(): void
+    {
+        $apiData = [
+            'id' => 1,
+            'name' => 'Test Playlist',
+            'is_enabled' => true,
+            'schedule_items' => [
+                [
+                    'start_time' => 'invalid',
+                    'end_time' => 'time',
+                    'days' => [1],
+                ],
+            ],
+        ];
+
+        $playlist = PlaylistDTO::fromApi($apiData);
+        $schedule = $playlist->getFormattedSchedule();
+
+        // Should handle gracefully with default time
+        $this->assertCount(1, $schedule);
+        $this->assertEquals('12:00 AM', $schedule[0]['start_time']);
+        $this->assertEquals('12:00 AM', $schedule[0]['end_time']);
+    }
+
+    public function test_playlist_dto_handles_invalid_day_numbers(): void
+    {
+        $apiData = [
+            'id' => 1,
+            'name' => 'Test Playlist',
+            'is_enabled' => true,
+            'schedule_items' => [
+                [
+                    'start_time' => '0800',
+                    'end_time' => '1200',
+                    'days' => [-1, 7, 'invalid', null, 1], // Invalid days mixed with valid
+                ],
+            ],
+        ];
+
+        $playlist = PlaylistDTO::fromApi($apiData);
+        $schedule = $playlist->getFormattedSchedule();
+
+        // Should only include valid day (1 = Monday)
+        $this->assertCount(1, $schedule);
+        $this->assertEquals('Monday', $schedule[0]['day']);
+    }
+
+    public function test_playlist_dto_handles_string_day_numbers(): void
+    {
+        // JSON may deserialize integers as strings
+        $apiData = [
+            'id' => 1,
+            'name' => 'Test Playlist',
+            'is_enabled' => true,
+            'schedule_items' => [
+                [
+                    'start_time' => '0800',
+                    'end_time' => '1200',
+                    'days' => ['1', '2', '3'], // Days as strings (from JSON)
+                ],
+            ],
+        ];
+
+        $playlist = PlaylistDTO::fromApi($apiData);
+        $schedule = $playlist->getFormattedSchedule();
+
+        // Should handle string day numbers correctly
+        $this->assertCount(3, $schedule);
+        $this->assertEquals('Monday', $schedule[0]['day']);
+        $this->assertEquals('Tuesday', $schedule[1]['day']);
+        $this->assertEquals('Wednesday', $schedule[2]['day']);
+    }
+
+    public function test_playlist_dto_handles_empty_schedule_items(): void
+    {
+        $apiData = [
+            'id' => 1,
+            'name' => 'Test Playlist',
+            'is_enabled' => true,
+            'schedule_items' => [],
+        ];
+
+        $playlist = PlaylistDTO::fromApi($apiData);
+        $schedule = $playlist->getFormattedSchedule();
+
+        $this->assertEmpty($schedule);
+        // Playlist with no schedule should be active if enabled
+        $this->assertTrue($playlist->isCurrentlyActive());
     }
 }
