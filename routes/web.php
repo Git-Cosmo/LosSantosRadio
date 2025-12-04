@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\RadioController;
@@ -74,6 +75,10 @@ Route::prefix('auth')->name('auth.')->group(function () {
 Route::middleware('auth')->group(function () {
     // Request history for logged-in users
     Route::get('/my-requests', [SongRequestController::class, 'history'])->name('requests.history');
+
+    // Comments
+    Route::post('/news/{slug}/comments', [CommentsController::class, 'store'])->name('comments.store');
+    Route::delete('/comments/{comment}', [CommentsController::class, 'destroy'])->name('comments.destroy');
 
     // Messaging
     Route::prefix('messages')->name('messages.')->group(function () {

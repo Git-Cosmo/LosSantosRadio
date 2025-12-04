@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Cmgmyr\Messenger\Models\Message;
 use Cmgmyr\Messenger\Models\Participant;
 use Cmgmyr\Messenger\Models\Thread;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,9 +27,9 @@ class MessagesController extends Controller
      */
     public function show(int $id)
     {
-        try {
-            $thread = Thread::findOrFail($id);
-        } catch (ModelNotFoundException) {
+        $thread = Thread::find($id);
+
+        if (! $thread) {
             return redirect()
                 ->route('messages.index')
                 ->with('error', 'Thread not found.');
@@ -44,8 +43,7 @@ class MessagesController extends Controller
         }
 
         // Check if user is a participant
-        $participant = $thread->getParticipantFromUser(Auth::id());
-        if (! $participant) {
+        if (! $thread->hasParticipant(Auth::id())) {
             return redirect()
                 ->route('messages.index')
                 ->with('error', 'You are not a participant of this conversation.');
@@ -120,9 +118,9 @@ class MessagesController extends Controller
      */
     public function update(Request $request, int $id)
     {
-        try {
-            $thread = Thread::findOrFail($id);
-        } catch (ModelNotFoundException) {
+        $thread = Thread::find($id);
+
+        if (! $thread) {
             return redirect()
                 ->route('messages.index')
                 ->with('error', 'Thread not found.');

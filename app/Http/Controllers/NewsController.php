@@ -28,12 +28,20 @@ class NewsController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
+        // Load comments with user and replies
+        $comments = $article->comments()
+            ->approved()
+            ->topLevel()
+            ->with(['user', 'replies.user'])
+            ->orderByDesc('created_at')
+            ->get();
+
         $relatedNews = News::published()
             ->where('id', '!=', $article->id)
             ->latestPublished()
             ->limit(3)
             ->get();
 
-        return view('news.show', compact('article', 'relatedNews'));
+        return view('news.show', compact('article', 'relatedNews', 'comments'));
     }
 }

@@ -29,6 +29,9 @@
                             <span>
                                 <i class="fas fa-clock"></i> {{ $article->published_at->diffForHumans() }}
                             </span>
+                            <span>
+                                <i class="fas fa-comments"></i> {{ $comments->count() }} {{ Str::plural('comment', $comments->count()) }}
+                            </span>
                         </div>
                     </header>
 
@@ -57,6 +60,120 @@
                     @endif
                 </div>
             </article>
+
+            <!-- Comments Section -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-comments" style="color: var(--color-accent);"></i>
+                        Comments ({{ $comments->count() }})
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <!-- Comment Form -->
+                    @auth
+                        <form action="{{ route('comments.store', $article->slug) }}" method="POST" style="margin-bottom: 2rem;">
+                            @csrf
+                            <div style="margin-bottom: 1rem;">
+                                <textarea name="body"
+                                          class="form-input"
+                                          rows="3"
+                                          placeholder="Write a comment..."
+                                          required
+                                          style="resize: vertical;">{{ old('body') }}</textarea>
+                                @error('body')
+                                    <p style="color: var(--color-danger); font-size: 0.8125rem; margin-top: 0.25rem;">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Post Comment
+                            </button>
+                        </form>
+                    @else
+                        <div style="background: var(--color-bg-tertiary); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
+                            <p style="color: var(--color-text-muted); margin-bottom: 0.5rem;">
+                                <i class="fas fa-lock"></i> Please sign in to leave a comment.
+                            </p>
+                            <a href="{{ route('login') }}" class="btn btn-primary btn-sm">
+                                Sign In
+                            </a>
+                        </div>
+                    @endauth
+
+                    <!-- Comments List -->
+                    @if($comments->count() > 0)
+                        <div class="comments-list" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                            @foreach($comments as $comment)
+                                <div class="comment" style="border-bottom: 1px solid var(--color-border); padding-bottom: 1.25rem;">
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <img src="{{ $comment->user->avatar_url }}"
+                                             alt="{{ $comment->user->name }}"
+                                             style="width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;">
+                                        <div style="flex: 1;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                                <span style="font-weight: 500; color: var(--color-text-primary);">
+                                                    {{ $comment->user->name }}
+                                                </span>
+                                                <span style="color: var(--color-text-muted); font-size: 0.75rem;">
+                                                    {{ $comment->created_at->diffForHumans() }}
+                                                </span>
+                                            </div>
+                                            <p style="color: var(--color-text-secondary); margin-bottom: 0.5rem; line-height: 1.5;">
+                                                {{ $comment->body }}
+                                            </p>
+                                            <div style="display: flex; gap: 1rem; font-size: 0.8125rem;">
+                                                @auth
+                                                    @if(auth()->id() === $comment->user_id || auth()->user()->hasRole('admin'))
+                                                        <form action="{{ route('comments.destroy', $comment) }}" method="POST" style="display: inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" style="background: none; border: none; color: var(--color-danger); cursor: pointer; font-size: 0.8125rem;">
+                                                                <i class="fas fa-trash"></i> Delete
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                @endauth
+                                            </div>
+
+                                            <!-- Replies -->
+                                            @if($comment->replies->count() > 0)
+                                                <div style="margin-top: 1rem; padding-left: 1rem; border-left: 2px solid var(--color-border);">
+                                                    @foreach($comment->replies as $reply)
+                                                        <div style="margin-bottom: 1rem;">
+                                                            <div style="display: flex; gap: 0.5rem;">
+                                                                <img src="{{ $reply->user->avatar_url }}"
+                                                                     alt="{{ $reply->user->name }}"
+                                                                     style="width: 32px; height: 32px; border-radius: 50%;">
+                                                                <div>
+                                                                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
+                                                                        <span style="font-weight: 500; font-size: 0.875rem; color: var(--color-text-primary);">
+                                                                            {{ $reply->user->name }}
+                                                                        </span>
+                                                                        <span style="color: var(--color-text-muted); font-size: 0.75rem;">
+                                                                            {{ $reply->created_at->diffForHumans() }}
+                                                                        </span>
+                                                                    </div>
+                                                                    <p style="color: var(--color-text-secondary); font-size: 0.875rem; line-height: 1.5;">
+                                                                        {{ $reply->body }}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p style="color: var(--color-text-muted); text-align: center; padding: 2rem;">
+                            No comments yet. Be the first to share your thoughts!
+                        </p>
+                    @endif
+                </div>
+            </div>
         </div>
 
         <!-- Sidebar -->
@@ -163,7 +280,7 @@
 
         function copyLink() {
             navigator.clipboard.writeText(window.location.href).then(() => {
-                alert('Link copied to clipboard!');
+                showToast('success', 'Link copied to clipboard!');
             });
         }
     </script>

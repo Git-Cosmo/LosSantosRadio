@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasComments;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ use Spatie\Tags\HasTags;
 
 class News extends Model implements HasMedia
 {
-    use HasFactory, HasSlug, HasTags, InteractsWithMedia;
+    use HasComments, HasFactory, HasSlug, HasTags, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
