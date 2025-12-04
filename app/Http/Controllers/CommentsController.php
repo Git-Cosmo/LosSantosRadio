@@ -24,8 +24,12 @@ class CommentsController extends Controller
         // Validate parent comment belongs to the same news article
         $parentId = $validated['parent_id'] ?? null;
         if ($parentId) {
-            $parentComment = Comment::findOrFail($parentId);
-            if ($parentComment->commentable_type !== News::class || $parentComment->commentable_id !== $news->id) {
+            $parentExists = Comment::where('id', $parentId)
+                ->where('commentable_type', News::class)
+                ->where('commentable_id', $news->id)
+                ->exists();
+
+            if (! $parentExists) {
                 return back()->with('error', 'Invalid parent comment.');
             }
         }
@@ -45,8 +49,10 @@ class CommentsController extends Controller
      */
     public function destroy(Comment $comment)
     {
+        $user = Auth::user();
+
         // Only allow the comment owner or admin to delete
-        if (Auth::id() !== $comment->user_id && ! Auth::user()->hasRole('admin')) {
+        if (! $user || ($user->id !== $comment->user_id && ! $user->hasRole('admin'))) {
             return back()->with('error', 'You cannot delete this comment.');
         }
 

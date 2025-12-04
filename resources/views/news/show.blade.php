@@ -123,7 +123,7 @@
                                             </p>
                                             <div style="display: flex; gap: 1rem; font-size: 0.8125rem;">
                                                 @auth
-                                                    @if(auth()->id() === $comment->user_id || auth()->user()->hasRole('admin'))
+                                                    @if(auth()->id() === $comment->user_id || auth()->user()?->hasRole('admin'))
                                                         <form action="{{ route('comments.destroy', $comment) }}" method="POST" style="display: inline;">
                                                             @csrf
                                                             @method('DELETE')
