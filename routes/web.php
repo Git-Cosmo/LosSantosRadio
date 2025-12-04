@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\ScheduleController;
@@ -73,6 +74,16 @@ Route::prefix('auth')->name('auth.')->group(function () {
 Route::middleware('auth')->group(function () {
     // Request history for logged-in users
     Route::get('/my-requests', [SongRequestController::class, 'history'])->name('requests.history');
+
+    // Messaging
+    Route::prefix('messages')->name('messages.')->group(function () {
+        Route::get('/', [MessagesController::class, 'index'])->name('index');
+        Route::get('/create', [MessagesController::class, 'create'])->name('create');
+        Route::post('/', [MessagesController::class, 'store'])->name('store');
+        Route::get('/{id}', [MessagesController::class, 'show'])->name('show');
+        Route::put('/{id}', [MessagesController::class, 'update'])->name('update');
+        Route::get('/api/unread', [MessagesController::class, 'unreadCount'])->name('unread');
+    });
 
     // Unlink social accounts
     Route::delete('/auth/{provider}/unlink', [SocialAuthController::class, 'unlink'])->name('auth.unlink');

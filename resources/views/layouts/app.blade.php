@@ -1267,6 +1267,9 @@
                     <a href="{{ route('requests.history') }}" class="nav-link">
                         <i class="fas fa-history"></i> My Requests
                     </a>
+                    <a href="{{ route('messages.index') }}" class="nav-link {{ request()->routeIs('messages.*') ? 'active' : '' }}">
+                        <i class="fas fa-envelope"></i> Messages
+                    </a>
                 @endauth
             </nav>
 
