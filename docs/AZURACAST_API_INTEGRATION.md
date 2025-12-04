@@ -138,7 +138,7 @@ Maps the `Api_NowPlaying` response.
 | `remaining` | int | `now_playing.remaining` |
 | `duration` | int | `now_playing.duration` |
 | `isLive` | bool | `live.is_live` |
-| `listeners` | int | `listeners.current` or `listeners.total` |
+| `listeners` | int | `listeners.current` (fallback: `listeners.total`) |
 | `uniqueListeners` | int | `listeners.unique` |
 | `playedAt` | Carbon | `now_playing.played_at` |
 | `isOnline` | bool | `is_online` |
