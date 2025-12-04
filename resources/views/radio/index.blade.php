@@ -17,7 +17,14 @@
             </div>
             <div class="hero-actions">
                 <button id="hero-play-btn" class="btn btn-primary btn-lg" onclick="togglePlayback()">
-                    <i class="fas fa-play"></i> Listen Live
+                    <div class="equalizer paused" id="hero-equalizer">
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                    </div>
+                    <span id="hero-play-text">Listen Live</span>
                 </button>
                 <a href="{{ route('requests.index') }}" class="btn btn-secondary btn-lg">
                     <i class="fas fa-music"></i> Request a Song
@@ -28,9 +35,16 @@
                     <span class="badge badge-live pulse-animation">
                         <i class="fas fa-circle"></i> LIVE NOW
                     </span>
+                    <div class="equalizer" id="status-equalizer">
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                    </div>
                     <span class="hero-listeners">
                         <i class="fas fa-headphones"></i>
-                        {{ $nowPlaying?->listeners ?? 0 }} listeners tuned in
+                        <span id="hero-listener-count">{{ $nowPlaying?->listeners ?? 0 }}</span> listeners tuned in
                     </span>
                 </div>
             @endif
@@ -351,6 +365,9 @@
         function togglePlayback() {
             const btn = document.getElementById('play-btn');
             const heroBtn = document.getElementById('hero-play-btn');
+            const heroPlayText = document.getElementById('hero-play-text');
+            const heroEqualizer = document.getElementById('hero-equalizer');
+            const nowPlayingEl = document.getElementById('now-playing');
             const streamUrl = '{{ $streamUrl ?? '' }}';
 
             if (!streamUrl) {
@@ -360,19 +377,42 @@
 
             if (!audioPlayer) {
                 audioPlayer = new Audio(streamUrl);
+                audioPlayer.addEventListener('playing', updatePlayState);
+                audioPlayer.addEventListener('pause', updatePauseState);
+                audioPlayer.addEventListener('ended', updatePauseState);
             }
 
             if (isPlaying) {
                 audioPlayer.pause();
-                btn.innerHTML = '<i class="fas fa-play"></i> Listen Live';
-                if (heroBtn) heroBtn.innerHTML = '<i class="fas fa-play"></i> Listen Live';
-                isPlaying = false;
             } else {
                 audioPlayer.play();
-                btn.innerHTML = '<i class="fas fa-pause"></i> Stop Listening';
-                if (heroBtn) heroBtn.innerHTML = '<i class="fas fa-pause"></i> Stop Listening';
-                isPlaying = true;
             }
+        }
+
+        function updatePlayState() {
+            isPlaying = true;
+            const btn = document.getElementById('play-btn');
+            const heroPlayText = document.getElementById('hero-play-text');
+            const heroEqualizer = document.getElementById('hero-equalizer');
+            const nowPlayingEl = document.getElementById('now-playing');
+
+            if (btn) btn.innerHTML = '<i class="fas fa-pause"></i> Stop Listening';
+            if (heroPlayText) heroPlayText.textContent = 'Now Playing';
+            if (heroEqualizer) heroEqualizer.classList.remove('paused');
+            if (nowPlayingEl) nowPlayingEl.classList.add('is-playing');
+        }
+
+        function updatePauseState() {
+            isPlaying = false;
+            const btn = document.getElementById('play-btn');
+            const heroPlayText = document.getElementById('hero-play-text');
+            const heroEqualizer = document.getElementById('hero-equalizer');
+            const nowPlayingEl = document.getElementById('now-playing');
+
+            if (btn) btn.innerHTML = '<i class="fas fa-play"></i> Listen Live';
+            if (heroPlayText) heroPlayText.textContent = 'Listen Live';
+            if (heroEqualizer) heroEqualizer.classList.add('paused');
+            if (nowPlayingEl) nowPlayingEl.classList.remove('is-playing');
         }
 
         // Song rating functionality
@@ -476,8 +516,16 @@
             const data = e.detail;
 
             // Update song info
-            document.getElementById('song-title').textContent = data.current_song.title;
-            document.getElementById('song-artist').textContent = data.current_song.artist;
+            const songTitle = document.getElementById('song-title');
+            const songArtist = document.getElementById('song-artist');
+            if (songTitle) songTitle.textContent = data.current_song.title;
+            if (songArtist) songArtist.textContent = data.current_song.artist;
+
+            // Update listener count in hero section
+            const listenerCount = document.getElementById('hero-listener-count');
+            if (listenerCount && data.listeners !== undefined) {
+                listenerCount.textContent = data.listeners;
+            }
 
             // Update rating data attributes and reload
             const ratingEl = document.getElementById('song-rating');
@@ -489,12 +537,17 @@
             }
 
             // Update progress
-            const progress = data.duration > 0 ? (data.elapsed / data.duration) * 100 : 0;
-            document.getElementById('progress-fill').style.width = progress + '%';
+            const progressFill = document.getElementById('progress-fill');
+            if (progressFill) {
+                const progress = data.duration > 0 ? (data.elapsed / data.duration) * 100 : 0;
+                progressFill.style.width = progress + '%';
+            }
 
             // Update times
-            document.getElementById('elapsed-time').textContent = formatTime(data.elapsed);
-            document.getElementById('total-time').textContent = formatTime(data.duration);
+            const elapsedTime = document.getElementById('elapsed-time');
+            const totalTime = document.getElementById('total-time');
+            if (elapsedTime) elapsedTime.textContent = formatTime(data.elapsed);
+            if (totalTime) totalTime.textContent = formatTime(data.duration);
         });
 
         function formatTime(seconds) {
@@ -503,10 +556,50 @@
             return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
         }
 
+        // Scroll to top functionality
+        function createScrollToTop() {
+            const scrollBtn = document.createElement('div');
+            scrollBtn.className = 'scroll-indicator';
+            scrollBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+            scrollBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.body.appendChild(scrollBtn);
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    scrollBtn.classList.add('visible');
+                } else {
+                    scrollBtn.classList.remove('visible');
+                }
+            });
+        }
+
+        // Add entrance animations
+        function addEntranceAnimations() {
+            const cards = document.querySelectorAll('.card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
+                observer.observe(card);
+            });
+        }
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadSongRating();
             loadTrendingSongs();
+            createScrollToTop();
+            addEntranceAnimations();
         });
     </script>
     @endpush
