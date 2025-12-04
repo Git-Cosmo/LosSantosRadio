@@ -9,8 +9,10 @@ A modern Laravel 12 application for **Los Santos Radio**, powered by AzuraCast a
 - **Social Login** - Sign in with Discord, Twitch, Steam, or Battle.net with multi-provider account linking
 - **Admin Panel** - Full-featured Filament admin panel for managing users, requests, and settings
 - **Icecast Integration** - Stream status and listener statistics
-- **Activity Logging** - Audit trail for important events
-- **Copilot Dark Theme** - GitHub Copilot-inspired dark theme with responsive design
+- **Activity Logging** - Audit trail for important events with admin UI
+- **Dark/Light Mode** - Toggle between dark and light themes with preference persistence
+- **Leaderboard** - Top song requesters with timeframe filtering
+- **Health Checks** - Environment and service connection verification
 
 ## Requirements
 
@@ -101,7 +103,36 @@ Access the admin panel at `/admin`. Default admin credentials:
 - **Services**: `AzuraCastService`, `IcecastService`, `RequestLimitService`
 - **DTOs**: Type-safe data transfer objects for API responses
 - **Filament**: Admin panel built with Filament 4
+- **Livewire**: Interactive components (Leaderboard)
 - **Spatie Packages**: Permissions, Activity Logging
+
+## Health Checks
+
+Run health checks to verify the application environment:
+
+```bash
+# Basic health check
+php artisan health:check
+
+# Detailed output
+php artisan health:check --detailed
+```
+
+This verifies:
+- Environment variables
+- Database connection
+- Cache functionality
+- AzuraCast API connection
+- Icecast connection
+- Storage paths
+- Required PHP extensions
+
+## CI/CD
+
+The project includes GitHub Actions workflows for:
+- **Linting**: Laravel Pint code style checking
+- **Testing**: PHPUnit test suite
+- **Building**: Production asset compilation
 
 ## License
 

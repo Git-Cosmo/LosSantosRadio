@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches) }" x-init="$watch('darkMode', val => localStorage.setItem('theme', val ? 'dark' : 'light'))" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,10 +17,39 @@
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
+    <!-- Alpine.js for theme toggle -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <!-- Styles -->
     <style>
+        /* Light Theme Colors (default) */
         :root {
-            /* Copilot Dark Theme Colors */
+            --color-bg-primary: #ffffff;
+            --color-bg-secondary: #f6f8fa;
+            --color-bg-tertiary: #eaeef2;
+            --color-bg-hover: #d0d7de;
+            --color-border: #d0d7de;
+            --color-border-light: #eaeef2;
+
+            --color-text-primary: #1f2328;
+            --color-text-secondary: #656d76;
+            --color-text-muted: #8c959f;
+
+            --color-accent: #0969da;
+            --color-accent-hover: #0550ae;
+            --color-success: #1a7f37;
+            --color-warning: #9a6700;
+            --color-danger: #cf222e;
+
+            /* Provider Colors */
+            --color-discord: #5865F2;
+            --color-twitch: #9146FF;
+            --color-steam: #1b2838;
+            --color-battlenet: #00AEFF;
+        }
+
+        /* Dark Theme Colors */
+        html.dark {
             --color-bg-primary: #0d1117;
             --color-bg-secondary: #161b22;
             --color-bg-tertiary: #21262d;
@@ -37,12 +66,6 @@
             --color-success: #3fb950;
             --color-warning: #d29922;
             --color-danger: #f85149;
-
-            /* Provider Colors */
-            --color-discord: #5865F2;
-            --color-twitch: #9146FF;
-            --color-steam: #1b2838;
-            --color-battlenet: #00AEFF;
         }
 
         * {
@@ -514,6 +537,21 @@
 
         .form-input::placeholder {
             color: var(--color-text-muted);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            padding: 0.5rem;
+            min-width: 38px;
+            transition: transform 0.3s ease, background-color 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg);
+        }
+
+        .theme-toggle i {
+            transition: transform 0.3s ease;
         }
 
         /* User Menu */
@@ -1274,6 +1312,11 @@
             </nav>
 
             <div class="user-menu">
+                <!-- Theme Toggle Button -->
+                <button @click="darkMode = !darkMode" class="btn btn-secondary theme-toggle" :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+                    <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+                </button>
+
                 @auth
                     <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="user-avatar">
                     <span style="color: var(--color-text-secondary);">{{ auth()->user()->name }}</span>
