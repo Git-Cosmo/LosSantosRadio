@@ -140,18 +140,45 @@
             border-radius: 6px;
             border: 1px solid transparent;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Shine effect only on primary CTA buttons */
+        .btn-primary::before,
+        .btn-discord::before,
+        .btn-twitch::before,
+        .btn-battlenet::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before,
+        .btn-discord:hover::before,
+        .btn-twitch:hover::before,
+        .btn-battlenet:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
-            background-color: var(--color-accent);
+            background: linear-gradient(135deg, var(--color-accent), #7c3aed);
             color: white;
+            box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
         }
 
         .btn-primary:hover {
-            background-color: var(--color-accent-hover);
+            background: linear-gradient(135deg, var(--color-accent-hover), #8b5cf6);
             text-decoration: none;
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 166, 255, 0.4);
         }
 
         .btn-secondary {
@@ -163,27 +190,37 @@
         .btn-secondary:hover {
             background-color: var(--color-bg-hover);
             text-decoration: none;
+            transform: translateY(-2px);
+            border-color: var(--color-accent);
         }
 
         .btn-discord {
-            background-color: var(--color-discord);
+            background: linear-gradient(135deg, var(--color-discord), #4752c4);
             color: white;
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+        }
+
+        .btn-discord:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4);
         }
 
         .btn-twitch {
-            background-color: var(--color-twitch);
+            background: linear-gradient(135deg, var(--color-twitch), #772ce8);
             color: white;
+            box-shadow: 0 4px 15px rgba(145, 70, 255, 0.3);
         }
 
         .btn-steam {
-            background-color: var(--color-steam);
+            background: linear-gradient(135deg, var(--color-steam), #2a475e);
             color: white;
             border-color: #2a475e;
         }
 
         .btn-battlenet {
-            background-color: var(--color-battlenet);
+            background: linear-gradient(135deg, var(--color-battlenet), #0088cc);
             color: white;
+            box-shadow: 0 4px 15px rgba(0, 174, 255, 0.3);
         }
 
         /* Cards */
@@ -192,6 +229,13 @@
             border: 1px solid var(--color-border);
             border-radius: 8px;
             overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--color-accent);
         }
 
         .card-header {
@@ -226,10 +270,26 @@
         .now-playing-art {
             width: 200px;
             height: 200px;
-            border-radius: 8px;
+            border-radius: 12px;
             background-color: var(--color-bg-tertiary);
             flex-shrink: 0;
             object-fit: cover;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .now-playing-art:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 15px 50px rgba(88, 166, 255, 0.3);
+        }
+
+        .now-playing.is-playing .now-playing-art {
+            animation: albumSpin 60s linear infinite;
+        }
+
+        @keyframes albumSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .now-playing-info {
@@ -250,18 +310,36 @@
 
         .progress-bar {
             width: 100%;
-            height: 4px;
+            height: 6px;
             background-color: var(--color-bg-tertiary);
-            border-radius: 2px;
+            border-radius: 3px;
             margin: 1rem 0;
             overflow: hidden;
+            position: relative;
         }
 
         .progress-fill {
             height: 100%;
-            background-color: var(--color-accent);
-            border-radius: 2px;
+            background: linear-gradient(90deg, var(--color-accent), #a855f7);
+            border-radius: 3px;
             transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressShimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes progressShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .time-info {
@@ -278,20 +356,28 @@
             gap: 1rem;
             padding: 0.75rem;
             border-radius: 6px;
-            transition: background-color 0.15s ease;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
         }
 
         .history-item:hover {
             background-color: var(--color-bg-hover);
+            transform: translateX(5px);
+            border-color: var(--color-border);
         }
 
         .history-art {
             width: 48px;
             height: 48px;
-            border-radius: 4px;
+            border-radius: 6px;
             background-color: var(--color-bg-tertiary);
             object-fit: cover;
             flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .history-item:hover .history-art {
+            transform: scale(1.1);
         }
 
         .history-info {
@@ -459,11 +545,33 @@
             padding: 3rem 2rem;
             margin-bottom: 2rem;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(88, 166, 255, 0.1) 0%, transparent 50%);
+            animation: heroGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes heroGlow {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            25% { transform: translate(10%, 10%) scale(1.1); opacity: 0.7; }
+            50% { transform: translate(5%, -5%) scale(1); opacity: 0.6; }
+            75% { transform: translate(-10%, 5%) scale(1.05); opacity: 0.8; }
         }
 
         .hero-content {
             max-width: 800px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .hero-brand {
@@ -471,26 +579,46 @@
         }
 
         .hero-logo {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             background: linear-gradient(135deg, var(--color-accent), #a855f7);
-            border-radius: 16px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1rem;
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: white;
+            animation: logoFloat 3s ease-in-out infinite;
+            box-shadow: 0 10px 40px rgba(88, 166, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hero-logo:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 50px rgba(88, 166, 255, 0.4);
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .hero-title {
             font-size: 2.5rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--color-accent), #a855f7);
+            background: linear-gradient(135deg, var(--color-accent), #a855f7, #ec4899);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 0.5rem;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .hero-tagline {
@@ -528,6 +656,38 @@
             animation: pulse 2s ease-in-out infinite;
         }
 
+        /* Audio Equalizer Animation */
+        .equalizer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 3px;
+            height: 24px;
+            margin: 0 0.5rem;
+        }
+
+        .equalizer-bar {
+            width: 4px;
+            background: linear-gradient(to top, var(--color-accent), #a855f7);
+            border-radius: 2px;
+            animation: equalizerBounce 0.5s ease-in-out infinite alternate;
+        }
+
+        .equalizer-bar:nth-child(1) { animation-delay: 0s; height: 8px; }
+        .equalizer-bar:nth-child(2) { animation-delay: 0.1s; height: 16px; }
+        .equalizer-bar:nth-child(3) { animation-delay: 0.2s; height: 12px; }
+        .equalizer-bar:nth-child(4) { animation-delay: 0.3s; height: 20px; }
+        .equalizer-bar:nth-child(5) { animation-delay: 0.4s; height: 10px; }
+
+        @keyframes equalizerBounce {
+            0% { transform: scaleY(0.3); }
+            100% { transform: scaleY(1); }
+        }
+
+        .equalizer.paused .equalizer-bar {
+            animation-play-state: paused;
+        }
+
         /* Song Rating */
         .song-rating {
             display: flex;
@@ -545,12 +705,13 @@
             border-radius: 6px;
             color: var(--color-text-secondary);
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
         }
 
         .rating-btn:hover {
             background-color: var(--color-bg-hover);
             color: var(--color-text-primary);
+            transform: scale(1.05);
         }
 
         .rating-btn.upvote:hover, .rating-btn.upvote.active {
@@ -580,11 +741,23 @@
             background-color: var(--color-bg-tertiary);
             border-radius: 8px;
             border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .schedule-item:hover {
+            transform: translateX(5px);
+            background-color: var(--color-bg-hover);
         }
 
         .schedule-item.active {
             border-color: var(--color-accent);
             background-color: rgba(88, 166, 255, 0.1);
+            animation: activeGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(88, 166, 255, 0.2); }
+            50% { box-shadow: 0 0 15px rgba(88, 166, 255, 0.4); }
         }
 
         .schedule-time {
@@ -624,17 +797,34 @@
             gap: 1rem;
             padding: 0.75rem;
             border-radius: 6px;
-            transition: background-color 0.15s ease;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
         }
 
         .trending-item:hover {
             background-color: var(--color-bg-hover);
+            transform: translateX(5px);
+            border-color: var(--color-border);
         }
 
         .trending-rank {
             font-weight: 700;
             color: var(--color-accent);
             min-width: 30px;
+            font-size: 1.125rem;
+        }
+
+        .trending-item:first-child .trending-rank {
+            color: #fbbf24;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        .trending-item:nth-child(2) .trending-rank {
+            color: #9ca3af;
+        }
+
+        .trending-item:nth-child(3) .trending-rank {
+            color: #cd7f32;
         }
 
         .trending-info {
@@ -674,6 +864,12 @@
             padding: 1rem;
             background-color: var(--color-bg-tertiary);
             border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .dj-profile:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
         .dj-avatar {
@@ -685,8 +881,14 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
+            animation: avatarPulse 3s ease-in-out infinite;
             color: white;
             flex-shrink: 0;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(88, 166, 255, 0); }
         }
 
         .dj-info {
@@ -716,12 +918,25 @@
             padding: 1rem;
             background-color: var(--color-bg-tertiary);
             border-radius: 8px;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .news-item:hover {
+            transform: translateX(5px);
+            border-left-color: var(--color-accent);
+            background-color: var(--color-bg-hover);
         }
 
         .news-date {
             font-size: 1.25rem;
             min-width: 30px;
             text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .news-item:hover .news-date {
+            transform: scale(1.2);
         }
 
         .news-content {
@@ -743,10 +958,134 @@
             text-align: center;
         }
 
+        /* Header Animation */
+        .header {
+            background: rgba(22, 27, 34, 0.95);
+        }
+
+        @media (min-width: 769px) {
+            .header {
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+        }
+
+        .logo-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-accent), #a855f7);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Footer Enhancement */
+        .footer {
+            background: linear-gradient(180deg, transparent 0%, rgba(88, 166, 255, 0.05) 100%);
+        }
+
+        /* Scroll to Top Indicator */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--color-accent), #a855f7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
+        }
+
+        .scroll-indicator.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-indicator:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(88, 166, 255, 0.4);
+        }
+
+        /* Loading Skeleton Animation - Only when motion is OK */
+        .skeleton {
+            background: var(--color-bg-tertiary);
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .skeleton {
+                background: linear-gradient(90deg, var(--color-bg-tertiary) 0%, var(--color-bg-hover) 50%, var(--color-bg-tertiary) 100%);
+                background-size: 200% 100%;
+                animation: skeletonShimmer 1.5s ease-in-out infinite;
+            }
+        }
+
+        @keyframes skeletonShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Entrance animations - via CSS classes */
+        .card-entrance {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .card-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .hero-section {
                 padding: 2rem 1rem;
+            }
+
+            .hero-logo {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
             }
 
             .hero-title {
@@ -791,6 +1130,103 @@
                 flex-direction: column;
                 text-align: center;
             }
+
+            .card:hover {
+                transform: none;
+            }
+
+            .now-playing-art {
+                width: 150px;
+                height: 150px;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background: var(--color-bg-secondary);
+                border-bottom: 1px solid var(--color-border);
+                flex-direction: column;
+                padding: 1rem;
+                gap: 0.5rem;
+                display: none;
+            }
+
+            .nav-links.mobile-open {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .header-content {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Tablet Responsive */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .hero-section {
+                padding: 2.5rem 1.5rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .now-playing-art {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        /* Focus States for Accessibility */
+        .btn:focus,
+        .nav-link:focus,
+        .rating-btn:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+
+        /* Reduced Motion Preference */
+        @media (prefers-reduced-motion: reduce) {
+            .hero-section::before,
+            .hero-logo,
+            .hero-title,
+            .equalizer-bar,
+            .now-playing.is-playing .now-playing-art,
+            .dj-avatar,
+            .schedule-item.active {
+                animation: none;
+            }
+
+            .btn-primary::before,
+            .btn-discord::before,
+            .btn-twitch::before,
+            .btn-battlenet::before {
+                display: none;
+            }
+
+            .progress-fill::after {
+                animation: none;
+            }
+
+            /* Reset hover transforms for motion sensitivity */
+            .btn:hover,
+            .card:hover,
+            .history-item:hover,
+            .trending-item:hover,
+            .schedule-item:hover,
+            .news-item:hover,
+            .dj-profile:hover,
+            .scroll-indicator:hover,
+            .hero-logo:hover,
+            .now-playing-art:hover {
+                transform: none;
+            }
         }
     </style>
 </head>
@@ -804,7 +1240,11 @@
                 <span>Los Santos Radio</span>
             </a>
 
-            <nav class="nav-links">
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars" id="mobile-menu-icon"></i>
+            </button>
+
+            <nav class="nav-links" id="nav-links">
                 <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Home
                 </a>
@@ -858,6 +1298,15 @@
     <script>
         // CSRF token for AJAX requests
         window.csrfToken = '{{ csrf_token() }}';
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            const icon = document.getElementById('mobile-menu-icon');
+            navLinks.classList.toggle('mobile-open');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        }
 
         // Auto-refresh now playing
         function updateNowPlaying() {
