@@ -6,6 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $title ?? 'Los Santos Radio' }} - Los Santos Radio</title>
+    <meta name="description" content="Los Santos Radio - The best radio station in San Andreas. Listen live, request songs, and connect with the community.">
+
+    <!-- PWA Meta Tags -->
+    @laravelPWA
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -19,6 +23,9 @@
 
     <!-- Alpine.js for theme toggle -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Livewire Styles -->
+    @livewireStyles
 
     <!-- Styles -->
     <style>
@@ -1434,5 +1441,17 @@
     </script>
 
     @stack('scripts')
+
+    <!-- Livewire Scripts -->
+    @livewireScripts
+
+    <!-- Handle Livewire toast events -->
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('showToast', (data) => {
+                window.showToast(data.type, data.message);
+            });
+        });
+    </script>
 </body>
 </html>

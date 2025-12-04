@@ -100,6 +100,15 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('profile.linked-accounts');
 
+    // Analytics (for staff only)
+    Route::get('/analytics', function () {
+        if (! auth()->check() || ! auth()->user()->hasAnyRole(['admin', 'staff'])) {
+            abort(403);
+        }
+
+        return view('analytics.index');
+    })->name('analytics');
+
     // Logout
     Route::post('/logout', function () {
         auth()->logout();
