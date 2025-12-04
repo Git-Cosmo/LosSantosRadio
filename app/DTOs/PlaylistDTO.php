@@ -75,8 +75,13 @@ readonly class PlaylistDTO
             }
 
             foreach ($days as $day) {
+                // Validate day is within valid range (0-6)
+                if (! is_int($day) || $day < 0 || $day > 6) {
+                    continue;
+                }
+
                 $formatted[] = [
-                    'day' => $dayNames[$day] ?? 'Unknown',
+                    'day' => $dayNames[$day],
                     'day_number' => $day,
                     'start_time' => $this->formatTime($startTime),
                     'end_time' => $this->formatTime($endTime),
@@ -144,15 +149,34 @@ readonly class PlaylistDTO
 
     /**
      * Format time from HHMM to H:MM AM/PM.
+     *
+     * @param  string  $time  Time in HHMM format (e.g., "0800", "1430")
+     * @return string Formatted time (e.g., "8:00 AM", "2:30 PM")
      */
     private function formatTime(string $time): string
     {
+        // Remove any non-numeric characters and validate
+        $time = preg_replace('/[^0-9]/', '', $time);
+
+        if (empty($time) || ! ctype_digit($time)) {
+            return '12:00 AM';
+        }
+
         if (strlen($time) < 4) {
             $time = str_pad($time, 4, '0', STR_PAD_LEFT);
         }
 
         $hours = (int) substr($time, 0, 2);
         $minutes = substr($time, 2, 2);
+
+        // Validate hours and minutes
+        if ($hours > 23) {
+            $hours = 0;
+        }
+        if ((int) $minutes > 59) {
+            $minutes = '00';
+        }
+
         $period = $hours >= 12 ? 'PM' : 'AM';
         $hours = $hours % 12 ?: 12;
 

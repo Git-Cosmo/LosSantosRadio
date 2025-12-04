@@ -46,6 +46,7 @@
                 </span>
             </div>
             <div class="card-body" style="padding: 0;">
+                @php $firstResult = $searchResults->first(); @endphp
                 <div class="song-table-wrapper" style="overflow-x: auto;">
                     <table class="song-table" style="width: 100%; border-collapse: collapse;">
                         <thead>
@@ -53,7 +54,7 @@
                                 <th style="padding: 0.75rem 1rem; text-align: left; color: var(--color-text-secondary); font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Song</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; color: var(--color-text-secondary); font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Artist</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; color: var(--color-text-secondary); font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Album</th>
-                                @if($searchResults->first() && $searchResults->first()->genre)
+                                @if($firstResult && $firstResult->genre)
                                     <th style="padding: 0.75rem 1rem; text-align: left; color: var(--color-text-secondary); font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Genre</th>
                                 @endif
                                 <th style="padding: 0.75rem 1rem; text-align: right; color: var(--color-text-secondary); font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Action</th>
@@ -84,7 +85,7 @@
                                     <td style="padding: 0.75rem 1rem; color: var(--color-text-muted);">
                                         {{ $song->album ?? '-' }}
                                     </td>
-                                    @if($searchResults->first() && $searchResults->first()->genre)
+                                    @if($firstResult && $firstResult->genre)
                                         <td style="padding: 0.75rem 1rem;">
                                             @if($song->genre)
                                                 <span style="display: inline-block; padding: 0.25rem 0.5rem; background: var(--color-bg-tertiary); border-radius: 4px; font-size: 0.75rem; color: var(--color-text-secondary);">
@@ -97,7 +98,7 @@
                                     @endif
                                     <td style="padding: 0.75rem 1rem; text-align: right;">
                                         <button class="btn btn-primary request-btn"
-                                                onclick="requestSong('{{ $song->id }}', '{{ addslashes($song->title) }}', '{{ addslashes($song->artist) }}', this)"
+                                                onclick="requestSong({{ Js::from($song->id) }}, {{ Js::from($song->title) }}, {{ Js::from($song->artist) }}, this)"
                                                 style="padding: 0.375rem 0.75rem; font-size: 0.8125rem;">
                                             <i class="fas fa-plus"></i> Request
                                         </button>
