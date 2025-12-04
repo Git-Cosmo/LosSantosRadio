@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\EloquentSortable\Sortable;
+use Spatie\EloquentSortable\SortableTrait;
 
-class SongRequest extends Model
+class SongRequest extends Model implements Sortable
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, SortableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +28,7 @@ class SongRequest extends Model
         'session_id',
         'guest_email',
         'status',
+        'queue_order',
         'azuracast_request_id',
         'played_at',
     ];
@@ -39,7 +42,25 @@ class SongRequest extends Model
     {
         return [
             'played_at' => 'datetime',
+            'queue_order' => 'integer',
         ];
+    }
+
+    /**
+     * Sortable configuration.
+     */
+    public array $sortable = [
+        'order_column_name' => 'queue_order',
+        'sort_when_creating' => true,
+        'sort_on_has_many' => true,
+    ];
+
+    /**
+     * Build sort query - only sort pending requests.
+     */
+    public function buildSortQuery()
+    {
+        return static::query()->where('status', self::STATUS_PENDING);
     }
 
     /**

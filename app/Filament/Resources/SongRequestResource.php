@@ -47,6 +47,10 @@ class SongRequestResource extends Resource
                                 'cancelled' => 'Cancelled',
                             ])
                             ->required(),
+                        TextInput::make('queue_order')
+                            ->label('Queue Position')
+                            ->numeric()
+                            ->helperText('Lower numbers play first'),
                     ])->columns(2),
 
                 Section::make('Requester Info')
@@ -65,7 +69,13 @@ class SongRequestResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->reorderable('queue_order')
+            ->defaultSort('queue_order', 'asc')
             ->columns([
+                Tables\Columns\TextColumn::make('queue_order')
+                    ->label('#')
+                    ->sortable()
+                    ->width(50),
                 Tables\Columns\TextColumn::make('song_title')
                     ->searchable()
                     ->limit(30),
@@ -89,7 +99,6 @@ class SongRequestResource extends Resource
                     ->dateTime()
                     ->sortable(),
             ])
-            ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
@@ -102,6 +111,18 @@ class SongRequestResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('moveUp')
+                    ->label('Move Up')
+                    ->icon('heroicon-o-arrow-up')
+                    ->color('gray')
+                    ->action(fn (SongRequest $record) => $record->moveOrderUp())
+                    ->visible(fn (SongRequest $record) => $record->status === 'pending'),
+                Tables\Actions\Action::make('moveDown')
+                    ->label('Move Down')
+                    ->icon('heroicon-o-arrow-down')
+                    ->color('gray')
+                    ->action(fn (SongRequest $record) => $record->moveOrderDown())
+                    ->visible(fn (SongRequest $record) => $record->status === 'pending'),
                 Tables\Actions\Action::make('markPlayed')
                     ->label('Mark Played')
                     ->icon('heroicon-o-check')
@@ -122,6 +143,15 @@ class SongRequestResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('markAllPlayed')
+                        ->label('Mark All Played')
+                        ->icon('heroicon-o-check')
+                        ->action(fn ($records) => $records->each(fn ($record) => $record->update([
+                            'status' => 'played',
+                            'played_at' => now(),
+                        ])))
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }
