@@ -61,10 +61,20 @@
 
                 <div class="playlist-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
                     @foreach($playlists->filter(fn($p) => $p->isEnabled && !$p->isJingle)->take(8) as $playlist)
+                        @php
+                            $iconMap = [
+                                'scheduled' => 'clock',
+                                'once_per_day' => 'star',
+                                'once_per_x_songs' => 'random',
+                                'once_per_x_minutes' => 'stopwatch',
+                                'once_per_hour' => 'hourglass-half',
+                            ];
+                            $icon = $iconMap[$playlist->type] ?? 'music';
+                        @endphp
                         <div class="playlist-card" style="background: var(--color-bg-tertiary); border-radius: 8px; padding: 1rem; border: 1px solid {{ $playlist->isCurrentlyActive() ? 'var(--color-accent)' : 'var(--color-border)' }}; {{ $playlist->isCurrentlyActive() ? 'box-shadow: 0 0 15px rgba(88, 166, 255, 0.2);' : '' }}">
                             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                                 <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                    <i class="fas fa-{{ $playlist->type === 'scheduled' ? 'clock' : ($playlist->type === 'once_per_day' ? 'star' : 'music') }}" style="color: white;"></i>
+                                    <i class="fas fa-{{ e($icon) }}" style="color: white;"></i>
                                 </div>
                                 <div style="flex: 1; min-width: 0;">
                                     <h3 style="font-weight: 600; font-size: 0.9375rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">

@@ -99,6 +99,7 @@
                                     <td style="padding: 0.75rem 1rem; text-align: right;">
                                         <button class="btn btn-primary request-btn"
                                                 onclick="requestSong({{ Js::from($song->id) }}, {{ Js::from($song->title) }}, {{ Js::from($song->artist) }}, this)"
+                                                aria-label="Request {{ $song->title }} by {{ $song->artist }}"
                                                 style="padding: 0.375rem 0.75rem; font-size: 0.8125rem;">
                                             <i class="fas fa-plus"></i> Request
                                         </button>
@@ -278,7 +279,7 @@
         /**
          * Request a song via the AzuraCast API.
          * 
-         * @param {string} songId - The song ID to request
+         * @param {number|string} songId - The song ID to request
          * @param {string} title - The song title (for display)
          * @param {string} artist - The song artist (for display)
          * @param {HTMLElement} btn - The button element that was clicked
@@ -301,7 +302,12 @@
                     song_artist: artist
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Request failed with status ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     btn.innerHTML = '<i class="fas fa-check"></i> Requested';

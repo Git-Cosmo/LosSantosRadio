@@ -76,7 +76,9 @@ readonly class PlaylistDTO
 
             foreach ($days as $day) {
                 // Validate day is within valid range (0-6)
-                if (! is_int($day) || $day < 0 || $day > 6) {
+                // Use is_numeric() since JSON may deserialize integers as strings
+                $day = is_numeric($day) ? (int) $day : -1;
+                if ($day < 0 || $day > 6) {
                     continue;
                 }
 

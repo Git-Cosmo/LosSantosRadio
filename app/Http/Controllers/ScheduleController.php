@@ -62,6 +62,7 @@ class ScheduleController extends Controller
             $formattedSchedule = $playlist->getFormattedSchedule();
 
             foreach ($formattedSchedule as $item) {
+                $isCurrentlyActive = $playlist->isCurrentlyActive();
                 $schedule[] = [
                     'playlist_id' => $playlist->id,
                     'title' => $playlist->name,
@@ -73,16 +74,17 @@ class ScheduleController extends Controller
                     'time' => $item['start_time'].' - '.$item['end_time'],
                     'start_time' => $item['start_time'],
                     'end_time' => $item['end_time'],
-                    'is_current' => $playlist->isCurrentlyActive(),
+                    'start_raw' => $item['start_raw'] ?? '',
+                    'is_current' => $isCurrentlyActive,
                     'type' => $playlist->type,
                 ];
             }
         }
 
-        // Sort by day number, then start time
+        // Sort by day number, then start time (using raw time for correct sorting)
         usort($schedule, function ($a, $b) {
             if ($a['day_number'] === $b['day_number']) {
-                return strcmp($a['start_time'], $b['start_time']);
+                return strcmp($a['start_raw'], $b['start_raw']);
             }
 
             return $a['day_number'] - $b['day_number'];
