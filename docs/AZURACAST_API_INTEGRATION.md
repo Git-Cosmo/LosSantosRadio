@@ -218,11 +218,11 @@ API responses are cached to reduce load:
 This integration is validated against the official AzuraCast OpenAPI specification:
 https://raw.githubusercontent.com/AzuraCast/AzuraCast/main/web/static/openapi.yml
 
-**Validated Version:** AzuraCast 0.23.x
+**Validated Version:** AzuraCast 0.23.1+
 
 ## Changelog
 
-### 2024-12-03
+### Initial Documentation (December 2024)
 - Updated `StationDTO` to support both `requests_enabled` (official) and `enable_requests` (legacy)
 - Added `genre` and `isrc` fields to `SongDTO` per API spec
 - Added `isRequest` field to `SongHistoryDTO` per API spec
