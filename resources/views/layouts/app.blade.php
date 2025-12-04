@@ -1136,12 +1136,22 @@
 
         /* Reduced Motion Preference */
         @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
+            .hero-section::before,
+            .hero-logo,
+            .hero-title,
+            .equalizer-bar,
+            .now-playing.is-playing .now-playing-art,
+            .dj-avatar,
+            .schedule-item.active {
+                animation: none;
+            }
+
+            .btn::before {
+                display: none;
+            }
+
+            .progress-fill::after {
+                animation: none;
             }
         }
     </style>

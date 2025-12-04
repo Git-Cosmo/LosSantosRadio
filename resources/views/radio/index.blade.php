@@ -556,7 +556,7 @@
             return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
         }
 
-        // Scroll to top functionality
+        // Scroll to top functionality with throttling
         function createScrollToTop() {
             const scrollBtn = document.createElement('div');
             scrollBtn.className = 'scroll-indicator';
@@ -564,11 +564,18 @@
             scrollBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
             document.body.appendChild(scrollBtn);
 
+            let ticking = false;
             window.addEventListener('scroll', () => {
-                if (window.scrollY > 300) {
-                    scrollBtn.classList.add('visible');
-                } else {
-                    scrollBtn.classList.remove('visible');
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        if (window.scrollY > 300) {
+                            scrollBtn.classList.add('visible');
+                        } else {
+                            scrollBtn.classList.remove('visible');
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
                 }
             });
         }
@@ -577,7 +584,7 @@
         function addEntranceAnimations() {
             const cards = document.querySelectorAll('.card');
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry, index) => {
+                entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         entry.target.style.opacity = '1';
                         entry.target.style.transform = 'translateY(0)';
