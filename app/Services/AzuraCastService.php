@@ -94,7 +94,12 @@ class AzuraCastService
             ]);
         });
 
-        return collect($data)->map(fn ($item) => SongHistoryDTO::fromApi($item));
+        // Handle paginated response format (with 'items' key) or plain array
+        $items = $this->extractItems($data);
+
+        return collect($items)
+            ->filter(fn ($item) => is_array($item))
+            ->map(fn ($item) => SongHistoryDTO::fromApi($item));
     }
 
     /**
@@ -110,7 +115,12 @@ class AzuraCastService
             return $this->makeRequest("/api/station/{$this->stationId}/queue");
         });
 
-        return collect($data)->map(fn ($item) => SongDTO::fromApi($item['song'] ?? $item));
+        // Handle paginated response format (with 'items' key) or plain array
+        $items = $this->extractItems($data);
+
+        return collect($items)
+            ->filter(fn ($item) => is_array($item))
+            ->map(fn ($item) => SongDTO::fromApi($item['song'] ?? $item));
     }
 
     /**
@@ -134,9 +144,15 @@ class AzuraCastService
 
             $data = $this->makeRequest("/api/station/{$this->stationId}/requests", $params);
 
+            // Handle paginated response format (with 'items' key) or plain array
+            $items = $this->extractItems($data);
+            $total = $data['meta']['total'] ?? $data['total'] ?? count($items);
+
             return [
-                'songs' => collect($data)->map(fn ($item) => SongDTO::fromApi($item['song'] ?? $item)),
-                'total' => count($data), // AzuraCast may provide pagination info differently
+                'songs' => collect($items)
+                    ->filter(fn ($item) => is_array($item))
+                    ->map(fn ($item) => SongDTO::fromApi($item['song'] ?? $item)),
+                'total' => $total,
             ];
         });
     }
@@ -180,7 +196,12 @@ class AzuraCastService
             ]);
         });
 
-        return collect($data)->map(fn ($item) => SongDTO::fromApi($item));
+        // Handle paginated response format (with 'items' key) or plain array
+        $items = $this->extractItems($data);
+
+        return collect($items)
+            ->filter(fn ($item) => is_array($item))
+            ->map(fn ($item) => SongDTO::fromApi($item));
     }
 
     /**
@@ -203,6 +224,34 @@ class AzuraCastService
             }
             Cache::forget($key);
         }
+    }
+
+    /**
+     * Extract items from API response, handling both paginated and plain array formats.
+     *
+     * @param  array  $data  API response data
+     * @return array Items array
+     */
+    protected function extractItems(array $data): array
+    {
+        // Check for paginated response format with 'items' key
+        if (isset($data['items']) && is_array($data['items'])) {
+            return $data['items'];
+        }
+
+        // Check for paginated response format with 'data' key (alternative format)
+        if (isset($data['data']) && is_array($data['data'])) {
+            return $data['data'];
+        }
+
+        // If response has 'meta' or 'links' keys, it's a paginated response without items
+        // This shouldn't normally happen, but handle it gracefully
+        if (isset($data['meta']) || isset($data['links'])) {
+            return [];
+        }
+
+        // Plain array response - return as-is
+        return $data;
     }
 
     /**
