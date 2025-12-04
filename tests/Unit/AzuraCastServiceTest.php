@@ -4,10 +4,13 @@ namespace Tests\Unit;
 
 use App\Services\AzuraCastService;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 class AzuraCastServiceTest extends TestCase
 {
     private AzuraCastService $service;
+
+    private ReflectionMethod $extractItemsMethod;
 
     protected function setUp(): void
     {
@@ -19,13 +22,16 @@ class AzuraCastServiceTest extends TestCase
             {
                 // Skip parent constructor to avoid config dependency
             }
-
-            // Expose protected method for testing
-            public function testExtractItems(array $data): array
-            {
-                return $this->extractItems($data);
-            }
         };
+
+        // Use reflection to access the protected extractItems method
+        $this->extractItemsMethod = new ReflectionMethod(AzuraCastService::class, 'extractItems');
+        $this->extractItemsMethod->setAccessible(true);
+    }
+
+    private function extractItems(array $data): array
+    {
+        return $this->extractItemsMethod->invoke($this->service, $data);
     }
 
     public function test_extract_items_from_plain_array(): void
@@ -35,7 +41,7 @@ class AzuraCastServiceTest extends TestCase
             ['id' => '2', 'title' => 'Song 2'],
         ];
 
-        $result = $this->service->testExtractItems($data);
+        $result = $this->extractItems($data);
 
         $this->assertEquals($data, $result);
     }
@@ -53,7 +59,7 @@ class AzuraCastServiceTest extends TestCase
             'links' => ['next' => '/api/station/1/requests?page=2'],
         ];
 
-        $result = $this->service->testExtractItems($data);
+        $result = $this->extractItems($data);
 
         $this->assertEquals($items, $result);
     }
@@ -71,7 +77,7 @@ class AzuraCastServiceTest extends TestCase
             'links' => ['next' => '/api/station/1/requests?page=2'],
         ];
 
-        $result = $this->service->testExtractItems($data);
+        $result = $this->extractItems($data);
 
         $this->assertEquals($items, $result);
     }
@@ -83,14 +89,14 @@ class AzuraCastServiceTest extends TestCase
             'links' => [],
         ];
 
-        $result = $this->service->testExtractItems($data);
+        $result = $this->extractItems($data);
 
         $this->assertEquals([], $result);
     }
 
     public function test_extract_items_returns_empty_array_for_empty_input(): void
     {
-        $result = $this->service->testExtractItems([]);
+        $result = $this->extractItems([]);
 
         $this->assertEquals([], $result);
     }
@@ -104,7 +110,7 @@ class AzuraCastServiceTest extends TestCase
             2 => ['id' => '2', 'title' => 'Song 2'],
         ];
 
-        $result = $this->service->testExtractItems($data);
+        $result = $this->extractItems($data);
 
         // extractItems returns the array as-is; filtering happens in the calling methods
         $this->assertEquals($data, $result);
