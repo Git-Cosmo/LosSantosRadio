@@ -328,12 +328,18 @@
     </style>
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@4"></script>
     <script>
         document.addEventListener('livewire:init', function() {
             let chart = null;
 
             function renderChart(data) {
+                // Cache computed styles for performance
+                const rootStyles = getComputedStyle(document.documentElement);
+                const textSecondary = rootStyles.getPropertyValue('--color-text-secondary').trim();
+                const borderColor = rootStyles.getPropertyValue('--color-border').trim();
+                const isDark = document.documentElement.classList.contains('dark');
+
                 const options = {
                     series: [{
                         name: 'Requests',
@@ -365,7 +371,7 @@
                         categories: data.map(d => d.date),
                         labels: {
                             style: {
-                                colors: getComputedStyle(document.documentElement).getPropertyValue('--color-text-secondary').trim()
+                                colors: textSecondary
                             },
                             rotate: -45,
                             rotateAlways: false
@@ -374,7 +380,7 @@
                     yaxis: {
                         labels: {
                             style: {
-                                colors: getComputedStyle(document.documentElement).getPropertyValue('--color-text-secondary').trim()
+                                colors: textSecondary
                             }
                         }
                     },
@@ -392,11 +398,11 @@
                     },
                     colors: ['#58a6ff'],
                     grid: {
-                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim(),
+                        borderColor: borderColor,
                         strokeDashArray: 4
                     },
                     tooltip: {
-                        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                        theme: isDark ? 'dark' : 'light'
                     }
                 };
 

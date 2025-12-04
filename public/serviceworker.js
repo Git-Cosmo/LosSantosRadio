@@ -1,8 +1,9 @@
-var staticCacheName = "pwa-v" + new Date().getTime();
+// Los Santos Radio PWA Service Worker
+// Version should be updated on each deployment
+var CACHE_VERSION = 'v1.0.0';
+var staticCacheName = "pwa-lsradio-" + CACHE_VERSION;
 var filesToCache = [
     '/offline',
-    '/css/app.css',
-    '/js/app.js',
     '/images/icons/icon-72x72.png',
     '/images/icons/icon-96x96.png',
     '/images/icons/icon-128x128.png',
