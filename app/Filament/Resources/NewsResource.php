@@ -10,11 +10,14 @@ use Filament\Schemas\Components\DateTimePicker;
 use Filament\Schemas\Components\RichEditor;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Select;
+use Filament\Schemas\Components\SpatieMediaLibraryFileUpload;
+use Filament\Schemas\Components\SpatieTagsInput;
 use Filament\Schemas\Components\Textarea;
 use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Tables;
+use Filament\Tables\Columns\SpatieTagsColumn;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -56,12 +59,32 @@ class NewsResource extends Resource
                             ->fileAttachmentsDirectory('news-attachments'),
                     ])->columns(2),
 
-                Section::make('Media & Source')
+                Section::make('Media')
                     ->schema([
-                        TextInput::make('image')
-                            ->url()
-                            ->maxLength(500)
-                            ->helperText('URL of the featured image'),
+                        SpatieMediaLibraryFileUpload::make('featured')
+                            ->collection('featured')
+                            ->image()
+                            ->imageResizeMode('cover')
+                            ->imageCropAspectRatio('16:9')
+                            ->imageResizeTargetWidth('1200')
+                            ->imageResizeTargetHeight('675')
+                            ->columnSpanFull(),
+                        SpatieMediaLibraryFileUpload::make('gallery')
+                            ->collection('gallery')
+                            ->multiple()
+                            ->image()
+                            ->reorderable()
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Tags & Categories')
+                    ->schema([
+                        SpatieTagsInput::make('tags')
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Source')
+                    ->schema([
                         Select::make('source')
                             ->options([
                                 'manual' => 'Manual Entry',
@@ -74,6 +97,10 @@ class NewsResource extends Resource
                             ->url()
                             ->maxLength(500)
                             ->helperText('Original source URL for imported news'),
+                        TextInput::make('image')
+                            ->url()
+                            ->maxLength(500)
+                            ->helperText('External image URL (fallback if no uploaded media)'),
                     ])->columns(3),
 
                 Section::make('Publishing')
@@ -108,6 +135,7 @@ class NewsResource extends Resource
                         'api' => 'warning',
                         default => 'gray',
                     }),
+                SpatieTagsColumn::make('tags'),
                 Tables\Columns\IconColumn::make('is_published')
                     ->label('Published')
                     ->boolean(),

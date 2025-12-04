@@ -7,10 +7,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
+use Spatie\Tags\HasTags;
 
-class News extends Model
+class News extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, HasSlug, HasTags, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -44,35 +50,42 @@ class News extends Model
     }
 
     /**
-     * Boot the model.
+     * Get the options for generating the slug.
      */
-    protected static function boot(): void
+    public function getSlugOptions(): SlugOptions
     {
-        parent::boot();
+        return SlugOptions::create()
+            ->generateSlugsFrom('title')
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
+    }
 
-        static::creating(function (News $news) {
-            if (empty($news->slug)) {
-                $news->slug = Str::slug($news->title);
-            }
-            // Ensure slug is unique
-            $originalSlug = $news->slug;
-            $counter = 1;
-            while (static::where('slug', $news->slug)->exists()) {
-                $news->slug = $originalSlug.'-'.$counter++;
-            }
-        });
+    /**
+     * Register the media collections for the model.
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('featured')
+            ->singleFile()
+            ->useFallbackUrl('/images/default-news.png');
 
-        static::updating(function (News $news) {
-            if ($news->isDirty('title') && ! $news->isDirty('slug')) {
-                $news->slug = Str::slug($news->title);
-                // Ensure slug is unique
-                $originalSlug = $news->slug;
-                $counter = 1;
-                while (static::where('slug', $news->slug)->where('id', '!=', $news->id)->exists()) {
-                    $news->slug = $originalSlug.'-'.$counter++;
-                }
-            }
-        });
+        $this->addMediaCollection('gallery');
+    }
+
+    /**
+     * Register the media conversions for the model.
+     */
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(400)
+            ->height(300)
+            ->sharpen(10);
+
+        $this->addMediaConversion('preview')
+            ->width(800)
+            ->height(600)
+            ->sharpen(10);
     }
 
     /**
