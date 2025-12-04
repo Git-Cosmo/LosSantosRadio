@@ -145,7 +145,11 @@
             overflow: hidden;
         }
 
-        .btn::before {
+        /* Shine effect only on primary CTA buttons */
+        .btn-primary::before,
+        .btn-discord::before,
+        .btn-twitch::before,
+        .btn-battlenet::before {
             content: '';
             position: absolute;
             top: 0;
@@ -156,7 +160,10 @@
             transition: left 0.5s ease;
         }
 
-        .btn:hover::before {
+        .btn-primary:hover::before,
+        .btn-discord:hover::before,
+        .btn-twitch:hover::before,
+        .btn-battlenet:hover::before {
             left: 100%;
         }
 
@@ -277,12 +284,12 @@
         }
 
         .now-playing.is-playing .now-playing-art {
-            animation: albumSpin 20s linear infinite;
+            animation: albumSpin 60s linear infinite;
         }
 
         @keyframes albumSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            0%, 90% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .now-playing-info {
@@ -679,7 +686,6 @@
 
         .equalizer.paused .equalizer-bar {
             animation-play-state: paused;
-            transform: scaleY(0.3);
         }
 
         /* Song Rating */
@@ -954,9 +960,14 @@
 
         /* Header Animation */
         .header {
-            background: linear-gradient(180deg, var(--color-bg-secondary) 0%, rgba(22, 27, 34, 0.95) 100%);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(22, 27, 34, 0.95);
+        }
+
+        @media (min-width: 769px) {
+            .header {
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
         }
 
         .logo-icon {
@@ -1024,16 +1035,45 @@
             box-shadow: 0 6px 20px rgba(88, 166, 255, 0.4);
         }
 
-        /* Loading Skeleton Animation */
+        /* Loading Skeleton Animation - Only when motion is OK */
         .skeleton {
-            background: linear-gradient(90deg, var(--color-bg-tertiary) 0%, var(--color-bg-hover) 50%, var(--color-bg-tertiary) 100%);
-            background-size: 200% 100%;
-            animation: skeletonShimmer 1.5s ease-in-out infinite;
+            background: var(--color-bg-tertiary);
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .skeleton {
+                background: linear-gradient(90deg, var(--color-bg-tertiary) 0%, var(--color-bg-hover) 50%, var(--color-bg-tertiary) 100%);
+                background-size: 200% 100%;
+                animation: skeletonShimmer 1.5s ease-in-out infinite;
+            }
         }
 
         @keyframes skeletonShimmer {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
+        }
+
+        /* Entrance animations - via CSS classes */
+        .card-entrance {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .card-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
         }
 
         /* Mobile Responsive */
@@ -1101,7 +1141,24 @@
             }
 
             .nav-links {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background: var(--color-bg-secondary);
+                border-bottom: 1px solid var(--color-border);
+                flex-direction: column;
+                padding: 1rem;
+                gap: 0.5rem;
                 display: none;
+            }
+
+            .nav-links.mobile-open {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
             }
 
             .header-content {
@@ -1146,12 +1203,29 @@
                 animation: none;
             }
 
-            .btn::before {
+            .btn-primary::before,
+            .btn-discord::before,
+            .btn-twitch::before,
+            .btn-battlenet::before {
                 display: none;
             }
 
             .progress-fill::after {
                 animation: none;
+            }
+
+            /* Reset hover transforms for motion sensitivity */
+            .btn:hover,
+            .card:hover,
+            .history-item:hover,
+            .trending-item:hover,
+            .schedule-item:hover,
+            .news-item:hover,
+            .dj-profile:hover,
+            .scroll-indicator:hover,
+            .hero-logo:hover,
+            .now-playing-art:hover {
+                transform: none;
             }
         }
     </style>
@@ -1166,7 +1240,11 @@
                 <span>Los Santos Radio</span>
             </a>
 
-            <nav class="nav-links">
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars" id="mobile-menu-icon"></i>
+            </button>
+
+            <nav class="nav-links" id="nav-links">
                 <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Home
                 </a>
@@ -1220,6 +1298,15 @@
     <script>
         // CSRF token for AJAX requests
         window.csrfToken = '{{ csrf_token() }}';
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            const icon = document.getElementById('mobile-menu-icon');
+            navLinks.classList.toggle('mobile-open');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        }
 
         // Auto-refresh now playing
         function updateNowPlaying() {

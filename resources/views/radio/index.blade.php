@@ -558,6 +558,9 @@
 
         // Scroll to top functionality with throttling
         function createScrollToTop() {
+            // Prevent duplicate scroll indicators
+            if (document.querySelector('.scroll-indicator')) return;
+
             const scrollBtn = document.createElement('div');
             scrollBtn.className = 'scroll-indicator';
             scrollBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
@@ -565,10 +568,14 @@
             document.body.appendChild(scrollBtn);
 
             let ticking = false;
+            let lastScrollY = window.scrollY;
+
             window.addEventListener('scroll', () => {
+                lastScrollY = window.scrollY;
+
                 if (!ticking) {
                     window.requestAnimationFrame(() => {
-                        if (window.scrollY > 300) {
+                        if (lastScrollY > 300) {
                             scrollBtn.classList.add('visible');
                         } else {
                             scrollBtn.classList.remove('visible');
@@ -580,23 +587,26 @@
             });
         }
 
-        // Add entrance animations
+        // Add entrance animations using CSS classes
         function addEntranceAnimations() {
+            // Respect user's motion preferences
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+
             const cards = document.querySelectorAll('.card');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+                        entry.target.classList.add('card-visible');
                         observer.unobserve(entry.target);
                     }
                 });
             }, { threshold: 0.1 });
 
             cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
+                card.classList.add('card-entrance');
+                card.style.transitionDelay = `${index * 0.1}s`;
                 observer.observe(card);
             });
         }
