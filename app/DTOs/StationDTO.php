@@ -29,7 +29,8 @@ readonly class StationDTO
             listenUrl: $data['listen_url'] ?? null,
             publicPlaylistUri: $data['public_player_url'] ?? null,
             isOnline: (bool) ($data['is_online'] ?? false),
-            enableRequests: (bool) ($data['enable_requests'] ?? false),
+            // Support both 'requests_enabled' (official API) and 'enable_requests' (legacy)
+            enableRequests: (bool) ($data['requests_enabled'] ?? $data['enable_requests'] ?? false),
             requestDelay: (int) ($data['request_delay'] ?? 0),
             requestThreshold: (int) ($data['request_threshold'] ?? 0),
         );
