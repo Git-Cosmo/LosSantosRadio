@@ -70,9 +70,8 @@ class DiscordBotController extends Controller
      */
     public function settings(): View
     {
+        // Bot token and guild ID are read from environment variables only for security
         $settings = [
-            'discord_bot_token' => Setting::get('discord_bot_token'),
-            'discord_guild_id' => Setting::get('discord_guild_id'),
             'discord_log_channel' => Setting::get('discord_log_channel'),
             'discord_welcome_channel' => Setting::get('discord_welcome_channel'),
             'discord_auto_sync_enabled' => Setting::get('discord_auto_sync_enabled', false),
@@ -85,14 +84,15 @@ class DiscordBotController extends Controller
 
     /**
      * Update Discord settings.
+     * Note: Bot token and guild ID cannot be updated via the admin panel for security reasons.
      */
     public function updateSettings(Request $request): RedirectResponse
     {
+        // Only allow non-sensitive settings to be updated via the admin panel
+        // Bot token and guild ID must be set via environment variables
         $validated = $request->validate([
-            'discord_bot_token' => 'nullable|string',
-            'discord_guild_id' => 'nullable|string',
-            'discord_log_channel' => 'nullable|string',
-            'discord_welcome_channel' => 'nullable|string',
+            'discord_log_channel' => 'nullable|string|max:20',
+            'discord_welcome_channel' => 'nullable|string|max:20',
         ]);
 
         foreach ($validated as $key => $value) {

@@ -29,18 +29,24 @@ class GamesController extends Controller
      */
     public function deals(Request $request): View
     {
+        // Validate input parameters to prevent injection and ensure data integrity
+        $validated = $request->validate([
+            'min_savings' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'store' => ['nullable', 'integer', 'exists:game_stores,id'],
+        ]);
+
         $query = GameDeal::with('store')
             ->onSale()
             ->orderBy('savings_percent', 'desc');
 
         // Filter by minimum savings
-        if ($request->filled('min_savings')) {
-            $query->minSavings((int) $request->min_savings);
+        if (isset($validated['min_savings'])) {
+            $query->minSavings((int) $validated['min_savings']);
         }
 
         // Filter by store
-        if ($request->filled('store')) {
-            $query->where('store_id', $request->store);
+        if (isset($validated['store'])) {
+            $query->where('store_id', $validated['store']);
         }
 
         $deals = $query->paginate(24);
@@ -50,8 +56,8 @@ class GamesController extends Controller
             'deals' => $deals,
             'stores' => $stores,
             'filters' => [
-                'min_savings' => $request->min_savings,
-                'store' => $request->store,
+                'min_savings' => $validated['min_savings'] ?? null,
+                'store' => $validated['store'] ?? null,
             ],
         ]);
     }

@@ -18,7 +18,11 @@ class SearchController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = $request->input('q');
+        $validated = $request->validate([
+            'q' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $query = $validated['q'] ?? null;
         $results = [];
 
         if ($query && strlen($query) >= 2) {
@@ -36,7 +40,11 @@ class SearchController extends Controller
      */
     public function search(Request $request): JsonResponse
     {
-        $query = $request->input('q');
+        $validated = $request->validate([
+            'q' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $query = $validated['q'] ?? null;
 
         if (! $query || strlen($query) < 2) {
             return response()->json(['results' => []]);
@@ -49,14 +57,18 @@ class SearchController extends Controller
 
     /**
      * Perform a search across multiple models.
+     * Note: This uses basic LIKE queries. For better performance at scale,
+     * consider implementing Laravel Scout with Meilisearch or database full-text search.
      */
     protected function performSearch(string $query, int $limit = 20): array
     {
+        // Sanitize the search query - escape special characters for LIKE
+        $escapedQuery = str_replace(['%', '_'], ['\%', '\_'], $query);
         $results = [];
 
         // Search News
-        $news = News::where('title', 'like', "%{$query}%")
-            ->orWhere('content', 'like', "%{$query}%")
+        $news = News::where('title', 'like', "%{$escapedQuery}%")
+            ->orWhere('content', 'like', "%{$escapedQuery}%")
             ->published()
             ->orderBy('created_at', 'desc')
             ->limit($limit)
@@ -74,8 +86,8 @@ class SearchController extends Controller
         $results = array_merge($results, $news->toArray());
 
         // Search Events
-        $events = Event::where('title', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
+        $events = Event::where('title', 'like', "%{$escapedQuery}%")
+            ->orWhere('description', 'like', "%{$escapedQuery}%")
             ->published()
             ->orderBy('start_date', 'desc')
             ->limit($limit)
@@ -93,8 +105,8 @@ class SearchController extends Controller
         $results = array_merge($results, $events->toArray());
 
         // Search Free Games
-        $games = FreeGame::where('title', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
+        $games = FreeGame::where('title', 'like', "%{$escapedQuery}%")
+            ->orWhere('description', 'like', "%{$escapedQuery}%")
             ->active()
             ->orderBy('created_at', 'desc')
             ->limit($limit)
@@ -112,7 +124,7 @@ class SearchController extends Controller
         $results = array_merge($results, $games->toArray());
 
         // Search Game Deals
-        $deals = GameDeal::where('title', 'like', "%{$query}%")
+        $deals = GameDeal::where('title', 'like', "%{$escapedQuery}%")
             ->onSale()
             ->orderBy('savings_percent', 'desc')
             ->limit($limit)
@@ -130,8 +142,8 @@ class SearchController extends Controller
         $results = array_merge($results, $deals->toArray());
 
         // Search Videos
-        $videos = Video::where('title', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
+        $videos = Video::where('title', 'like', "%{$escapedQuery}%")
+            ->orWhere('description', 'like', "%{$escapedQuery}%")
             ->active()
             ->orderBy('posted_at', 'desc')
             ->limit($limit)

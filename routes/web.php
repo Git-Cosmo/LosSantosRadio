@@ -81,9 +81,9 @@ Route::prefix('videos')->name('videos.')->group(function () {
     Route::get('/{video}', [\App\Http\Controllers\VideosController::class, 'show'])->name('show');
 });
 
-// Search
-Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
-Route::get('/api/search', [\App\Http\Controllers\SearchController::class, 'search'])->name('search.api');
+// Search (with rate limiting to prevent abuse)
+Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->middleware('throttle:30,1')->name('search');
+Route::get('/api/search', [\App\Http\Controllers\SearchController::class, 'search'])->middleware('throttle:60,1')->name('search.api');
 
 // User profiles (public)
 Route::get('/users/{user}', [ProfileController::class, 'show'])->name('profile.show');

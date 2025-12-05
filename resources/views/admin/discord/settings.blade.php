@@ -10,21 +10,25 @@
 
                 <div class="alert" style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); margin-bottom: 1.5rem;">
                     <p style="color: var(--color-text-secondary); font-size: 0.875rem;">
-                        <i class="fas fa-info-circle" style="color: var(--color-accent);"></i>
-                        Discord bot settings are primarily configured through environment variables. You can override them here for quick testing.
+                        <i class="fas fa-shield-alt" style="color: var(--color-accent);"></i>
+                        <strong>Important:</strong> The Discord bot token and guild ID must be configured via environment variables only. For security reasons, they cannot be set or overridden from this form.
                     </p>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="discord_bot_token">Bot Token</label>
-                    <input type="password" name="discord_bot_token" id="discord_bot_token" class="form-input" value="{{ $settings['discord_bot_token'] ?? '' }}" placeholder="Leave empty to use .env value">
-                    <small style="color: var(--color-text-muted);">Get this from the Discord Developer Portal</small>
+                    <label class="form-label">Bot Token</label>
+                    <div class="form-input" style="background-color: var(--color-bg-tertiary); cursor: not-allowed;">
+                        {{ config('services.discord.bot_token') ? '••••••••' . substr(config('services.discord.bot_token'), -4) : 'Not configured' }}
+                    </div>
+                    <small style="color: var(--color-text-muted);">Set via <code>DISCORD_BOT_TOKEN</code> in .env file</small>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="discord_guild_id">Guild (Server) ID</label>
-                    <input type="text" name="discord_guild_id" id="discord_guild_id" class="form-input" value="{{ $settings['discord_guild_id'] ?? '' }}" placeholder="Leave empty to use .env value">
-                    <small style="color: var(--color-text-muted);">Right-click your server and copy ID (Developer Mode must be enabled)</small>
+                    <label class="form-label">Guild (Server) ID</label>
+                    <div class="form-input" style="background-color: var(--color-bg-tertiary); cursor: not-allowed;">
+                        {{ config('services.discord.guild_id') ?: 'Not configured' }}
+                    </div>
+                    <small style="color: var(--color-text-muted);">Set via <code>DISCORD_GUILD_ID</code> in .env file</small>
                 </div>
 
                 <div class="form-group">

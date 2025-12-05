@@ -32,16 +32,20 @@ class VideosController extends Controller
             ->clips()
             ->orderBy('posted_at', 'desc');
 
-        // Filter by platform
-        if ($request->filled('platform')) {
-            $query->platform($request->platform);
+        // Filter by platform (validated against whitelist to prevent SQL injection)
+        $allowedPlatforms = ['twitch', 'youtube', 'kick'];
+        $platform = $request->input('platform');
+        if ($platform && in_array($platform, $allowedPlatforms, true)) {
+            $query->platform($platform);
+        } else {
+            $platform = null;
         }
 
         $videos = $query->paginate(20);
 
         return view('videos.clips', [
             'videos' => $videos,
-            'platform' => $request->platform,
+            'platform' => $platform,
         ]);
     }
 
