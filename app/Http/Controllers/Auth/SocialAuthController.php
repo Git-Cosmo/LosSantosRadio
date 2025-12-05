@@ -134,6 +134,9 @@ class SocialAuthController extends Controller
             $email = 'steam_'.$socialUser->getId().'@placeholder.local';
         }
 
+        // Check if this will be the first user BEFORE creating (prevents race condition)
+        $isFirstUser = User::count() === 0;
+
         $user = User::create([
             'name' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'Listener',
             'email' => $email ?? $provider.'_'.$socialUser->getId().'@placeholder.local',
@@ -141,18 +144,27 @@ class SocialAuthController extends Controller
             'password' => null, // Social login users don't need password
         ]);
 
-        // Assign default listener role
+        // Assign role: first user becomes admin, subsequent users are listeners
         if (class_exists('Spatie\Permission\Models\Role')) {
-            $user->assignRole('listener');
+            if ($isFirstUser) {
+                // Ensure admin role exists
+                \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);
+                $user->assignRole('admin');
+            } else {
+                // Ensure listener role exists
+                \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'listener']);
+                $user->assignRole('listener');
+            }
         }
 
         $this->createSocialAccount($user, $provider, $socialUser);
 
         Auth::login($user, true);
 
+        $roleAssigned = $user->hasRole('admin') ? 'admin' : 'listener';
         activity()
             ->causedBy($user)
-            ->log("Registered via {$provider}");
+            ->log("Registered via {$provider} as {$roleAssigned}");
 
         return redirect()->intended('/')->with('success', 'Welcome to Los Santos Radio!');
     }

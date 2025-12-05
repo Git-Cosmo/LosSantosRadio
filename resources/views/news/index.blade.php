@@ -13,41 +13,43 @@
     <!-- News Content with unified Alpine.js scope -->
     <div class="card" x-data="newsFilters()" x-init="init()">
         <!-- Filter & Sort Controls -->
-        <div class="news-controls">
-            <div class="news-controls-left">
-                <div class="news-search">
-                    <i class="fas fa-search" aria-hidden="true"></i>
-                    <label for="news-search" class="sr-only">Search news articles</label>
-                    <input type="text"
-                           id="news-search"
-                           placeholder="Search news..." 
-                           x-model="searchQuery" 
-                           @input.debounce.300ms="filterArticles()"
-                           class="form-input">
+        <div class="card-header">
+            <div class="news-controls">
+                <div class="news-controls-left">
+                    <div class="news-search">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                        <label for="news-search" class="sr-only">Search news articles</label>
+                        <input type="text"
+                               id="news-search"
+                               placeholder="Search news..." 
+                               x-model="searchQuery" 
+                               @input.debounce.300ms="filterArticles()"
+                               class="form-input">
+                    </div>
+                </div>
+                <div class="news-controls-right">
+                    <div class="news-sort">
+                        <label for="sort-by" class="sr-only">Sort by</label>
+                        <select id="sort-by" x-model="sortBy" @change="sortArticles()" class="form-input">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="title">Title A-Z</option>
+                        </select>
+                    </div>
+                    <div class="news-view-toggle">
+                        <button @click="switchView('grid')" :class="{ 'active': viewMode === 'grid' }" class="view-btn" title="Grid View" aria-label="Switch to grid view">
+                            <i class="fas fa-th-large" aria-hidden="true"></i>
+                        </button>
+                        <button @click="switchView('list')" :class="{ 'active': viewMode === 'list' }" class="view-btn" title="List View" aria-label="Switch to list view">
+                            <i class="fas fa-list" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="news-controls-right">
-                <div class="news-sort">
-                    <label for="sort-by" class="sr-only">Sort by</label>
-                    <select id="sort-by" x-model="sortBy" @change="sortArticles()" class="form-input">
-                        <option value="newest">Newest First</option>
-                        <option value="oldest">Oldest First</option>
-                        <option value="title">Title A-Z</option>
-                    </select>
-                </div>
-                <div class="news-view-toggle">
-                    <button @click="switchView('grid')" :class="{ 'active': viewMode === 'grid' }" class="view-btn" title="Grid View" aria-label="Switch to grid view">
-                        <i class="fas fa-th-large" aria-hidden="true"></i>
-                    </button>
-                    <button @click="switchView('list')" :class="{ 'active': viewMode === 'list' }" class="view-btn" title="List View" aria-label="Switch to list view">
-                        <i class="fas fa-list" aria-hidden="true"></i>
-                    </button>
-                </div>
-            </div>
+            <p class="news-pagination-note" x-show="isPaginated" x-cloak>
+                <i class="fas fa-info-circle" aria-hidden="true"></i> Search and sort apply to the current page only.
+            </p>
         </div>
-        <p class="news-pagination-note" x-show="isPaginated" x-cloak>
-            <i class="fas fa-info-circle" aria-hidden="true"></i> Search and sort apply to the current page only.
-        </p>
         <div class="card-body">
             @if($news->count() > 0)
                 <!-- Grid View -->
@@ -270,7 +272,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0;
             flex-wrap: wrap;
         }
 
@@ -703,7 +705,8 @@
         .news-pagination-note {
             font-size: 0.8125rem;
             color: var(--color-text-muted);
-            margin-bottom: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 0;
             padding: 0.5rem 0.75rem;
             background: var(--color-bg-tertiary);
             border-radius: 6px;
