@@ -7,12 +7,17 @@ A modern Laravel 12 application for **Los Santos Radio**, powered by AzuraCast a
 - **Now Playing & History** - Real-time display of currently playing songs with auto-refresh and song history
 - **Song Request System** - Browse the song library and request tracks with configurable rate limits
 - **Social Login** - Sign in with Discord, Twitch, Steam, or Battle.net with multi-provider account linking
-- **Admin Panel** - Full-featured Filament admin panel for managing users, requests, and settings
+- **Admin Panel** - Full-featured native admin panel for managing users, requests, news, and settings
 - **Icecast Integration** - Stream status and listener statistics
 - **Activity Logging** - Audit trail for important events with admin UI
 - **Dark/Light Mode** - Toggle between dark and light themes with preference persistence
 - **Leaderboard** - Top song requesters with timeframe filtering
 - **Health Checks** - Environment and service connection verification
+- **Analytics Dashboard** - Request statistics and trends for staff members
+- **News System** - Publish and manage news articles with rich content
+- **Messaging** - User-to-user messaging system
+- **Song Ratings** - Upvote/downvote songs with trending display
+- **PWA Support** - Progressive Web App for mobile experience
 
 ## Requirements
 
@@ -94,17 +99,23 @@ Default limits (configurable via admin panel):
 
 ## Admin Panel
 
-Access the admin panel at `/admin`. Default admin credentials:
-- Email: admin@lossantosradio.com
-- Password: password
+Access the admin panel at `/admin`. Admin users must have the `admin` role assigned.
+
+Features:
+- **Dashboard** - Overview of users, requests, and recent activity
+- **User Management** - View and manage users, assign roles
+- **Song Requests** - Manage request queue, mark as played/rejected
+- **News** - Create and publish news articles
+- **Settings** - Configure application settings
+- **Activity Log** - View audit trail of admin actions
 
 ## Architecture
 
 - **Services**: `AzuraCastService`, `IcecastService`, `RequestLimitService`
 - **DTOs**: Type-safe data transfer objects for API responses
-- **Filament**: Admin panel built with Filament 4
-- **Livewire**: Interactive components (Leaderboard)
-- **Spatie Packages**: Permissions, Activity Logging
+- **Controllers**: Native Laravel controllers for all functionality
+- **Blade Components**: Reusable UI components with layouts
+- **Spatie Packages**: Permissions, Activity Logging, Media Library, Tags
 
 ## Health Checks
 
@@ -126,6 +137,28 @@ This verifies:
 - Icecast connection
 - Storage paths
 - Required PHP extensions
+
+## Development
+
+### Running Tests
+
+```bash
+php artisan test
+```
+
+### Code Style
+
+```bash
+./vendor/bin/pint
+```
+
+### Development Server
+
+```bash
+composer dev
+```
+
+This starts the web server, queue worker, log viewer, and Vite dev server concurrently.
 
 ## CI/CD
 

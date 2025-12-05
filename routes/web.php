@@ -1,7 +1,16 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SongRequestController as AdminSongRequestController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\CommentsController;
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PlaylistsController;
@@ -11,6 +20,7 @@ use App\Http\Controllers\SongRatingController;
 use App\Http\Controllers\SongRequestController;
 use App\Http\Controllers\SongsController;
 use App\Http\Controllers\StationsController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +46,9 @@ Route::get('/songs', [SongsController::class, 'index'])->name('songs');
 
 // Stations page
 Route::get('/stations', [StationsController::class, 'index'])->name('stations');
+
+// Leaderboard page
+Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
 
 // Radio API endpoints
 Route::prefix('api/radio')->name('radio.')->group(function () {
@@ -72,6 +85,9 @@ Route::prefix('requests')->name('requests.')->group(function () {
     Route::get('/limits', [SongRequestController::class, 'checkLimits'])->name('limits');
     Route::post('/', [SongRequestController::class, 'store'])->name('store');
 });
+
+// Leaderboard API endpoint
+Route::get('/api/leaderboard', [LeaderboardController::class, 'api'])->name('leaderboard.api');
 
 /*
 |--------------------------------------------------------------------------
@@ -119,13 +135,7 @@ Route::middleware('auth')->group(function () {
     })->name('profile.linked-accounts');
 
     // Analytics (for staff only)
-    Route::get('/analytics', function () {
-        if (! auth()->check() || ! auth()->user()->hasAnyRole(['admin', 'staff'])) {
-            abort(403);
-        }
-
-        return view('analytics.index');
-    })->name('analytics');
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
 
     // Logout
     Route::post('/logout', function () {
@@ -146,3 +156,46 @@ Route::middleware('auth')->group(function () {
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login')->middleware('guest');
+
+/*
+|--------------------------------------------------------------------------
+| Admin Panel Routes
+|--------------------------------------------------------------------------
+*/
+
+// Admin Authentication (guest only)
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
+    Route::post('/login', [AdminAuthController::class, 'login'])->middleware('guest');
+});
+
+// Admin Protected Routes
+Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->group(function () {
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
+    // Dashboard
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Users
+    Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
+
+    // News
+    Route::resource('news', AdminNewsController::class)->except(['show']);
+
+    // Settings
+    Route::resource('settings', SettingController::class)->except(['show']);
+
+    // Song Requests
+    Route::get('/requests', [AdminSongRequestController::class, 'index'])->name('requests.index');
+    Route::get('/requests/{songRequest}/edit', [AdminSongRequestController::class, 'edit'])->name('requests.edit');
+    Route::put('/requests/{songRequest}', [AdminSongRequestController::class, 'update'])->name('requests.update');
+    Route::delete('/requests/{songRequest}', [AdminSongRequestController::class, 'destroy'])->name('requests.destroy');
+    Route::post('/requests/{songRequest}/mark-played', [AdminSongRequestController::class, 'markPlayed'])->name('requests.mark-played');
+    Route::post('/requests/{songRequest}/reject', [AdminSongRequestController::class, 'reject'])->name('requests.reject');
+    Route::post('/requests/{songRequest}/move-up', [AdminSongRequestController::class, 'moveUp'])->name('requests.move-up');
+    Route::post('/requests/{songRequest}/move-down', [AdminSongRequestController::class, 'moveDown'])->name('requests.move-down');
+
+    // Activity Log
+    Route::get('/activity', [ActivityLogController::class, 'index'])->name('activity.index');
+    Route::get('/activity/{activity}', [ActivityLogController::class, 'show'])->name('activity.show');
+});

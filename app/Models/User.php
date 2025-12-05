@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use Cmgmyr\Messenger\Traits\Messagable;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,7 +11,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, HasRoles, LogsActivity, Messagable, Notifiable;
@@ -67,14 +65,6 @@ class User extends Authenticatable implements FilamentUser
     public function songRequests(): HasMany
     {
         return $this->hasMany(SongRequest::class);
-    }
-
-    /**
-     * Determine if the user can access the Filament admin panel.
-     */
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return $this->hasAnyRole(['admin', 'staff']);
     }
 
     /**
