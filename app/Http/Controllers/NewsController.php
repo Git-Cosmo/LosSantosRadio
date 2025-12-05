@@ -14,6 +14,7 @@ class NewsController extends Controller
     {
         $news = News::published()
             ->latestPublished()
+            ->withCount('comments')
             ->paginate(10);
 
         return view('news.index', compact('news'));

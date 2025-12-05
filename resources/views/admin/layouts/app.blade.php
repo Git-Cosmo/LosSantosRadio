@@ -611,7 +611,7 @@
             <!-- Admin Header Bar -->
             <div style="display: flex; justify-content: flex-end; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-border);">
                 <!-- Live Clock -->
-                <div class="live-clock" @click="clockFormat = clockFormat === '24' ? '12' : '24'" title="Click to toggle 12/24 hour format" x-data="liveClock()" x-init="init()">
+                <div class="live-clock" @click="clockFormat = clockFormat === '24' ? '12' : '24'; window.dispatchEvent(new Event('clockFormatChanged'))" title="Click to toggle 12/24 hour format" x-data="liveClock()" x-init="init()">
                     <i class="fas fa-clock"></i>
                     <span x-text="time"></span>
                     <span class="live-clock-format" x-text="clockFormat === '24' ? '24H' : '12H'"></span>
@@ -648,10 +648,12 @@
                 init() {
                     this.updateTime();
                     this.interval = setInterval(() => this.updateTime(), 1000);
+                    // Listen for clock format changes via custom event
+                    window.addEventListener('clockFormatChanged', () => this.updateTime());
                 },
                 updateTime() {
                     const now = new Date();
-                    const format = this.$root.querySelector('[x-data]')?._x_dataStack?.[0]?.clockFormat || localStorage.getItem('clockFormat') || '24';
+                    const format = localStorage.getItem('clockFormat') || '24';
                     
                     let hours = now.getHours();
                     const minutes = now.getMinutes().toString().padStart(2, '0');

@@ -696,6 +696,20 @@
             justify-content: center;
         }
 
+        /* Animations */
+        @keyframes heroGlow {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            25% { transform: translate(10%, 10%) scale(1.1); opacity: 0.7; }
+            50% { transform: translate(5%, -5%) scale(1); opacity: 0.6; }
+            75% { transform: translate(-10%, 5%) scale(1.05); opacity: 0.8; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .news-hero::before {
+                animation: none;
+            }
+        }
+
         /* Utility */
         .sr-only {
             position: absolute;
