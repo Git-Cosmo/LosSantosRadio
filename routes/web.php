@@ -3,17 +3,24 @@
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DjProfileController;
+use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
+use App\Http\Controllers\Admin\PollController as AdminPollController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SongRequestController as AdminSongRequestController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\CommentsController;
+use App\Http\Controllers\DjController;
+use App\Http\Controllers\EventsController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PlaylistsController;
+use App\Http\Controllers\PollsController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SongRatingController;
@@ -49,6 +56,31 @@ Route::get('/stations', [StationsController::class, 'index'])->name('stations');
 
 // Leaderboard page
 Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
+
+// Events pages
+Route::prefix('events')->name('events.')->group(function () {
+    Route::get('/', [EventsController::class, 'index'])->name('index');
+    Route::get('/{slug}', [EventsController::class, 'show'])->name('show');
+});
+
+// Polls pages
+Route::prefix('polls')->name('polls.')->group(function () {
+    Route::get('/', [PollsController::class, 'index'])->name('index');
+    Route::get('/{slug}', [PollsController::class, 'show'])->name('show');
+    Route::post('/{poll}/vote', [PollsController::class, 'vote'])->name('vote');
+    Route::get('/{poll}/results', [PollsController::class, 'results'])->name('results');
+});
+
+// DJs/Staff pages
+Route::prefix('djs')->name('djs.')->group(function () {
+    Route::get('/', [DjController::class, 'index'])->name('index');
+    Route::get('/schedule', [DjController::class, 'schedule'])->name('schedule');
+    Route::get('/on-air', [DjController::class, 'onAir'])->name('on-air');
+    Route::get('/{djProfile}', [DjController::class, 'show'])->name('show');
+});
+
+// User profiles (public)
+Route::get('/users/{user}', [ProfileController::class, 'show'])->name('profile.show');
 
 // Radio API endpoints
 Route::prefix('api/radio')->name('radio.')->group(function () {
@@ -124,15 +156,21 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/unread', [MessagesController::class, 'unreadCount'])->name('unread');
     });
 
+    // Profile management
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::put('/update', [ProfileController::class, 'update'])->name('update');
+        Route::get('/achievements', [ProfileController::class, 'achievements'])->name('achievements');
+        Route::get('/xp-history', [ProfileController::class, 'xpHistory'])->name('xp-history');
+        Route::get('/linked-accounts', function () {
+            return view('profile.linked-accounts', [
+                'socialAccounts' => auth()->user()->socialAccounts,
+            ]);
+        })->name('linked-accounts');
+    });
+
     // Unlink social accounts
     Route::delete('/auth/{provider}/unlink', [SocialAuthController::class, 'unlink'])->name('auth.unlink');
-
-    // Profile and linked accounts
-    Route::get('/profile/linked-accounts', function () {
-        return view('profile.linked-accounts', [
-            'socialAccounts' => auth()->user()->socialAccounts,
-        ]);
-    })->name('profile.linked-accounts');
 
     // Analytics (for staff only)
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
@@ -181,6 +219,18 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
 
     // News
     Route::resource('news', AdminNewsController::class)->except(['show']);
+
+    // Events
+    Route::resource('events', AdminEventController::class)->except(['show']);
+
+    // Polls
+    Route::resource('polls', AdminPollController::class)->except(['show']);
+
+    // DJ Profiles
+    Route::get('/djs/{dj}/schedules', [DjProfileController::class, 'schedules'])->name('djs.schedules');
+    Route::post('/djs/{dj}/schedules', [DjProfileController::class, 'storeSchedule'])->name('djs.schedules.store');
+    Route::delete('/djs/{dj}/schedules/{schedule}', [DjProfileController::class, 'destroySchedule'])->name('djs.schedules.destroy');
+    Route::resource('djs', DjProfileController::class)->except(['show']);
 
     // Settings
     Route::resource('settings', SettingController::class)->except(['show']);

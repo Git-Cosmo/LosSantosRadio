@@ -514,12 +514,21 @@
                     <a href="{{ route('admin.requests.index') }}" class="nav-link {{ request()->routeIs('admin.requests.*') ? 'active' : '' }}">
                         <i class="fas fa-music"></i> Song Requests
                     </a>
+                    <a href="{{ route('admin.djs.index') }}" class="nav-link {{ request()->routeIs('admin.djs.*') ? 'active' : '' }}">
+                        <i class="fas fa-headphones"></i> DJ Profiles
+                    </a>
                 </div>
 
                 <div class="nav-group">
                     <div class="nav-group-title">Content</div>
                     <a href="{{ route('admin.news.index') }}" class="nav-link {{ request()->routeIs('admin.news.*') ? 'active' : '' }}">
                         <i class="fas fa-newspaper"></i> News
+                    </a>
+                    <a href="{{ route('admin.events.index') }}" class="nav-link {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-alt"></i> Events
+                    </a>
+                    <a href="{{ route('admin.polls.index') }}" class="nav-link {{ request()->routeIs('admin.polls.*') ? 'active' : '' }}">
+                        <i class="fas fa-poll"></i> Polls
                     </a>
                 </div>
 
