@@ -17,7 +17,13 @@ class PollFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'question' => fake()->sentence().'?',
+            'description' => fake()->optional()->sentence(),
+            'starts_at' => fake()->dateTimeBetween('-1 week', 'now'),
+            'ends_at' => fake()->dateTimeBetween('+1 week', '+1 month'),
+            'allow_multiple' => fake()->boolean(20),
+            'is_active' => true,
+            'show_results' => true,
         ];
     }
 }
