@@ -10,6 +10,12 @@ use Illuminate\Http\Response;
 class SitemapController extends Controller
 {
     /**
+     * Maximum items to include per content type in sitemap.
+     * Using cursor-based iteration to prevent memory issues with large datasets.
+     */
+    protected const MAX_ITEMS_PER_TYPE = 1000;
+
+    /**
      * Generate XML sitemap for SEO.
      */
     public function index(): Response
@@ -107,56 +113,84 @@ class SitemapController extends Controller
     }
 
     /**
-     * Get news article URLs.
+     * Get news article URLs using cursor for memory efficiency.
      */
     protected function getNewsUrls(): array
     {
-        return News::where('is_published', true)
+        $urls = [];
+        $count = 0;
+
+        News::where('is_published', true)
             ->orderBy('published_at', 'desc')
-            ->limit(100)
-            ->get()
-            ->map(fn ($news) => [
-                'loc' => route('news.show', $news->slug),
-                'lastmod' => $news->updated_at->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.6',
-            ])
-            ->toArray();
+            ->cursor()
+            ->each(function ($news) use (&$urls, &$count) {
+                if ($count >= self::MAX_ITEMS_PER_TYPE) {
+                    return false;
+                }
+                $urls[] = [
+                    'loc' => route('news.show', $news->slug),
+                    'lastmod' => $news->updated_at->toIso8601String(),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.6',
+                ];
+                $count++;
+            });
+
+        return $urls;
     }
 
     /**
-     * Get event URLs.
+     * Get event URLs using cursor for memory efficiency.
      */
     protected function getEventUrls(): array
     {
-        return Event::where('is_published', true)
+        $urls = [];
+        $count = 0;
+
+        Event::where('is_published', true)
             ->orderBy('start_date', 'desc')
-            ->limit(100)
-            ->get()
-            ->map(fn ($event) => [
-                'loc' => route('events.show', $event->slug),
-                'lastmod' => $event->updated_at->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.6',
-            ])
-            ->toArray();
+            ->cursor()
+            ->each(function ($event) use (&$urls, &$count) {
+                if ($count >= self::MAX_ITEMS_PER_TYPE) {
+                    return false;
+                }
+                $urls[] = [
+                    'loc' => route('events.show', $event->slug),
+                    'lastmod' => $event->updated_at->toIso8601String(),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.6',
+                ];
+                $count++;
+            });
+
+        return $urls;
     }
 
     /**
-     * Get poll URLs.
+     * Get poll URLs using cursor for memory efficiency.
      */
     protected function getPollUrls(): array
     {
-        return Poll::where('is_published', true)
+        $urls = [];
+        $count = 0;
+        $maxPolls = 500; // Polls typically have less importance in sitemap
+
+        Poll::where('is_published', true)
             ->orderBy('created_at', 'desc')
-            ->limit(50)
-            ->get()
-            ->map(fn ($poll) => [
-                'loc' => route('polls.show', $poll->slug),
-                'lastmod' => $poll->updated_at->toIso8601String(),
-                'changefreq' => 'weekly',
-                'priority' => '0.5',
-            ])
-            ->toArray();
+            ->cursor()
+            ->each(function ($poll) use (&$urls, &$count, $maxPolls) {
+                if ($count >= $maxPolls) {
+                    return false;
+                }
+                $urls[] = [
+                    'loc' => route('polls.show', $poll->slug),
+                    'lastmod' => $poll->updated_at->toIso8601String(),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.5',
+                ];
+                $count++;
+            });
+
+        return $urls;
     }
 }

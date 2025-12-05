@@ -142,6 +142,9 @@ Route::get('/api/leaderboard', [LeaderboardController::class, 'api'])->middlewar
 |
 */
 
+// Valid OAuth providers pattern
+$oauthProviderPattern = 'discord|twitch|steam|battlenet';
+
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::get('/{provider}', [SocialAuthController::class, 'redirect'])->name('redirect');
     Route::get('/{provider}/callback', [SocialAuthController::class, 'callback'])->name('callback');
@@ -150,11 +153,11 @@ Route::prefix('auth')->name('auth.')->group(function () {
 // Alternative /login/{provider}/callback routes for OAuth providers
 // Some OAuth applications may be configured with /login instead of /auth prefix
 // Provider parameter is constrained to valid OAuth providers to avoid conflicts with the /login page
-Route::prefix('login')->group(function () {
+Route::prefix('login')->group(function () use ($oauthProviderPattern) {
     Route::get('/{provider}', [SocialAuthController::class, 'redirect'])
-        ->where('provider', 'discord|twitch|steam|battlenet');
+        ->where('provider', $oauthProviderPattern);
     Route::get('/{provider}/callback', [SocialAuthController::class, 'callback'])
-        ->where('provider', 'discord|twitch|steam|battlenet');
+        ->where('provider', $oauthProviderPattern);
 });
 
 /*

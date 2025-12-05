@@ -1,4 +1,5 @@
 # Los Santos Radio - robots.txt
+# Note: Replace 'example.com' with your actual domain
 
 User-agent: *
 Allow: /
@@ -14,5 +15,7 @@ Allow: /images/
 Allow: /css/
 Allow: /js/
 
-# Sitemap location (update domain as needed)
-Sitemap: /sitemap.xml
+# Sitemap location
+# IMPORTANT: Replace with your actual domain URL
+# Example: Sitemap: https://lossantosradio.com/sitemap.xml
+Sitemap: https://example.com/sitemap.xml
