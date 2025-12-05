@@ -185,7 +185,7 @@
             <a href="{{ url('/') }}" class="btn btn-primary">
                 <i class="fas fa-home"></i> Back to Homepage
             </a>
-            <a href="{{ url('/login') }}" class="btn btn-secondary">
+            <a href="{{ route('login') }}" class="btn btn-secondary">
                 <i class="fas fa-sign-in-alt"></i> Sign In
             </a>
         </div>

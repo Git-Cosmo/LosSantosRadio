@@ -190,7 +190,7 @@
             <a href="{{ url('/') }}" class="btn btn-primary">
                 <i class="fas fa-home"></i> Back to Homepage
             </a>
-            <a href="{{ url('/requests') }}" class="btn btn-secondary">
+            <a href="{{ route('requests.index') }}" class="btn btn-secondary">
                 <i class="fas fa-music"></i> Request a Song
             </a>
         </div>
