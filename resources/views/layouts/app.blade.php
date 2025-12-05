@@ -5,8 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Los Santos Radio' }} - Los Santos Radio</title>
-    <meta name="description" content="Los Santos Radio - The best radio station in San Andreas. Listen live, request songs, and connect with the community.">
+    {{-- SEO: Basic Meta Tags --}}
+    <title>{{ isset($title) ? $title . ' - Los Santos Radio' : 'Los Santos Radio - 24/7 Online Radio & Gaming Community' }}</title>
+    <meta name="description" content="{{ $metaDescription ?? 'Los Santos Radio - Your 24/7 online radio station. Listen live, request songs, join our gaming community, and connect with listeners worldwide.' }}">
+    <meta name="keywords" content="Los Santos Radio, online radio, music streaming, song requests, gaming community, live DJ, Discord, radio station">
+    <meta name="author" content="Los Santos Radio">
+    <meta name="robots" content="index, follow">
+
+    {{-- SEO: Canonical URL --}}
+    <link rel="canonical" href="{{ $canonicalUrl ?? url()->current() }}">
+
+    {{-- SEO: Open Graph Meta Tags for Social Sharing --}}
+    <meta property="og:type" content="{{ $ogType ?? 'website' }}">
+    <meta property="og:site_name" content="Los Santos Radio">
+    <meta property="og:title" content="{{ isset($title) ? $title . ' - Los Santos Radio' : 'Los Santos Radio - 24/7 Online Radio & Gaming Community' }}">
+    <meta property="og:description" content="{{ $metaDescription ?? 'Los Santos Radio - Your 24/7 online radio station. Listen live, request songs, and connect with the gaming community.' }}">
+    <meta property="og:url" content="{{ $canonicalUrl ?? url()->current() }}">
+    <meta property="og:image" content="{{ $ogImage ?? asset('images/icons/icon-512x512.png') }}">
+    @if(isset($ogImageWidth) && isset($ogImageHeight))
+    <meta property="og:image:width" content="{{ $ogImageWidth }}">
+    <meta property="og:image:height" content="{{ $ogImageHeight }}">
+    @endif
+    <meta property="og:image:alt" content="{{ $ogImageAlt ?? 'Los Santos Radio Logo' }}">
+    <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+    {{-- SEO: Twitter Card Meta Tags --}}
+    <meta name="twitter:card" content="{{ $twitterCard ?? 'summary_large_image' }}">
+    <meta name="twitter:title" content="{{ isset($title) ? $title . ' - Los Santos Radio' : 'Los Santos Radio - 24/7 Online Radio & Gaming Community' }}">
+    <meta name="twitter:description" content="{{ $metaDescription ?? 'Los Santos Radio - Your 24/7 online radio station. Listen live, request songs, and connect with the gaming community.' }}">
+    <meta name="twitter:image" content="{{ $ogImage ?? asset('images/icons/icon-512x512.png') }}">
+    <meta name="twitter:image:alt" content="{{ $ogImageAlt ?? 'Los Santos Radio Logo' }}">
+
+    {{-- SEO: Structured Data (JSON-LD) --}}
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'RadioStation',
+        'name' => 'Los Santos Radio',
+        'description' => $metaDescription ?? 'Los Santos Radio - Your 24/7 online radio station featuring music streaming, song requests, and an active gaming community.',
+        'url' => config('app.url'),
+        'logo' => asset('images/icons/icon-512x512.png'),
+        'broadcaster' => [
+            '@type' => 'Organization',
+            'name' => 'Los Santos Radio'
+        ],
+        'areaServed' => [
+            '@type' => 'Place',
+            'name' => 'Worldwide'
+        ]
+    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    @if(isset($structuredData))
+    <script type="application/ld+json">
+    {!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    @endif
+
+    {{-- Additional head content from child views --}}
+    @stack('head')
 
     <!-- PWA Meta Tags -->
     @laravelPWA

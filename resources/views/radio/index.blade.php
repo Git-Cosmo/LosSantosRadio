@@ -33,10 +33,10 @@
                         <div class="now-playing" id="now-playing">
                             <div class="now-playing-album-container" style="position: relative;">
                                 <img src="{{ $nowPlaying->currentSong->art ?? '/images/default-album.png' }}"
-                                     alt="Album Art"
+                                     alt="Album art for {{ $nowPlaying->currentSong->title }} by {{ $nowPlaying->currentSong->artist }}"
                                      class="now-playing-art"
                                      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2230%22>🎵</text></svg>'">
-                                <div class="now-playing-equalizer" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 3px; height: 20px;">
+                                <div class="now-playing-equalizer" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 3px; height: 20px;" aria-hidden="true">
                                     <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.5s ease-in-out infinite alternate; height: 8px;"></div>
                                     <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.5s ease-in-out infinite alternate 0.1s; height: 16px;"></div>
                                     <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.5s ease-in-out infinite alternate 0.2s; height: 12px;"></div>
@@ -49,7 +49,7 @@
                                 <p class="now-playing-artist" id="song-artist">{{ $nowPlaying->currentSong->artist }}</p>
                                 @if($nowPlaying->currentSong->album)
                                     <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">
-                                        <i class="fas fa-compact-disc" style="margin-right: 0.25rem;"></i>
+                                        <i class="fas fa-compact-disc" style="margin-right: 0.25rem;" aria-hidden="true"></i>
                                         {{ $nowPlaying->currentSong->album }}
                                     </p>
                                 @endif
@@ -58,18 +58,20 @@
                                 <div class="song-rating" id="song-rating"
                                      data-song-id="{{ $nowPlaying->currentSong->id }}"
                                      data-song-title="{{ $nowPlaying->currentSong->title }}"
-                                     data-song-artist="{{ $nowPlaying->currentSong->artist }}">
-                                    <button class="rating-btn upvote" onclick="rateSong(1)" title="Like this song">
-                                        <i class="fas fa-thumbs-up"></i>
+                                     data-song-artist="{{ $nowPlaying->currentSong->artist }}"
+                                     role="group"
+                                     aria-label="Rate this song">
+                                    <button class="rating-btn upvote" onclick="rateSong(1)" title="Like this song" aria-label="Like this song">
+                                        <i class="fas fa-thumbs-up" aria-hidden="true"></i>
                                         <span id="upvote-count">0</span>
                                     </button>
-                                    <button class="rating-btn downvote" onclick="rateSong(-1)" title="Dislike this song">
-                                        <i class="fas fa-thumbs-down"></i>
+                                    <button class="rating-btn downvote" onclick="rateSong(-1)" title="Dislike this song" aria-label="Dislike this song">
+                                        <i class="fas fa-thumbs-down" aria-hidden="true"></i>
                                         <span id="downvote-count">0</span>
                                     </button>
                                 </div>
 
-                                <div class="progress-bar">
+                                <div class="progress-bar" role="progressbar" aria-label="Song progress" aria-valuenow="{{ $nowPlaying->elapsed }}" aria-valuemin="0" aria-valuemax="{{ $nowPlaying->duration }}">
                                     <div class="progress-fill" id="progress-fill" style="width: {{ $nowPlaying->progressPercentage() }}%;"></div>
                                 </div>
                                 <div class="time-info">
@@ -80,11 +82,11 @@
                                 @if($nowPlaying->nextSong)
                                     <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-border);">
                                         <p style="color: var(--color-text-muted); font-size: 0.75rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                                            <i class="fas fa-forward"></i> UP NEXT
+                                            <i class="fas fa-forward" aria-hidden="true"></i> UP NEXT
                                         </p>
                                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                                             <img src="{{ $nowPlaying->nextSong->art ?? '' }}"
-                                                 alt=""
+                                                 alt="Album art for {{ $nowPlaying->nextSong->title }} by {{ $nowPlaying->nextSong->artist }}"
                                                  style="width: 48px; height: 48px; border-radius: 6px; background: var(--color-bg-tertiary);"
                                                  onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2220%22>🎵</text></svg>'">
                                             <div>
@@ -217,14 +219,14 @@
                         @foreach($history->take(2) as $item)
                             <div class="history-item">
                                 <img src="{{ $item->song->art ?? '' }}"
-                                     alt=""
+                                     alt="Album art for {{ $item->song->title }} by {{ $item->song->artist }}"
                                      class="history-art"
                                      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2220%22>🎵</text></svg>'">
                                 <div class="history-info">
                                     <p class="history-title">{{ $item->song->title }}</p>
                                     <p class="history-artist">{{ $item->song->artist }}</p>
                                 </div>
-                                <span class="history-time">{{ $item->playedAt->diffForHumans(null, true, true) }}</span>
+                                <span class="history-time" aria-label="Played {{ $item->playedAt->diffForHumans() }}">{{ $item->playedAt->diffForHumans(null, true, true) }}</span>
                             </div>
                         @endforeach
                     @else
@@ -239,7 +241,7 @@
             <div class="card" style="margin-top: 1.5rem;">
                 <div class="card-header">
                     <h2 class="card-title">
-                        <i class="fas fa-chart-bar" style="color: var(--color-accent);"></i>
+                        <i class="fas fa-chart-bar" style="color: var(--color-accent);" aria-hidden="true"></i>
                         Quick Stats
                     </h2>
                 </div>

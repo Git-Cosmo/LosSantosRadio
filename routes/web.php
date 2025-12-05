@@ -21,7 +21,9 @@ use App\Http\Controllers\PlaylistsController;
 use App\Http\Controllers\PollsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RadioController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SongRatingController;
 use App\Http\Controllers\SongRequestController;
 use App\Http\Controllers\SongsController;
@@ -37,6 +39,10 @@ use Illuminate\Support\Facades\Route;
 
 // Main radio page
 Route::get('/', [RadioController::class, 'index'])->name('home');
+
+// SEO: Sitemap and Robots.txt
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
 
 // News pages
 Route::prefix('news')->name('news.')->group(function () {
@@ -131,11 +137,31 @@ Route::get('/api/leaderboard', [LeaderboardController::class, 'api'])->middlewar
 |--------------------------------------------------------------------------
 | Social Authentication Routes
 |--------------------------------------------------------------------------
+|
+| OAuth callbacks can be configured with either /auth/{provider}/callback
+| or /login/{provider}/callback URLs. Both patterns are supported for
+| flexibility with different OAuth provider configurations.
+|
 */
+
+// Valid OAuth providers pattern
+$oauthProviderPattern = 'discord|twitch|steam|battlenet';
 
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::get('/{provider}', [SocialAuthController::class, 'redirect'])->name('redirect');
     Route::get('/{provider}/callback', [SocialAuthController::class, 'callback'])->name('callback');
+});
+
+// Alternative /login/{provider}/callback routes for OAuth providers
+// Some OAuth applications may be configured with /login instead of /auth prefix
+// Provider parameter is constrained to valid OAuth providers to avoid conflicts with the /login page
+Route::prefix('login')->name('login.oauth.')->group(function () use ($oauthProviderPattern) {
+    Route::get('/{provider}', [SocialAuthController::class, 'redirect'])
+        ->name('redirect')
+        ->where('provider', $oauthProviderPattern);
+    Route::get('/{provider}/callback', [SocialAuthController::class, 'callback'])
+        ->name('callback')
+        ->where('provider', $oauthProviderPattern);
 });
 
 /*
