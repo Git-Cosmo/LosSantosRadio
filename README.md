@@ -395,6 +395,13 @@ database/
 └── seeders/            # Database seeders
 ```
 
+## 🔄 Recent Updates
+
+### Bug Fixes
+- **Request Page Song List** - Fixed the song library not displaying songs on the request page despite showing the correct total count. The AzuraCast API response uses a `rows` key for paginated request data which is now properly handled.
+- **Theme Toggle Navbar** - Fixed the light/dark mode toggle not changing the navbar color. The navbar now correctly uses CSS variables to match the selected theme.
+- **Album Art Rotation Removed** - Removed the spinning album art animation when music is playing. Album art now displays statically for a cleaner look.
+
 ## 🤝 Contributing
 
 1. Fork the repository
