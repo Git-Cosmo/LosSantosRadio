@@ -25,10 +25,12 @@
                             value="{{ old('name', $user->name) }}" 
                             required 
                             maxlength="255"
+                            aria-required="true"
+                            aria-describedby="name-error"
                             style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); font-size: 1rem;"
                         >
                         @error('name')
-                            <p style="color: var(--color-danger); font-size: 0.875rem; margin-top: 0.5rem;">{{ $message }}</p>
+                            <p id="name-error" role="alert" style="color: var(--color-danger); font-size: 0.875rem; margin-top: 0.5rem;">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -43,13 +45,14 @@
                             rows="4" 
                             maxlength="500"
                             placeholder="Tell us about yourself..."
+                            aria-describedby="bio-help bio-error"
                             style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); font-size: 1rem; resize: vertical;"
                         >{{ old('bio', $user->bio) }}</textarea>
-                        <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.5rem;">
+                        <p id="bio-help" style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.5rem;">
                             Max 500 characters
                         </p>
                         @error('bio')
-                            <p style="color: var(--color-danger); font-size: 0.875rem; margin-top: 0.5rem;">{{ $message }}</p>
+                            <p id="bio-error" role="alert" style="color: var(--color-danger); font-size: 0.875rem; margin-top: 0.5rem;">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -74,7 +77,7 @@
             </div>
             <div class="card-body">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;">
+                    <img src="{{ $user->avatar_url }}" alt="Profile picture of {{ $user->name }}" loading="lazy" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;">
                     <div>
                         <p style="font-weight: 600; font-size: 1.125rem;">{{ $user->name }}</p>
                         <p style="color: var(--color-text-secondary);">{{ $user->email }}</p>
