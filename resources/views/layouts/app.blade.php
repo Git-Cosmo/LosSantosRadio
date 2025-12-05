@@ -1296,6 +1296,9 @@
                 <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Home
                 </a>
+                <a href="{{ route('stations') }}" class="nav-link {{ request()->routeIs('stations') ? 'active' : '' }}">
+                    <i class="fas fa-broadcast-tower"></i> Stations
+                </a>
                 <a href="{{ route('news.index') }}" class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}">
                     <i class="fas fa-newspaper"></i> News
                 </a>
