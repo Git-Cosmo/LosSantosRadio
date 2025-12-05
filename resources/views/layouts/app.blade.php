@@ -1195,6 +1195,136 @@
             text-align: center;
         }
 
+        /* User Dropdown Styles */
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--color-text-primary);
+            font-family: inherit;
+            font-size: 0.875rem;
+        }
+
+        .user-dropdown-toggle:hover {
+            background: var(--color-bg-hover);
+            border-color: var(--color-accent);
+        }
+
+        .user-dropdown-name {
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-dropdown-arrow {
+            font-size: 0.625rem;
+            color: var(--color-text-muted);
+            transition: transform 0.2s ease;
+        }
+
+        .user-dropdown-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .user-dropdown-menu {
+            right: 0;
+            left: auto;
+            min-width: 220px;
+        }
+
+        .user-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .user-dropdown-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-dropdown-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-dropdown-fullname {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            font-size: 0.875rem;
+        }
+
+        .user-dropdown-level {
+            font-size: 0.75rem;
+            color: var(--color-accent);
+        }
+
+        .user-dropdown-divider {
+            height: 1px;
+            background: var(--color-border);
+            margin: 0.5rem 0;
+        }
+
+        .logout-form {
+            margin: 0;
+        }
+
+        .logout-btn {
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            text-align: left;
+            color: var(--color-danger);
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(248, 81, 73, 0.1);
+            color: var(--color-danger);
+        }
+
+        .admin-link {
+            color: var(--color-accent) !important;
+        }
+
+        .admin-link:hover {
+            background-color: rgba(88, 166, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .user-dropdown-name {
+                display: none;
+            }
+
+            .user-dropdown-toggle {
+                padding: 0.375rem;
+            }
+
+            .user-dropdown-menu {
+                position: fixed;
+                top: 60px;
+                right: 0.5rem;
+                left: auto;
+            }
+        }
+
         [x-cloak] {
             display: none !important;
         }
@@ -1490,11 +1620,6 @@
                         </a>
                     </div>
                 </div>
-                @auth
-                    <a href="{{ route('messages.index') }}" class="nav-link {{ request()->routeIs('messages.*') ? 'active' : '' }}">
-                        <i class="fas fa-envelope"></i> Messages
-                    </a>
-                @endauth
             </nav>
 
             <div class="user-menu">
@@ -1511,12 +1636,46 @@
                 </button>
 
                 @auth
-                    <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="user-avatar">
-                    <span style="color: var(--color-text-secondary);">{{ auth()->user()->name }}</span>
-                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-                        @csrf
-                        <button type="submit" class="btn btn-secondary">Logout</button>
-                    </form>
+                    <!-- User Dropdown Menu -->
+                    <div class="nav-dropdown user-dropdown" x-data="{ open: false }">
+                        <button @click="open = !open" class="user-dropdown-toggle">
+                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="user-avatar">
+                            <span class="user-dropdown-name">{{ auth()->user()->name }}</span>
+                            <i class="fas fa-chevron-down user-dropdown-arrow" :class="{ 'rotated': open }"></i>
+                        </button>
+                        <div x-show="open" @click.away="open = false" class="nav-dropdown-menu user-dropdown-menu" x-cloak>
+                            <div class="user-dropdown-header">
+                                <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="user-dropdown-avatar">
+                                <div class="user-dropdown-info">
+                                    <span class="user-dropdown-fullname">{{ auth()->user()->name }}</span>
+                                    <span class="user-dropdown-level">Level {{ auth()->user()->level ?? 1 }}</span>
+                                </div>
+                            </div>
+                            <div class="user-dropdown-divider"></div>
+                            <a href="{{ route('messages.index') }}" class="nav-dropdown-item {{ request()->routeIs('messages.*') ? 'active' : '' }}">
+                                <i class="fas fa-envelope"></i> Messages
+                            </a>
+                            <a href="{{ route('profile.edit') }}" class="nav-dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                                <i class="fas fa-user-cog"></i> Settings
+                            </a>
+                            <a href="{{ route('profile.show', auth()->user()) }}" class="nav-dropdown-item {{ request()->routeIs('profile.show') && request()->route('user')?->id === auth()->id() ? 'active' : '' }}">
+                                <i class="fas fa-user"></i> My Profile
+                            </a>
+                            @if(auth()->user()->hasRole(['admin', 'staff']))
+                            <div class="user-dropdown-divider"></div>
+                            <a href="{{ route('admin.dashboard') }}" class="nav-dropdown-item admin-link">
+                                <i class="fas fa-shield-alt"></i> Admin Panel
+                            </a>
+                            @endif
+                            <div class="user-dropdown-divider"></div>
+                            <form action="{{ route('logout') }}" method="POST" class="logout-form">
+                                @csrf
+                                <button type="submit" class="nav-dropdown-item logout-btn">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 @else
                     <a href="{{ route('login') }}" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt"></i> Sign In
