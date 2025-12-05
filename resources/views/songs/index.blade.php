@@ -371,7 +371,7 @@
             })
             .then(data => {
                 if (data.success) {
-                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                    btn.innerHTML = '<i class="fas fa-check"></i> Requested';
                     btn.classList.remove('btn-primary');
                     btn.classList.add('btn-secondary');
                     showToast('success', data.message || 'Song request submitted!');
