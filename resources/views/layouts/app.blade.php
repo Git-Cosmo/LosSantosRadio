@@ -24,9 +24,6 @@
     <!-- Alpine.js for theme toggle -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Livewire Styles -->
-    @livewireStyles
-
     <!-- Styles -->
     <style>
         /* Light Theme Colors (default) */
@@ -1444,17 +1441,5 @@
     </script>
 
     @stack('scripts')
-
-    <!-- Livewire Scripts -->
-    @livewireScripts
-
-    <!-- Handle Livewire toast events -->
-    <script>
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('showToast', (data) => {
-                window.showToast(data.type, data.message);
-            });
-        });
-    </script>
 </body>
 </html>
