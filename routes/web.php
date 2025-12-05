@@ -82,21 +82,21 @@ Route::prefix('djs')->name('djs.')->group(function () {
 // User profiles (public)
 Route::get('/users/{user}', [ProfileController::class, 'show'])->name('profile.show');
 
-// Radio API endpoints
-Route::prefix('api/radio')->name('radio.')->group(function () {
+// Radio API endpoints with caching
+Route::prefix('api/radio')->name('radio.')->middleware('cache.api:30')->group(function () {
     Route::get('/now-playing', [RadioController::class, 'nowPlaying'])->name('now-playing');
     Route::get('/history', [RadioController::class, 'history'])->name('history');
     Route::get('/status', [RadioController::class, 'status'])->name('status');
 });
 
-// Stations API endpoints
-Route::prefix('api/stations')->name('stations.api.')->group(function () {
+// Stations API endpoints with caching
+Route::prefix('api/stations')->name('stations.api.')->middleware('cache.api:60')->group(function () {
     Route::get('/', [StationsController::class, 'list'])->name('list');
     Route::get('/now-playing', [StationsController::class, 'nowPlaying'])->name('now-playing');
 });
 
-// Playlists API endpoints
-Route::prefix('api/playlists')->name('playlists.api.')->group(function () {
+// Playlists API endpoints with caching
+Route::prefix('api/playlists')->name('playlists.api.')->middleware('cache.api:300')->group(function () {
     Route::get('/', [PlaylistsController::class, 'index'])->name('index');
     Route::get('/active', [PlaylistsController::class, 'active'])->name('active');
     Route::get('/current', [PlaylistsController::class, 'current'])->name('current');
@@ -106,20 +106,20 @@ Route::prefix('api/playlists')->name('playlists.api.')->group(function () {
 Route::prefix('api/ratings')->name('ratings.')->group(function () {
     Route::post('/', [SongRatingController::class, 'rate'])->name('rate');
     Route::get('/song/{songId}', [SongRatingController::class, 'show'])->name('show');
-    Route::get('/trending', [SongRatingController::class, 'trending'])->name('trending');
+    Route::get('/trending', [SongRatingController::class, 'trending'])->middleware('cache.api:60')->name('trending');
 });
 
 // Song requests
 Route::prefix('requests')->name('requests.')->group(function () {
     Route::get('/', [SongRequestController::class, 'index'])->name('index');
     Route::get('/search', [SongRequestController::class, 'search'])->name('search');
-    Route::get('/queue', [SongRequestController::class, 'queue'])->name('queue');
+    Route::get('/queue', [SongRequestController::class, 'queue'])->middleware('cache.api:30')->name('queue');
     Route::get('/limits', [SongRequestController::class, 'checkLimits'])->name('limits');
     Route::post('/', [SongRequestController::class, 'store'])->name('store');
 });
 
-// Leaderboard API endpoint
-Route::get('/api/leaderboard', [LeaderboardController::class, 'api'])->name('leaderboard.api');
+// Leaderboard API endpoint with caching
+Route::get('/api/leaderboard', [LeaderboardController::class, 'api'])->middleware('cache.api:60')->name('leaderboard.api');
 
 /*
 |--------------------------------------------------------------------------

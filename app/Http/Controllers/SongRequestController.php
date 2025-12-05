@@ -22,10 +22,11 @@ class SongRequestController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $page = (int) $request->input('page', 1);
+        $page = max(1, (int) $request->input('page', 1));
+        $perPage = 50; // Increased from 25 to show more songs per page
 
         try {
-            $result = $this->azuraCast->getRequestableSongs(25, $page, $search);
+            $result = $this->azuraCast->getRequestableSongs($perPage, $page, $search);
             $queue = $this->azuraCast->getRequestQueue();
             $canRequest = $this->requestLimiter->canRequest($request);
         } catch (AzuraCastException $e) {
@@ -35,8 +36,15 @@ class SongRequestController extends Controller
                 'queue' => collect(),
                 'canRequest' => ['allowed' => false, 'reason' => 'Service unavailable'],
                 'search' => $search,
+                'total' => 0,
+                'page' => 1,
+                'perPage' => $perPage,
+                'totalPages' => 0,
             ]);
         }
+
+        $total = $result['total'] ?? 0;
+        $totalPages = $total > 0 ? (int) ceil($total / $perPage) : 0;
 
         return view('requests.index', [
             'songs' => $result['songs'],
@@ -44,6 +52,9 @@ class SongRequestController extends Controller
             'canRequest' => $canRequest,
             'search' => $search,
             'page' => $page,
+            'perPage' => $perPage,
+            'total' => $total,
+            'totalPages' => $totalPages,
         ]);
     }
 

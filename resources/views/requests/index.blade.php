@@ -15,6 +15,11 @@
                     <h2 class="card-title">
                         <i class="fas fa-music" style="color: var(--color-accent);"></i>
                         Song Library
+                        @if(isset($total) && $total > 0)
+                            <span style="font-size: 0.875rem; color: var(--color-text-muted); font-weight: normal;">
+                                ({{ number_format($total) }} songs)
+                            </span>
+                        @endif
                     </h2>
                     <form action="{{ route('requests.index') }}" method="GET" style="display: flex; gap: 0.5rem;">
                         <input type="text"
@@ -60,7 +65,7 @@
                                         <td style="padding: 0.75rem 1rem; text-align: right;">
                                             @if($canRequest['allowed'])
                                                 <button class="btn btn-primary request-btn"
-                                                        onclick="requestSong('{{ $song->id }}', '{{ addslashes($song->title) }}', '{{ addslashes($song->artist) }}')"
+                                                        onclick="requestSong({{ Js::from($song->id) }}, {{ Js::from($song->title) }}, {{ Js::from($song->artist) }})"
                                                         {{ !$canRequest['allowed'] ? 'disabled' : '' }}>
                                                     <i class="fas fa-plus"></i> Request
                                                 </button>
@@ -74,6 +79,45 @@
                                 @endforeach
                             </tbody>
                         </table>
+
+                        <!-- Pagination -->
+                        @if(isset($totalPages) && $totalPages > 1)
+                            <div class="pagination-container" style="padding: 1rem; display: flex; justify-content: center; align-items: center; gap: 0.5rem; border-top: 1px solid var(--color-border);">
+                                @php
+                                    $currentPage = $page ?? 1;
+                                    $queryParams = $search ? ['search' => $search] : [];
+                                @endphp
+
+                                {{-- Previous button --}}
+                                @if($currentPage > 1)
+                                    <a href="{{ route('requests.index', array_merge($queryParams, ['page' => $currentPage - 1])) }}"
+                                       class="btn btn-secondary btn-sm">
+                                        <i class="fas fa-chevron-left"></i> Previous
+                                    </a>
+                                @else
+                                    <button class="btn btn-secondary btn-sm" disabled>
+                                        <i class="fas fa-chevron-left"></i> Previous
+                                    </button>
+                                @endif
+
+                                {{-- Page info --}}
+                                <span style="padding: 0 1rem; color: var(--color-text-secondary);">
+                                    Page {{ $currentPage }} of {{ $totalPages }}
+                                </span>
+
+                                {{-- Next button --}}
+                                @if($currentPage < $totalPages)
+                                    <a href="{{ route('requests.index', array_merge($queryParams, ['page' => $currentPage + 1])) }}"
+                                       class="btn btn-secondary btn-sm">
+                                        Next <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                @else
+                                    <button class="btn btn-secondary btn-sm" disabled>
+                                        Next <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                @endif
+                            </div>
+                        @endif
                     @else
                         <div style="padding: 3rem; text-align: center; color: var(--color-text-muted);">
                             <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
