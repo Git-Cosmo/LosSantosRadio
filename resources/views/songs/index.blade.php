@@ -90,12 +90,14 @@
                         @if($currentPage > 1)
                             <a href="{{ route('songs', ['page' => $currentPage - 1, 'search' => $search]) }}"
                                class="pagination-btn"
-                               style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); text-decoration: none; transition: background 0.2s ease;">
+                               style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); text-decoration: none; transition: background 0.2s ease;"
+                               aria-label="Previous page">
                                 <i class="fas fa-chevron-left"></i>
                             </a>
                         @else
                             <span class="pagination-btn disabled"
-                                  style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-muted); opacity: 0.5; cursor: not-allowed;">
+                                  style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-muted); opacity: 0.5; cursor: not-allowed;"
+                                  aria-disabled="true">
                                 <i class="fas fa-chevron-left"></i>
                             </span>
                         @endif
@@ -118,7 +120,8 @@
                         @if($start > 1)
                             <a href="{{ route('songs', ['page' => 1, 'search' => $search]) }}"
                                class="pagination-btn"
-                               style="display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; padding: 0 0.75rem; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); text-decoration: none; font-weight: 500; transition: background 0.2s ease;">
+                               style="display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; padding: 0 0.75rem; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); text-decoration: none; font-weight: 500; transition: background 0.2s ease;"
+                               aria-label="Go to first page">
                                 1
                             </a>
                             @if($start > 2)
@@ -129,13 +132,15 @@
                         @for($i = $start; $i <= $end; $i++)
                             @if($i == $currentPage)
                                 <span class="pagination-btn active"
-                                      style="display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; padding: 0 0.75rem; border-radius: 8px; background: var(--color-accent); color: white; font-weight: 600;">
+                                      style="display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; padding: 0 0.75rem; border-radius: 8px; background: var(--color-accent); color: white; font-weight: 600;"
+                                      aria-current="page">
                                     {{ $i }}
                                 </span>
                             @else
                                 <a href="{{ route('songs', ['page' => $i, 'search' => $search]) }}"
                                    class="pagination-btn"
-                                   style="display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; padding: 0 0.75rem; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); text-decoration: none; font-weight: 500; transition: background 0.2s ease;">
+                                   style="display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; padding: 0 0.75rem; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); text-decoration: none; font-weight: 500; transition: background 0.2s ease;"
+                                   aria-label="Go to page {{ $i }}">
                                     {{ $i }}
                                 </a>
                             @endif
@@ -147,7 +152,8 @@
                             @endif
                             <a href="{{ route('songs', ['page' => $totalPages, 'search' => $search]) }}"
                                class="pagination-btn"
-                               style="display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; padding: 0 0.75rem; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); text-decoration: none; font-weight: 500; transition: background 0.2s ease;">
+                               style="display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; padding: 0 0.75rem; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); text-decoration: none; font-weight: 500; transition: background 0.2s ease;"
+                               aria-label="Go to last page">
                                 {{ $totalPages }}
                             </a>
                         @endif
@@ -156,12 +162,14 @@
                         @if($currentPage < $totalPages)
                             <a href="{{ route('songs', ['page' => $currentPage + 1, 'search' => $search]) }}"
                                class="pagination-btn"
-                               style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); text-decoration: none; transition: background 0.2s ease;">
+                               style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-primary); text-decoration: none; transition: background 0.2s ease;"
+                               aria-label="Next page">
                                 <i class="fas fa-chevron-right"></i>
                             </a>
                         @else
                             <span class="pagination-btn disabled"
-                                  style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-muted); opacity: 0.5; cursor: not-allowed;">
+                                  style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; background: var(--color-bg-tertiary); color: var(--color-text-muted); opacity: 0.5; cursor: not-allowed;"
+                                  aria-disabled="true">
                                 <i class="fas fa-chevron-right"></i>
                             </span>
                         @endif

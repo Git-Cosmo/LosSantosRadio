@@ -32,14 +32,14 @@ class SongsController extends Controller
             $history = $this->azuraCast->getHistory(20);
 
             // Fetch paginated song library
-            $libraryData = $this->azuraCast->getRequestableSongs($perPage, $page, $search ?: null);
+            $libraryData = $this->azuraCast->getRequestableSongs($perPage, $page, $search === '' ? null : $search);
             $songs = $libraryData['songs'];
             $totalSongs = $libraryData['total'];
             $totalPages = max(1, (int) ceil($totalSongs / $perPage));
 
             // Ensure page is within valid range
-            if ($page > $totalPages && $totalPages > 0) {
-                return redirect()->route('songs', ['page' => $totalPages, 'search' => $search]);
+            if ($page > $totalPages) {
+                return redirect()->route('songs', array_filter(['page' => $totalPages, 'search' => $search ?: null]));
             }
         } catch (AzuraCastException $e) {
             $error = 'Unable to fetch song data. Please try again later.';
@@ -54,7 +54,6 @@ class SongsController extends Controller
             'totalSongs' => $totalSongs,
             'currentPage' => $page,
             'totalPages' => $totalPages,
-            'perPage' => $perPage,
         ]);
     }
 }
