@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\AzuraCastException;
 use App\Services\AzuraCastService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class StationsController extends Controller
 {
@@ -20,6 +21,8 @@ class StationsController extends Controller
         try {
             $stations = $this->azuraCast->getAllNowPlaying();
         } catch (AzuraCastException $e) {
+            Log::warning('Failed to fetch stations data: '.$e->getMessage());
+
             return view('stations.index', [
                 'error' => 'Unable to fetch station data. Please try again later.',
                 'stations' => collect(),
@@ -44,6 +47,8 @@ class StationsController extends Controller
                 'data' => $stations->map(fn ($station) => $station->toArray())->values()->all(),
             ]);
         } catch (AzuraCastException $e) {
+            Log::warning('Failed to fetch stations data: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'error' => 'Unable to fetch stations data.',
@@ -64,6 +69,8 @@ class StationsController extends Controller
                 'data' => $nowPlaying->map(fn ($np) => $np->toArray())->values()->all(),
             ]);
         } catch (AzuraCastException $e) {
+            Log::warning('Failed to fetch now playing data: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'error' => 'Unable to fetch now playing data.',

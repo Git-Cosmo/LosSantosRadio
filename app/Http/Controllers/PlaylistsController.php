@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\AzuraCastException;
 use App\Services\AzuraCastService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class PlaylistsController extends Controller
 {
@@ -25,6 +26,8 @@ class PlaylistsController extends Controller
                 'data' => $playlists->map(fn ($playlist) => $playlist->toArray())->values()->all(),
             ]);
         } catch (AzuraCastException $e) {
+            Log::warning('Failed to fetch playlists: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'error' => 'Unable to fetch playlists data.',
@@ -46,6 +49,8 @@ class PlaylistsController extends Controller
                 'data' => $playlists->map(fn ($playlist) => $playlist->toArray())->values()->all(),
             ]);
         } catch (AzuraCastException $e) {
+            Log::warning('Failed to fetch active playlists: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'error' => 'Unable to fetch playlists data.',
@@ -67,6 +72,8 @@ class PlaylistsController extends Controller
                 'data' => $playlists->map(fn ($playlist) => $playlist->toArray())->values()->all(),
             ]);
         } catch (AzuraCastException $e) {
+            Log::warning('Failed to fetch current playlists: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'error' => 'Unable to fetch playlists data.',

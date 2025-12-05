@@ -5,6 +5,12 @@
         </div>
     @endif
 
+    <!-- Refresh Error Notification (hidden by default) -->
+    <div id="refresh-error" class="alert alert-error" style="display: none; margin-bottom: 1rem;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>
+        Unable to refresh station data. Displaying cached information.
+    </div>
+
     <div class="card">
         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
             <h1 class="card-title" style="font-size: 1.5rem;">
@@ -29,7 +35,7 @@
                                     </div>
                                     <div>
                                         <h3 style="font-weight: 600; font-size: 1.125rem; margin-bottom: 0.125rem;">
-                                            {{ $station->currentSong->title ?? 'Unknown' }}
+                                            {{ $station->station->name ?? 'Unknown Station' }}
                                         </h3>
                                         <p style="color: var(--color-text-muted); font-size: 0.8125rem;">
                                             Station
@@ -53,7 +59,7 @@
                             <div style="padding: 1rem;">
                                 <div style="display: flex; gap: 1rem; align-items: center;">
                                     <img src="{{ $station->currentSong->art ?? '' }}"
-                                         alt="Album Art"
+                                         alt="{{ $station->currentSong->title ?? 'Unknown Track' }} by {{ $station->currentSong->artist ?? 'Unknown Artist' }}"
                                          style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; background: var(--color-bg-secondary); flex-shrink: 0;"
                                          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2230%22>🎵</text></svg>'">
                                     <div style="flex: 1; min-width: 0;">
@@ -68,9 +74,17 @@
                                             {{ $station->currentSong->artist ?? 'Unknown Artist' }}
                                         </p>
 
-                                        <!-- Progress Bar -->
+                                        <!-- Progress Bar with Accessibility -->
                                         @if($station->duration > 0)
-                                            <div class="progress-bar" style="margin-top: 0.75rem; height: 4px;">
+                                            <div
+                                                class="progress-bar"
+                                                style="margin-top: 0.75rem; height: 4px;"
+                                                role="progressbar"
+                                                aria-valuenow="{{ $station->progressPercentage() }}"
+                                                aria-valuemin="0"
+                                                aria-valuemax="100"
+                                                aria-label="Song playback progress"
+                                            >
                                                 <div class="progress-fill" style="width: {{ $station->progressPercentage() }}%;"></div>
                                             </div>
                                             <div class="time-info" style="margin-top: 0.25rem; font-size: 0.6875rem;">
@@ -94,7 +108,7 @@
                                     </span>
                                 </div>
                                 @if($station->isOnline)
-                                    <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.8125rem;" onclick="playStation({{ $station->currentSong->id ?? 0 }})">
+                                    <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.8125rem;" onclick="playStation({{ $station->station->id ?? 0 }})">
                                         <i class="fas fa-play"></i> Listen
                                     </button>
                                 @endif
@@ -147,20 +161,51 @@
 
     @push('scripts')
     <script>
+        let refreshErrorCount = 0;
+        const maxRetries = 3;
+
         // Auto-refresh station data every 30 seconds
         function refreshStations() {
             fetch('/api/stations/now-playing')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        refreshErrorCount = 0;
+                        hideRefreshError();
                         const totalListeners = data.data.reduce((sum, station) => sum + (station.listeners || 0), 0);
                         const listenerCount = document.getElementById('listener-count');
                         if (listenerCount) {
                             listenerCount.textContent = totalListeners;
                         }
+                    } else {
+                        handleRefreshError();
                     }
                 })
-                .catch(console.error);
+                .catch(error => {
+                    console.error('Failed to refresh stations:', error);
+                    handleRefreshError();
+                });
+        }
+
+        function handleRefreshError() {
+            refreshErrorCount++;
+            if (refreshErrorCount >= maxRetries) {
+                showRefreshError();
+            }
+        }
+
+        function showRefreshError() {
+            const errorEl = document.getElementById('refresh-error');
+            if (errorEl) {
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function hideRefreshError() {
+            const errorEl = document.getElementById('refresh-error');
+            if (errorEl) {
+                errorEl.style.display = 'none';
+            }
         }
 
         // Refresh every 30 seconds

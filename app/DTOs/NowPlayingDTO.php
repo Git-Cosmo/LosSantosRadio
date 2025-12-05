@@ -18,6 +18,7 @@ readonly class NowPlayingDTO
         public Carbon $playedAt,
         public bool $isOnline,
         public ?string $streamerName,
+        public ?StationDTO $station = null,
     ) {}
 
     public static function fromApi(array $data): self
@@ -26,6 +27,10 @@ readonly class NowPlayingDTO
         $song = $nowPlaying['song'] ?? $nowPlaying;
 
         $playingNext = $data['playing_next']['song'] ?? null;
+
+        // Extract station data if available
+        $stationData = $data['station'] ?? null;
+        $station = $stationData ? StationDTO::fromApi($stationData) : null;
 
         return new self(
             currentSong: SongDTO::fromApi($song),
@@ -39,6 +44,7 @@ readonly class NowPlayingDTO
             playedAt: Carbon::createFromTimestamp($nowPlaying['played_at'] ?? time()),
             isOnline: (bool) ($data['is_online'] ?? true),
             streamerName: $data['live']['streamer_name'] ?? null,
+            station: $station,
         );
     }
 
@@ -56,6 +62,7 @@ readonly class NowPlayingDTO
             'played_at' => $this->playedAt->toIso8601String(),
             'is_online' => $this->isOnline,
             'streamer_name' => $this->streamerName,
+            'station' => $this->station?->toArray(),
         ];
     }
 
