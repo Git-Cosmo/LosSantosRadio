@@ -398,9 +398,23 @@ database/
 ## 🔄 Recent Updates
 
 ### Bug Fixes
+- **Login Route 404s Fixed** - Added support for both `/auth/{provider}/callback` and `/login/{provider}/callback` OAuth redirect URIs. OAuth providers (Discord, Twitch, Steam, Battle.net) can now be configured with either route pattern, resolving 404 errors when callbacks use the `/login` prefix.
 - **Request Page Song List** - Fixed the song library not displaying songs on the request page despite showing the correct total count. The AzuraCast API response uses a `rows` key for paginated request data which is now properly handled.
 - **Theme Toggle Navbar** - Fixed the light/dark mode toggle not changing the navbar color. The navbar now correctly uses CSS variables to match the selected theme.
 - **Album Art Rotation Removed** - Removed the spinning album art animation when music is playing. Album art now displays statically for a cleaner look.
+
+### SEO Improvements
+Comprehensive SEO best practices have been implemented across the application:
+
+- **Meta Tags**: Enhanced title, description, and keyword meta tags with dynamic content support
+- **Canonical URLs**: Automatic canonical URL generation for all pages
+- **Open Graph**: Full Open Graph meta tag support for social sharing (Facebook, LinkedIn, etc.)
+- **Twitter Cards**: Complete Twitter Card meta tags for optimized Twitter sharing
+- **Structured Data**: JSON-LD schema markup for RadioStation and NewsArticle content types
+- **Sitemap**: Dynamic XML sitemap generation at `/sitemap.xml` including all public pages, news articles, events, and polls
+- **Robots.txt**: Enhanced robots.txt with proper allow/disallow rules and sitemap reference
+- **Accessibility**: Improved alt text for images, ARIA labels for interactive elements, and semantic HTML improvements
+- **Page-specific SEO**: Individual pages (like news articles) now pass custom SEO meta data for better search engine indexing
 
 ### Homepage & Song Library Improvements
 - **Recently Played Songs** - Reduced the "Recently Played" section on the homepage to show only the last 2 songs for a cleaner look.
@@ -411,6 +425,54 @@ database/
   - Current page indicator
   - Total song count and page information
   - Search functionality integrated with pagination
+
+## 🔍 SEO Configuration
+
+The application includes comprehensive SEO support out of the box:
+
+### Meta Tags
+All pages include proper meta tags. Custom meta data can be passed to the layout component:
+
+```blade
+<x-layouts.app 
+    :title="$pageTitle"
+    :metaDescription="$description"
+    :ogImage="$imageUrl"
+    :canonicalUrl="$url"
+>
+```
+
+### Sitemap
+A dynamic XML sitemap is automatically generated at `/sitemap.xml` and includes:
+- All static pages (home, schedule, news, events, polls, etc.)
+- Published news articles with proper lastmod timestamps
+- Published events
+- Active polls
+
+### Robots.txt
+The robots.txt file at `/robots.txt` is configured to:
+- Allow search engines to index public content
+- Block admin areas and private user sections
+- Reference the sitemap location
+
+### Structured Data
+JSON-LD structured data is included for:
+- RadioStation (on all pages)
+- NewsArticle (on individual news pages)
+
+Custom structured data can be added via the `structuredData` prop in the layout component.
+
+## 🔐 OAuth Configuration
+
+OAuth providers support both `/auth/{provider}/callback` and `/login/{provider}/callback` redirect URI patterns. Configure your OAuth applications with either format:
+
+```env
+# Using /auth prefix (default)
+DISCORD_REDIRECT_URI="${APP_URL}/auth/discord/callback"
+
+# Or using /login prefix (also supported)
+DISCORD_REDIRECT_URI="${APP_URL}/login/discord/callback"
+```
 
 ## 🤝 Contributing
 

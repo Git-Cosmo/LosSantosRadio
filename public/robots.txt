@@ -1,2 +1,18 @@
+# Los Santos Radio - robots.txt
+
 User-agent: *
-Disallow:
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /profile/edit
+Disallow: /messages/
+
+# Allow search engines to access public assets
+Allow: /images/
+Allow: /css/
+Allow: /js/
+
+# Sitemap location (update domain as needed)
+Sitemap: /sitemap.xml

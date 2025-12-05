@@ -1,4 +1,11 @@
-<x-layouts.app :title="$article->title">
+<x-layouts.app 
+    :title="$article->title"
+    :metaDescription="Str::limit(strip_tags($article->excerpt ?? $article->content), 160)"
+    ogType="article"
+    :ogImage="$article->image"
+    :ogImageAlt="$article->title"
+    :canonicalUrl="route('news.show', $article->slug)"
+>
     <div class="grid" style="grid-template-columns: 1fr 300px; gap: 1.5rem;">
         <!-- Main Content -->
         <div>
@@ -11,7 +18,7 @@
                                 {{ $article->source === 'manual' ? 'Article' : ucfirst($article->source) }}
                             </span>
                             <a href="{{ route('news.index') }}" style="color: var(--color-text-secondary); font-size: 0.875rem;">
-                                <i class="fas fa-arrow-left"></i> Back to News
+                                <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to News
                             </a>
                         </div>
                         <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--color-text-primary);">
@@ -20,17 +27,18 @@
                         <div style="display: flex; align-items: center; gap: 1rem; color: var(--color-text-muted); font-size: 0.875rem;">
                             @if($article->author)
                                 <span>
-                                    <i class="fas fa-user"></i> {{ $article->author->name }}
+                                    <i class="fas fa-user" aria-hidden="true"></i> {{ $article->author->name }}
                                 </span>
                             @endif
                             <span>
-                                <i class="fas fa-calendar"></i> {{ $article->published_at->format('F d, Y') }}
+                                <i class="fas fa-calendar" aria-hidden="true"></i> 
+                                <time datetime="{{ $article->published_at->toIso8601String() }}">{{ $article->published_at->format('F d, Y') }}</time>
                             </span>
                             <span>
-                                <i class="fas fa-clock"></i> {{ $article->published_at->diffForHumans() }}
+                                <i class="fas fa-clock" aria-hidden="true"></i> {{ $article->published_at->diffForHumans() }}
                             </span>
                             <span>
-                                <i class="fas fa-comments"></i> {{ $comments->count() }} {{ Str::plural('comment', $comments->count()) }}
+                                <i class="fas fa-comments" aria-hidden="true"></i> {{ $comments->count() }} {{ Str::plural('comment', $comments->count()) }}
                             </span>
                         </div>
                     </header>
@@ -38,7 +46,7 @@
                     <!-- Featured Image -->
                     @if($article->image)
                         <div style="margin-bottom: 1.5rem; border-radius: 8px; overflow: hidden;">
-                            <img src="{{ $article->image }}" alt="{{ $article->title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
+                            <img src="{{ $article->image }}" alt="Featured image for {{ $article->title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
                         </div>
                     @endif
 
