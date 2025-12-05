@@ -140,6 +140,8 @@
             color: var(--color-text-primary);
             line-height: 1.5;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         a {
@@ -344,6 +346,8 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 1.5rem;
+            flex: 1 0 auto;
+            width: 100%;
         }
 
         /* Now Playing */
@@ -673,10 +677,11 @@
         .footer {
             border-top: 1px solid var(--color-border);
             padding: 1.5rem;
-            margin-top: 2rem;
+            margin-top: auto;
             text-align: center;
             color: var(--color-text-muted);
             font-size: 0.875rem;
+            flex-shrink: 0;
         }
 
         /* Hero Section */
