@@ -402,6 +402,16 @@ database/
 - **Theme Toggle Navbar** - Fixed the light/dark mode toggle not changing the navbar color. The navbar now correctly uses CSS variables to match the selected theme.
 - **Album Art Rotation Removed** - Removed the spinning album art animation when music is playing. Album art now displays statically for a cleaner look.
 
+### Homepage & Song Library Improvements
+- **Recently Played Songs** - Reduced the "Recently Played" section on the homepage to show only the last 2 songs for a cleaner look.
+- **Our DJs Section Removed** - Removed the "Our DJs" section from the homepage to streamline the interface.
+- **Song Library Pagination** - Added a modern, clean pagination system to the Song Library page. The library now displays songs in a responsive grid layout with pagination controls that include:
+  - Page numbers with ellipsis for large page counts
+  - Previous/Next navigation buttons
+  - Current page indicator
+  - Total song count and page information
+  - Search functionality integrated with pagination
+
 ## 🤝 Contributing
 
 1. Fork the repository
