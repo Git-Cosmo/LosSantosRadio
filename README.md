@@ -450,10 +450,10 @@ A dynamic XML sitemap is automatically generated at `/sitemap.xml` and includes:
 - Active polls
 
 ### Robots.txt
-The robots.txt file at `/robots.txt` is configured to:
+The robots.txt is dynamically generated at `/robots.txt` and automatically includes:
 - Allow search engines to index public content
 - Block admin areas and private user sections
-- Reference the sitemap location
+- Reference the sitemap location using the correct domain from `APP_URL`
 
 ### Structured Data
 JSON-LD structured data is included for:

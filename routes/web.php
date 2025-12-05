@@ -21,6 +21,7 @@ use App\Http\Controllers\PlaylistsController;
 use App\Http\Controllers\PollsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RadioController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SongRatingController;
@@ -39,8 +40,9 @@ use Illuminate\Support\Facades\Route;
 // Main radio page
 Route::get('/', [RadioController::class, 'index'])->name('home');
 
-// SEO: Sitemap
+// SEO: Sitemap and Robots.txt
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
 
 // News pages
 Route::prefix('news')->name('news.')->group(function () {
@@ -153,10 +155,12 @@ Route::prefix('auth')->name('auth.')->group(function () {
 // Alternative /login/{provider}/callback routes for OAuth providers
 // Some OAuth applications may be configured with /login instead of /auth prefix
 // Provider parameter is constrained to valid OAuth providers to avoid conflicts with the /login page
-Route::prefix('login')->group(function () use ($oauthProviderPattern) {
+Route::prefix('login')->name('login.oauth.')->group(function () use ($oauthProviderPattern) {
     Route::get('/{provider}', [SocialAuthController::class, 'redirect'])
+        ->name('redirect')
         ->where('provider', $oauthProviderPattern);
     Route::get('/{provider}/callback', [SocialAuthController::class, 'callback'])
+        ->name('callback')
         ->where('provider', $oauthProviderPattern);
 });
 

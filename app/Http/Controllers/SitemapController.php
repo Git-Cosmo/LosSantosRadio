@@ -11,9 +11,13 @@ class SitemapController extends Controller
 {
     /**
      * Maximum items to include per content type in sitemap.
-     * Using cursor-based iteration to prevent memory issues with large datasets.
      */
     protected const MAX_ITEMS_PER_TYPE = 1000;
+
+    /**
+     * Maximum polls to include in sitemap (polls typically have less importance).
+     */
+    protected const MAX_POLLS = 500;
 
     /**
      * Generate XML sitemap for SEO.
@@ -36,76 +40,78 @@ class SitemapController extends Controller
      */
     protected function getStaticUrls(): array
     {
+        $now = now()->format('c');
+
         return [
             [
                 'loc' => url('/'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'hourly',
                 'priority' => '1.0',
             ],
             [
                 'loc' => route('schedule'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'daily',
                 'priority' => '0.8',
             ],
             [
                 'loc' => route('news.index'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'daily',
                 'priority' => '0.8',
             ],
             [
                 'loc' => route('events.index'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'weekly',
                 'priority' => '0.7',
             ],
             [
                 'loc' => route('polls.index'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'weekly',
                 'priority' => '0.7',
             ],
             [
                 'loc' => route('requests.index'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'daily',
                 'priority' => '0.8',
             ],
             [
                 'loc' => route('songs'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'daily',
                 'priority' => '0.7',
             ],
             [
                 'loc' => route('leaderboard'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'hourly',
                 'priority' => '0.6',
             ],
             [
                 'loc' => route('games.free'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'daily',
                 'priority' => '0.7',
             ],
             [
                 'loc' => route('games.deals'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'daily',
                 'priority' => '0.7',
             ],
             [
                 'loc' => route('videos.ylyl'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'daily',
                 'priority' => '0.6',
             ],
             [
                 'loc' => route('videos.clips'),
-                'lastmod' => now()->toIso8601String(),
+                'lastmod' => $now,
                 'changefreq' => 'daily',
                 'priority' => '0.6',
             ],
@@ -118,22 +124,18 @@ class SitemapController extends Controller
     protected function getNewsUrls(): array
     {
         $urls = [];
-        $count = 0;
 
         News::where('is_published', true)
             ->orderBy('published_at', 'desc')
+            ->take(self::MAX_ITEMS_PER_TYPE)
             ->cursor()
-            ->each(function ($news) use (&$urls, &$count) {
-                if ($count >= self::MAX_ITEMS_PER_TYPE) {
-                    return false;
-                }
+            ->each(function ($news) use (&$urls) {
                 $urls[] = [
                     'loc' => route('news.show', $news->slug),
-                    'lastmod' => $news->updated_at->toIso8601String(),
+                    'lastmod' => $news->updated_at->format('c'),
                     'changefreq' => 'weekly',
                     'priority' => '0.6',
                 ];
-                $count++;
             });
 
         return $urls;
@@ -145,22 +147,18 @@ class SitemapController extends Controller
     protected function getEventUrls(): array
     {
         $urls = [];
-        $count = 0;
 
         Event::where('is_published', true)
             ->orderBy('start_date', 'desc')
+            ->take(self::MAX_ITEMS_PER_TYPE)
             ->cursor()
-            ->each(function ($event) use (&$urls, &$count) {
-                if ($count >= self::MAX_ITEMS_PER_TYPE) {
-                    return false;
-                }
+            ->each(function ($event) use (&$urls) {
                 $urls[] = [
                     'loc' => route('events.show', $event->slug),
-                    'lastmod' => $event->updated_at->toIso8601String(),
+                    'lastmod' => $event->updated_at->format('c'),
                     'changefreq' => 'weekly',
                     'priority' => '0.6',
                 ];
-                $count++;
             });
 
         return $urls;
@@ -172,23 +170,18 @@ class SitemapController extends Controller
     protected function getPollUrls(): array
     {
         $urls = [];
-        $count = 0;
-        $maxPolls = 500; // Polls typically have less importance in sitemap
 
         Poll::where('is_published', true)
             ->orderBy('created_at', 'desc')
+            ->take(self::MAX_POLLS)
             ->cursor()
-            ->each(function ($poll) use (&$urls, &$count, $maxPolls) {
-                if ($count >= $maxPolls) {
-                    return false;
-                }
+            ->each(function ($poll) use (&$urls) {
                 $urls[] = [
                     'loc' => route('polls.show', $poll->slug),
-                    'lastmod' => $poll->updated_at->toIso8601String(),
+                    'lastmod' => $poll->updated_at->format('c'),
                     'changefreq' => 'weekly',
                     'priority' => '0.5',
                 ];
-                $count++;
             });
 
         return $urls;

@@ -13,6 +13,8 @@ class App extends Component
         public ?string $ogType = null,
         public ?string $ogImage = null,
         public ?string $ogImageAlt = null,
+        public ?int $ogImageWidth = null,
+        public ?int $ogImageHeight = null,
         public ?string $canonicalUrl = null,
         public ?string $twitterCard = null,
         public ?array $structuredData = null,

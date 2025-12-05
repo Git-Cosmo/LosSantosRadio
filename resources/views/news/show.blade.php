@@ -1,3 +1,30 @@
+@php
+$newsStructuredData = [
+    '@context' => 'https://schema.org',
+    '@type' => 'NewsArticle',
+    'headline' => $article->title,
+    'description' => Str::limit(strip_tags($article->excerpt ?? $article->content), 160),
+    'image' => $article->image ?? asset('images/icons/icon-512x512.png'),
+    'datePublished' => $article->published_at->format('c'),
+    'dateModified' => $article->updated_at->format('c'),
+    'author' => [
+        '@type' => 'Person',
+        'name' => $article->author->name ?? 'Los Santos Radio'
+    ],
+    'publisher' => [
+        '@type' => 'Organization',
+        'name' => 'Los Santos Radio',
+        'logo' => [
+            '@type' => 'ImageObject',
+            'url' => asset('images/icons/icon-512x512.png')
+        ]
+    ],
+    'mainEntityOfPage' => [
+        '@type' => 'WebPage',
+        '@id' => route('news.show', $article->slug)
+    ]
+];
+@endphp
 <x-layouts.app 
     :title="$article->title"
     :metaDescription="Str::limit(strip_tags($article->excerpt ?? $article->content), 160)"
@@ -5,6 +32,7 @@
     :ogImage="$article->image"
     :ogImageAlt="$article->title"
     :canonicalUrl="route('news.show', $article->slug)"
+    :structuredData="$newsStructuredData"
 >
     <div class="grid" style="grid-template-columns: 1fr 300px; gap: 1.5rem;">
         <!-- Main Content -->

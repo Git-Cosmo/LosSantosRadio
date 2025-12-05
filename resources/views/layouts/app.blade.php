@@ -22,8 +22,10 @@
     <meta property="og:description" content="{{ $metaDescription ?? 'Los Santos Radio - Your 24/7 online radio station. Listen live, request songs, and connect with the gaming community.' }}">
     <meta property="og:url" content="{{ $canonicalUrl ?? url()->current() }}">
     <meta property="og:image" content="{{ $ogImage ?? asset('images/icons/icon-512x512.png') }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    @if(isset($ogImageWidth) && isset($ogImageHeight))
+    <meta property="og:image:width" content="{{ $ogImageWidth }}">
+    <meta property="og:image:height" content="{{ $ogImageHeight }}">
+    @endif
     <meta property="og:image:alt" content="{{ $ogImageAlt ?? 'Los Santos Radio Logo' }}">
     <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -43,7 +45,6 @@
         'description' => $metaDescription ?? 'Los Santos Radio - Your 24/7 online radio station featuring music streaming, song requests, and an active gaming community.',
         'url' => config('app.url'),
         'logo' => asset('images/icons/icon-512x512.png'),
-        'sameAs' => [],
         'broadcaster' => [
             '@type' => 'Organization',
             'name' => 'Los Santos Radio'
