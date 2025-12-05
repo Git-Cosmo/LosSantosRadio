@@ -317,4 +317,11 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::get('/settings', [\App\Http\Controllers\Admin\DiscordBotController::class, 'settings'])->name('settings');
         Route::post('/settings', [\App\Http\Controllers\Admin\DiscordBotController::class, 'updateSettings'])->name('settings.update');
     });
+
+    // Media Library Admin
+    Route::prefix('media')->name('media.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\MediaController::class, 'index'])->name('index');
+        Route::post('/upload', [\App\Http\Controllers\Admin\MediaController::class, 'upload'])->name('upload');
+        Route::delete('/{media}', [\App\Http\Controllers\Admin\MediaController::class, 'destroy'])->name('destroy');
+    });
 });

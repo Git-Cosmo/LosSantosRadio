@@ -6,6 +6,7 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
@@ -17,10 +18,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create roles
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $staffRole = Role::firstOrCreate(['name' => 'staff']);
-        $listenerRole = Role::firstOrCreate(['name' => 'listener']);
+        // Create permissions
+        $this->createPermissions();
+
+        // Create roles for Online Radio Station / Gaming Community
+        $this->createRoles();
 
         // Create admin user
         $admin = User::factory()->create([
@@ -32,6 +34,130 @@ class DatabaseSeeder extends Seeder
 
         // Create default settings
         $this->createDefaultSettings();
+    }
+
+    /**
+     * Create permissions for the application.
+     */
+    protected function createPermissions(): void
+    {
+        $permissions = [
+            // User management
+            'manage users',
+            'view users',
+            'edit users',
+            'delete users',
+
+            // Content management
+            'manage news',
+            'create news',
+            'edit news',
+            'delete news',
+
+            // Events
+            'manage events',
+            'create events',
+            'edit events',
+            'delete events',
+
+            // Polls
+            'manage polls',
+            'create polls',
+            'edit polls',
+            'delete polls',
+
+            // Song requests
+            'manage requests',
+            'approve requests',
+            'reject requests',
+
+            // DJ/Show management
+            'manage djs',
+            'manage schedule',
+            'go live',
+
+            // Media
+            'manage media',
+            'upload media',
+            'delete media',
+
+            // Settings
+            'manage settings',
+
+            // Activity logs
+            'view activity',
+
+            // Discord
+            'manage discord',
+
+            // Games/Videos
+            'manage games',
+            'manage videos',
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
+        }
+    }
+
+    /**
+     * Create roles for Online Radio Station / Gaming Community.
+     */
+    protected function createRoles(): void
+    {
+        // Admin - Full access to everything
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $adminRole->givePermissionTo(Permission::all());
+
+        // Staff - General staff members with most permissions
+        $staffRole = Role::firstOrCreate(['name' => 'staff']);
+        $staffRole->givePermissionTo([
+            'view users',
+            'manage news',
+            'create news',
+            'edit news',
+            'manage events',
+            'create events',
+            'edit events',
+            'manage polls',
+            'create polls',
+            'edit polls',
+            'manage requests',
+            'approve requests',
+            'reject requests',
+            'view activity',
+            'manage media',
+            'upload media',
+        ]);
+
+        // DJ - Radio DJs who can manage their shows
+        $djRole = Role::firstOrCreate(['name' => 'dj']);
+        $djRole->givePermissionTo([
+            'manage schedule',
+            'go live',
+            'manage requests',
+            'approve requests',
+            'reject requests',
+            'upload media',
+        ]);
+
+        // Moderator - Community moderators
+        $moderatorRole = Role::firstOrCreate(['name' => 'moderator']);
+        $moderatorRole->givePermissionTo([
+            'view users',
+            'manage requests',
+            'reject requests',
+            'view activity',
+        ]);
+
+        // VIP Listener - Premium listeners with extra privileges
+        $vipRole = Role::firstOrCreate(['name' => 'vip']);
+
+        // Listener - Regular authenticated users (default role)
+        $listenerRole = Role::firstOrCreate(['name' => 'listener']);
+
+        // Guest - Unauthenticated visitors (for reference)
+        $guestRole = Role::firstOrCreate(['name' => 'guest']);
     }
 
     /**

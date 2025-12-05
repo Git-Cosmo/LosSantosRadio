@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -17,7 +18,7 @@ use Spatie\Tags\HasTags;
 
 class News extends Model implements HasMedia
 {
-    use HasComments, HasFactory, HasSlug, HasTags, InteractsWithMedia;
+    use HasComments, HasFactory, HasSlug, HasTags, InteractsWithMedia, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -149,5 +150,28 @@ class News extends Model implements HasMedia
         }
 
         return Str::limit(strip_tags($this->content), 150);
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'content' => strip_tags($this->content),
+            'excerpt' => $this->excerpt,
+        ];
+    }
+
+    /**
+     * Determine if the model should be searchable.
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return $this->is_published && $this->published_at && $this->published_at <= now();
     }
 }
