@@ -25,7 +25,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $user = Auth::user();
 
-            if (! $user->hasRole('admin')) {
+            if (! $user->hasAnyRole(['admin', 'staff'])) {
                 Auth::logout();
 
                 return back()->withErrors([
