@@ -179,16 +179,16 @@
 </head>
 <body>
     <div class="background-elements">
-        <div class="speed-lines" style="top: 20%; animation-delay: 0s;"></div>
-        <div class="speed-lines" style="top: 35%; animation-delay: 0.2s;"></div>
-        <div class="speed-lines" style="top: 50%; animation-delay: 0.4s;"></div>
-        <div class="speed-lines" style="top: 65%; animation-delay: 0.6s;"></div>
-        <div class="speed-lines" style="top: 80%; animation-delay: 0.8s;"></div>
+        <div class="speed-lines" style="top: 20%; animation-delay: 0s;" aria-hidden="true"></div>
+        <div class="speed-lines" style="top: 35%; animation-delay: 0.2s;" aria-hidden="true"></div>
+        <div class="speed-lines" style="top: 50%; animation-delay: 0.4s;" aria-hidden="true"></div>
+        <div class="speed-lines" style="top: 65%; animation-delay: 0.6s;" aria-hidden="true"></div>
+        <div class="speed-lines" style="top: 80%; animation-delay: 0.8s;" aria-hidden="true"></div>
     </div>
     
     <div class="error-container">
         <div class="error-icon">
-            <i class="fas fa-tachometer-alt"></i>
+            <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
         </div>
         <div class="error-code">429</div>
         <h1 class="error-title">Slow Down, Speedy!</h1>

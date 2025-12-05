@@ -164,10 +164,10 @@
 </head>
 <body>
     <div class="background-elements">
-        <div class="clock-element sand-timer" style="top: 20%; left: 15%;"><i class="fas fa-hourglass-half"></i></div>
-        <div class="clock-element" style="top: 30%; right: 20%;"><i class="fas fa-clock"></i></div>
-        <div class="clock-element sand-timer" style="bottom: 25%; left: 20%; animation-delay: 1.5s;"><i class="fas fa-hourglass-end"></i></div>
-        <div class="clock-element" style="bottom: 15%; right: 25%;"><i class="fas fa-stopwatch"></i></div>
+        <div class="clock-element sand-timer" style="top: 20%; left: 15%;"><i class="fas fa-hourglass-half" aria-hidden="true"></i></div>
+        <div class="clock-element" style="top: 30%; right: 20%;"><i class="fas fa-clock" aria-hidden="true"></i></div>
+        <div class="clock-element sand-timer" style="bottom: 25%; left: 20%; animation-delay: 1.5s;"><i class="fas fa-hourglass-end" aria-hidden="true"></i></div>
+        <div class="clock-element" style="bottom: 15%; right: 25%;"><i class="fas fa-stopwatch" aria-hidden="true"></i></div>
     </div>
     
     <div class="error-container">
@@ -176,7 +176,7 @@
             Session timed out
         </div>
         <div class="error-icon">
-            <i class="fas fa-hourglass-end"></i>
+            <i class="fas fa-hourglass-end" aria-hidden="true"></i>
         </div>
         <div class="error-code">419</div>
         <h1 class="error-title">Your Session Hit a Break!</h1>

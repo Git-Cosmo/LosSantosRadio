@@ -194,10 +194,10 @@
 </head>
 <body>
     <div class="background-elements">
-        <div class="gear" style="top: 10%; left: 10%;"><i class="fas fa-cog"></i></div>
-        <div class="gear" style="top: 60%; left: 5%; animation-direction: reverse;"><i class="fas fa-cog"></i></div>
-        <div class="gear" style="top: 20%; right: 15%;"><i class="fas fa-cog"></i></div>
-        <div class="gear" style="bottom: 15%; right: 10%; animation-direction: reverse;"><i class="fas fa-cog"></i></div>
+        <div class="gear" style="top: 10%; left: 10%;"><i class="fas fa-cog" aria-hidden="true"></i></div>
+        <div class="gear" style="top: 60%; left: 5%; animation-direction: reverse;"><i class="fas fa-cog" aria-hidden="true"></i></div>
+        <div class="gear" style="top: 20%; right: 15%;"><i class="fas fa-cog" aria-hidden="true"></i></div>
+        <div class="gear" style="bottom: 15%; right: 10%; animation-direction: reverse;"><i class="fas fa-cog" aria-hidden="true"></i></div>
     </div>
     
     <div class="error-container">
@@ -206,7 +206,7 @@
             Maintenance in Progress
         </div>
         <div class="error-icon">
-            <i class="fas fa-wrench"></i>
+            <i class="fas fa-wrench" aria-hidden="true"></i>
         </div>
         <div class="error-code">503</div>
         <h1 class="error-title">Station Under Maintenance!</h1>

@@ -162,10 +162,10 @@
 </head>
 <body>
     <div class="background-elements">
-        <div class="lock-icon" style="top: 15%; left: 15%;"><i class="fas fa-lock"></i></div>
-        <div class="lock-icon" style="top: 25%; right: 20%; animation-delay: 2s;"><i class="fas fa-shield-alt"></i></div>
-        <div class="lock-icon" style="bottom: 20%; left: 25%; animation-delay: 4s;"><i class="fas fa-user-lock"></i></div>
-        <div class="lock-icon" style="bottom: 30%; right: 15%; animation-delay: 6s;"><i class="fas fa-ban"></i></div>
+        <div class="lock-icon" style="top: 15%; left: 15%;"><i class="fas fa-lock" aria-hidden="true"></i></div>
+        <div class="lock-icon" style="top: 25%; right: 20%; animation-delay: 2s;"><i class="fas fa-shield-alt" aria-hidden="true"></i></div>
+        <div class="lock-icon" style="bottom: 20%; left: 25%; animation-delay: 4s;"><i class="fas fa-user-lock" aria-hidden="true"></i></div>
+        <div class="lock-icon" style="bottom: 30%; right: 15%; animation-delay: 6s;"><i class="fas fa-ban" aria-hidden="true"></i></div>
     </div>
     
     <div class="error-container">
@@ -173,7 +173,7 @@
             <i class="fas fa-star"></i> VIP Area
         </div>
         <div class="error-icon">
-            <i class="fas fa-door-closed"></i>
+            <i class="fas fa-door-closed" aria-hidden="true"></i>
         </div>
         <div class="error-code">403</div>
         <h1 class="error-title">Backstage Pass Required!</h1>

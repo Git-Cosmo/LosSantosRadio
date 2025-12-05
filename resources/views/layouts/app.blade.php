@@ -1661,7 +1661,7 @@
                             <a href="{{ route('profile.show', auth()->user()) }}" class="nav-dropdown-item">
                                 <i class="fas fa-user"></i> My Profile
                             </a>
-                            @if(auth()->user()->hasRole(['admin', 'staff']))
+                            @if(auth()->user()->hasAnyRole(['admin', 'staff']))
                             <div class="user-dropdown-divider"></div>
                             <a href="{{ route('admin.dashboard') }}" class="nav-dropdown-item admin-link">
                                 <i class="fas fa-shield-alt"></i> Admin Panel

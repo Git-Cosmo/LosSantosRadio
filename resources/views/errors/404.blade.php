@@ -54,7 +54,6 @@
             background-clip: text;
             animation: gradientShift 4s ease infinite;
             line-height: 1;
-            text-shadow: 0 0 60px rgba(88, 166, 255, 0.3);
         }
         @keyframes gradientShift {
             0%, 100% { background-position: 0% 50%; }
@@ -165,12 +164,12 @@
 </head>
 <body>
     <div class="background-elements">
-        <div class="floating-note" style="left: 10%; animation-delay: 0s;"><i class="fas fa-music"></i></div>
-        <div class="floating-note" style="left: 25%; animation-delay: 2s;"><i class="fas fa-headphones"></i></div>
-        <div class="floating-note" style="left: 40%; animation-delay: 4s;"><i class="fas fa-radio"></i></div>
-        <div class="floating-note" style="left: 55%; animation-delay: 6s;"><i class="fas fa-music"></i></div>
-        <div class="floating-note" style="left: 70%; animation-delay: 8s;"><i class="fas fa-microphone"></i></div>
-        <div class="floating-note" style="left: 85%; animation-delay: 10s;"><i class="fas fa-volume-up"></i></div>
+        <div class="floating-note" style="left: 10%; animation-delay: 0s;"><i class="fas fa-music" aria-hidden="true"></i></div>
+        <div class="floating-note" style="left: 25%; animation-delay: 2s;"><i class="fas fa-headphones" aria-hidden="true"></i></div>
+        <div class="floating-note" style="left: 40%; animation-delay: 4s;"><i class="fas fa-radio" aria-hidden="true"></i></div>
+        <div class="floating-note" style="left: 55%; animation-delay: 6s;"><i class="fas fa-music" aria-hidden="true"></i></div>
+        <div class="floating-note" style="left: 70%; animation-delay: 8s;"><i class="fas fa-microphone" aria-hidden="true"></i></div>
+        <div class="floating-note" style="left: 85%; animation-delay: 10s;"><i class="fas fa-volume-up" aria-hidden="true"></i></div>
         <div class="radio-waves" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
         <div class="radio-waves" style="top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 1s;"></div>
         <div class="radio-waves" style="top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 2s;"></div>
@@ -178,7 +177,7 @@
     
     <div class="error-container">
         <div class="error-icon">
-            <i class="fas fa-compact-disc fa-spin"></i>
+            <i class="fas fa-compact-disc fa-spin" aria-hidden="true"></i>
         </div>
         <div class="error-code">404</div>
         <h1 class="error-title">This Track Doesn't Exist!</h1>
