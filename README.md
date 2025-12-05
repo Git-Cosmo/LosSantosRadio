@@ -120,6 +120,8 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Real-time Updates** - Auto-refresh of now playing data
 - **Toast Notifications** - User feedback for actions
 - **Dropdown Navigation** - Games and Videos sections have dropdown menus
+- **User Dropdown Menu** - Consolidated user actions (Messages, Settings, Profile, Admin Panel, Logout) in a compact dropdown for logged-in users
+- **Themed Error Pages** - Custom error pages (404, 500, 403, 419, 429, 503) with fun radio-themed messages and animations that match the site's visual style
 
 ## 📋 Requirements
 
@@ -449,6 +451,16 @@ Comprehensive SEO best practices have been implemented across the application:
   - Current page indicator
   - Total song count and page information
   - Search functionality integrated with pagination
+
+### UI & Navigation Improvements
+- **User Dropdown Menu** - Reorganized the navbar for logged-in users. User-specific links (Messages, Settings, Profile, Admin Panel, Logout) are now consolidated into a clean dropdown menu under the user's avatar and name, freeing up navbar space and improving mobile experience.
+- **Custom Error Pages** - Designed and implemented themed error pages that match the site's radio aesthetic:
+  - **404 - Page Not Found**: "This Track Doesn't Exist!" with floating music notes animation
+  - **500 - Server Error**: "Technical Difficulties!" with spark animations
+  - **403 - Access Denied**: "Backstage Pass Required!" with VIP badge styling
+  - **419 - Session Expired**: "Your Session Hit a Break!" with timer animations
+  - **429 - Too Many Requests**: "Slow Down, Speedy!" with speed lines and cooldown bar
+  - **503 - Service Unavailable**: "Station Under Maintenance!" with gear animations
 
 ## 🔍 SEO Configuration
 
