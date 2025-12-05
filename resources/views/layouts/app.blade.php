@@ -1658,7 +1658,7 @@
                             <a href="{{ route('profile.edit') }}" class="nav-dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
                                 <i class="fas fa-user-cog"></i> Settings
                             </a>
-                            <a href="{{ route('profile.show', auth()->user()) }}" class="nav-dropdown-item {{ request()->routeIs('profile.show') && request()->route('user')?->id === auth()->id() ? 'active' : '' }}">
+                            <a href="{{ route('profile.show', auth()->user()) }}" class="nav-dropdown-item">
                                 <i class="fas fa-user"></i> My Profile
                             </a>
                             @if(auth()->user()->hasRole(['admin', 'staff']))

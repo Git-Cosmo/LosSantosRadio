@@ -16,6 +16,7 @@
             --color-border: #d0d7de;
             --color-text-primary: #1f2328;
             --color-text-secondary: #656d76;
+            --color-text-muted: #8c959f;
             --color-accent: #0969da;
         }
         html.dark {
@@ -25,6 +26,7 @@
             --color-border: #30363d;
             --color-text-primary: #e6edf3;
             --color-text-secondary: #8b949e;
+            --color-text-muted: #6e7681;
             --color-accent: #58a6ff;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
