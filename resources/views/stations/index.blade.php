@@ -35,7 +35,7 @@
                                     </div>
                                     <div>
                                         <h3 style="font-weight: 600; font-size: 1.125rem; margin-bottom: 0.125rem;">
-                                            {{ $station->station->name ?? 'Unknown Station' }}
+                                            {{ $station->station?->name ?? 'Unknown Station' }}
                                         </h3>
                                         <p style="color: var(--color-text-muted); font-size: 0.8125rem;">
                                             Station
@@ -108,7 +108,7 @@
                                     </span>
                                 </div>
                                 @if($station->isOnline)
-                                    <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.8125rem;" onclick="playStation({{ $station->station->id ?? 0 }})">
+                                    <button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.8125rem;" onclick="playStation({{ $station->station?->id ?? 0 }})">
                                         <i class="fas fa-play"></i> Listen
                                     </button>
                                 @endif
