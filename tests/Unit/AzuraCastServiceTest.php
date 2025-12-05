@@ -82,6 +82,23 @@ class AzuraCastServiceTest extends TestCase
         $this->assertEquals($items, $result);
     }
 
+    public function test_extract_items_from_paginated_response_with_rows_key(): void
+    {
+        $items = [
+            ['id' => '1', 'title' => 'Song 1'],
+            ['id' => '2', 'title' => 'Song 2'],
+        ];
+
+        $data = [
+            'total' => 100,
+            'rows' => $items,
+        ];
+
+        $result = $this->extractItems($data);
+
+        $this->assertEquals($items, $result);
+    }
+
     public function test_extract_items_returns_empty_array_for_paginated_response_without_items(): void
     {
         $data = [

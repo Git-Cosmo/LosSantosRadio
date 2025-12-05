@@ -314,6 +314,11 @@ class AzuraCastService
             return $data['data'];
         }
 
+        // Check for paginated response format with 'rows' key (AzuraCast requests endpoint)
+        if (isset($data['rows']) && is_array($data['rows'])) {
+            return $data['rows'];
+        }
+
         // If response has 'meta' or 'links' keys, it's a paginated response without items
         // This shouldn't normally happen, but handle it gracefully
         if (isset($data['meta']) || isset($data['links'])) {

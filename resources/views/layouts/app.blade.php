@@ -313,15 +313,6 @@
             box-shadow: 0 15px 50px rgba(88, 166, 255, 0.3);
         }
 
-        .now-playing.is-playing .now-playing-art {
-            animation: albumSpin 60s linear infinite;
-        }
-
-        @keyframes albumSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         .now-playing-info {
             flex: 1;
         }
@@ -1054,10 +1045,6 @@
         }
 
         /* Header Animation */
-        .header {
-            background: rgba(22, 27, 34, 0.95);
-        }
-
         @media (min-width: 769px) {
             .header {
                 backdrop-filter: blur(10px);
@@ -1354,7 +1341,6 @@
             .hero-logo,
             .hero-title,
             .equalizer-bar,
-            .now-playing.is-playing .now-playing-art,
             .dj-avatar,
             .schedule-item.active {
                 animation: none;
