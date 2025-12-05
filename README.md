@@ -41,10 +41,16 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Comments** - Comment on news articles and content
 
 ### Content Systems
-- **News & Blog** - Publish articles with rich content
+- **News & Blog** - Publish articles with rich content, search and filter support
 - **Events** - Create and manage community events (live shows, contests, meetups)
 - **Music Polls** - Let the community vote on playlists and preferences
 - **DJ/Staff Profiles** - Showcase your DJ team with bios and schedules
+
+### Schedule System
+- **Playlist Schedule** - Automatically displays schedules from AzuraCast playlists
+- **Weekly View** - Schedule grouped by day with time slots
+- **Live Status** - Shows which playlists are currently active
+- **Now Playing** - Real-time display of current track during scheduled shows
 
 ### DJ/Presenter System
 - **DJ Profiles** - Featured DJ pages with social links and genres
@@ -186,6 +192,12 @@ Default limits (configurable via admin panel):
 
 Access the admin panel at `/admin`. Admin users must have the `admin` or `staff` role assigned.
 
+### User Roles
+
+- **Admin**: The first user to sign up automatically becomes an admin. Full access to all features.
+- **Staff**: Can access the admin panel with limited permissions.
+- **Listener**: Default role for all subsequent users. Can request songs, rate tracks, and participate in polls.
+
 **Features:**
 - Dashboard with stats and recent activity
 - User management with role assignment
@@ -198,6 +210,33 @@ Access the admin panel at `/admin`. Admin users must have the `admin` or `staff`
 - Activity log auditing
 
 ## 🏗️ Architecture
+
+### API Endpoints & Caching
+
+The application uses a multi-layer caching strategy for optimal performance:
+
+**Server-side Caching (via AzuraCastService):**
+- Now Playing data: 30 seconds
+- Station/Playlist data: 5 minutes
+- Request library: 60 seconds
+
+**HTTP Cache Headers (via CacheApiResponse middleware):**
+| Endpoint | Cache Duration |
+|----------|----------------|
+| `/api/radio/*` | 30 seconds |
+| `/api/stations/*` | 60 seconds |
+| `/api/playlists/*` | 5 minutes |
+| `/api/leaderboard` | 60 seconds |
+
+### AzuraCast API Integration
+
+All radio data is fetched using official AzuraCast API endpoints:
+- `GET /api/nowplaying/{station_id}` - Current playing track
+- `GET /api/station/{station_id}` - Station details
+- `GET /api/station/{station_id}/playlists` - Playlists with schedule
+- `GET /api/station/{station_id}/history` - Play history
+- `GET /api/station/{station_id}/requests` - Requestable songs (paginated)
+- `POST /api/station/{station_id}/request/{song_id}` - Submit song request
 
 ### Services
 - `AzuraCastService` - Radio data fetching and caching
