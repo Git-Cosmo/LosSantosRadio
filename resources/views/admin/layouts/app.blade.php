@@ -572,12 +572,25 @@
                     <a href="{{ route('admin.polls.index') }}" class="nav-link {{ request()->routeIs('admin.polls.*') ? 'active' : '' }}">
                         <i class="fas fa-poll"></i> Polls
                     </a>
+                    <a href="{{ route('admin.games.index') }}" class="nav-link {{ request()->routeIs('admin.games.*') ? 'active' : '' }}">
+                        <i class="fas fa-gamepad"></i> Games
+                    </a>
+                    <a href="{{ route('admin.videos.index') }}" class="nav-link {{ request()->routeIs('admin.videos.*') ? 'active' : '' }}">
+                        <i class="fas fa-video"></i> Videos
+                    </a>
                 </div>
 
                 <div class="nav-group">
                     <div class="nav-group-title">User Management</div>
                     <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                         <i class="fas fa-users"></i> Users
+                    </a>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-title">Integrations</div>
+                    <a href="{{ route('admin.discord.index') }}" class="nav-link {{ request()->routeIs('admin.discord.*') ? 'active' : '' }}">
+                        <i class="fab fa-discord"></i> Discord Bot
                     </a>
                 </div>
 

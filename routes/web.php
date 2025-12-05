@@ -13,7 +13,6 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\CommentsController;
-use App\Http\Controllers\DjController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\MessagesController;
@@ -51,9 +50,6 @@ Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule');
 // Songs page
 Route::get('/songs', [SongsController::class, 'index'])->name('songs');
 
-// Stations page
-Route::get('/stations', [StationsController::class, 'index'])->name('stations');
-
 // Leaderboard page
 Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
 
@@ -71,13 +67,23 @@ Route::prefix('polls')->name('polls.')->group(function () {
     Route::get('/{poll}/results', [PollsController::class, 'results'])->name('results');
 });
 
-// DJs/Staff pages
-Route::prefix('djs')->name('djs.')->group(function () {
-    Route::get('/', [DjController::class, 'index'])->name('index');
-    Route::get('/schedule', [DjController::class, 'schedule'])->name('schedule');
-    Route::get('/on-air', [DjController::class, 'onAir'])->name('on-air');
-    Route::get('/{djProfile}', [DjController::class, 'show'])->name('show');
+// Games pages
+Route::prefix('games')->name('games.')->group(function () {
+    Route::get('/free', [\App\Http\Controllers\GamesController::class, 'free'])->name('free');
+    Route::get('/deals', [\App\Http\Controllers\GamesController::class, 'deals'])->name('deals');
+    Route::get('/deals/{deal}', [\App\Http\Controllers\GamesController::class, 'showDeal'])->name('deals.show');
 });
+
+// Videos pages
+Route::prefix('videos')->name('videos.')->group(function () {
+    Route::get('/ylyl', [\App\Http\Controllers\VideosController::class, 'ylyl'])->name('ylyl');
+    Route::get('/clips', [\App\Http\Controllers\VideosController::class, 'clips'])->name('clips');
+    Route::get('/{video}', [\App\Http\Controllers\VideosController::class, 'show'])->name('show');
+});
+
+// Search (with rate limiting to prevent abuse)
+Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->middleware('throttle:30,1')->name('search');
+Route::get('/api/search', [\App\Http\Controllers\SearchController::class, 'search'])->middleware('throttle:60,1')->name('search.api');
 
 // User profiles (public)
 Route::get('/users/{user}', [ProfileController::class, 'show'])->name('profile.show');
@@ -248,4 +254,41 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
     // Activity Log
     Route::get('/activity', [ActivityLogController::class, 'index'])->name('activity.index');
     Route::get('/activity/{activity}', [ActivityLogController::class, 'show'])->name('activity.show');
+
+    // Games Admin
+    Route::prefix('games')->name('games.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\GamesController::class, 'index'])->name('index');
+        Route::get('/free', [\App\Http\Controllers\Admin\GamesController::class, 'freeGames'])->name('free');
+        Route::get('/free/create', [\App\Http\Controllers\Admin\GamesController::class, 'createFreeGame'])->name('free.create');
+        Route::post('/free', [\App\Http\Controllers\Admin\GamesController::class, 'storeFreeGame'])->name('free.store');
+        Route::get('/free/{freeGame}/edit', [\App\Http\Controllers\Admin\GamesController::class, 'editFreeGame'])->name('free.edit');
+        Route::put('/free/{freeGame}', [\App\Http\Controllers\Admin\GamesController::class, 'updateFreeGame'])->name('free.update');
+        Route::delete('/free/{freeGame}', [\App\Http\Controllers\Admin\GamesController::class, 'destroyFreeGame'])->name('free.destroy');
+        Route::get('/deals', [\App\Http\Controllers\Admin\GamesController::class, 'deals'])->name('deals');
+        Route::get('/stores', [\App\Http\Controllers\Admin\GamesController::class, 'stores'])->name('stores');
+        Route::post('/sync-deals', [\App\Http\Controllers\Admin\GamesController::class, 'syncDeals'])->name('sync-deals');
+        Route::post('/sync-free', [\App\Http\Controllers\Admin\GamesController::class, 'syncFreeGames'])->name('sync-free');
+    });
+
+    // Videos Admin
+    Route::prefix('videos')->name('videos.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\VideosController::class, 'index'])->name('index');
+        Route::get('/ylyl', [\App\Http\Controllers\Admin\VideosController::class, 'ylyl'])->name('ylyl');
+        Route::get('/clips', [\App\Http\Controllers\Admin\VideosController::class, 'clips'])->name('clips');
+        Route::get('/create', [\App\Http\Controllers\Admin\VideosController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\VideosController::class, 'store'])->name('store');
+        Route::get('/{video}/edit', [\App\Http\Controllers\Admin\VideosController::class, 'edit'])->name('edit');
+        Route::put('/{video}', [\App\Http\Controllers\Admin\VideosController::class, 'update'])->name('update');
+        Route::delete('/{video}', [\App\Http\Controllers\Admin\VideosController::class, 'destroy'])->name('destroy');
+        Route::post('/sync', [\App\Http\Controllers\Admin\VideosController::class, 'sync'])->name('sync');
+    });
+
+    // Discord Admin
+    Route::prefix('discord')->name('discord.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\DiscordBotController::class, 'index'])->name('index');
+        Route::post('/sync-roles', [\App\Http\Controllers\Admin\DiscordBotController::class, 'syncRoles'])->name('sync-roles');
+        Route::post('/sync-users', [\App\Http\Controllers\Admin\DiscordBotController::class, 'syncUsers'])->name('sync-users');
+        Route::get('/settings', [\App\Http\Controllers\Admin\DiscordBotController::class, 'settings'])->name('settings');
+        Route::post('/settings', [\App\Http\Controllers\Admin\DiscordBotController::class, 'updateSettings'])->name('settings.update');
+    });
 });
