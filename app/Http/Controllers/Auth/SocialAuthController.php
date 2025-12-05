@@ -134,6 +134,9 @@ class SocialAuthController extends Controller
             $email = 'steam_'.$socialUser->getId().'@placeholder.local';
         }
 
+        // Check if this will be the first user BEFORE creating (prevents race condition)
+        $isFirstUser = User::count() === 0;
+
         $user = User::create([
             'name' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'Listener',
             'email' => $email ?? $provider.'_'.$socialUser->getId().'@placeholder.local',
@@ -143,9 +146,6 @@ class SocialAuthController extends Controller
 
         // Assign role: first user becomes admin, subsequent users are listeners
         if (class_exists('Spatie\Permission\Models\Role')) {
-            // Check if this is the first user in the system
-            $isFirstUser = User::count() === 1;
-
             if ($isFirstUser) {
                 // Ensure admin role exists
                 \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);

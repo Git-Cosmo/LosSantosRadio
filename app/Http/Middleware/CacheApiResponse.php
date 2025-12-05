@@ -14,13 +14,14 @@ class CacheApiResponse
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, int $maxAge = 30): Response
+    public function handle(Request $request, Closure $next, string $maxAge = '30'): Response
     {
+        $maxAgeInt = (int) $maxAge;
         $response = $next($request);
 
         // Only cache successful JSON responses
         if ($response instanceof JsonResponse && $response->getStatusCode() === 200) {
-            $response->headers->set('Cache-Control', "public, max-age={$maxAge}");
+            $response->headers->set('Cache-Control', "public, max-age={$maxAgeInt}");
             $response->headers->set('Vary', 'Accept');
         }
 
