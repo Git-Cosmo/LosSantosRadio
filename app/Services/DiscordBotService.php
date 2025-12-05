@@ -258,9 +258,11 @@ class DiscordBotService
      */
     public function assignRole(string $userId, string $roleId): bool
     {
+        // PUT requests return 204 No Content on success, which translates to empty array
         $result = $this->request('PUT', "/guilds/{$this->guildId}/members/{$userId}/roles/{$roleId}");
 
-        if ($result !== null || $result === []) {
+        // Discord returns null on failure from our request method, empty array on success
+        if ($result !== null) {
             DiscordLog::info('assign_role', "Assigned role {$roleId} to user {$userId}");
 
             return true;
@@ -274,9 +276,11 @@ class DiscordBotService
      */
     public function removeRole(string $userId, string $roleId): bool
     {
+        // DELETE requests return 204 No Content on success
         $result = $this->request('DELETE', "/guilds/{$this->guildId}/members/{$userId}/roles/{$roleId}");
 
-        if ($result !== null || $result === []) {
+        // Discord returns null on failure from our request method, empty array on success
+        if ($result !== null) {
             DiscordLog::info('remove_role', "Removed role {$roleId} from user {$userId}");
 
             return true;

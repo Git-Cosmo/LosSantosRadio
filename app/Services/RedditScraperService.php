@@ -380,12 +380,15 @@ class RedditScraperService
      */
     protected function getTwitchEmbedUrl(string $url): ?string
     {
+        $appUrl = config('app.url', 'localhost');
+        $parent = parse_url($appUrl, PHP_URL_HOST) ?: 'localhost';
+
         if (preg_match('/twitch\.tv\/videos\/(\d+)/', $url, $matches)) {
-            return 'https://player.twitch.tv/?video='.$matches[1].'&parent='.config('app.url');
+            return 'https://player.twitch.tv/?video='.$matches[1].'&parent='.$parent;
         }
 
         if (preg_match('/clips\.twitch\.tv\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
-            return 'https://clips.twitch.tv/embed?clip='.$matches[1].'&parent='.config('app.url');
+            return 'https://clips.twitch.tv/embed?clip='.$matches[1].'&parent='.$parent;
         }
 
         return null;

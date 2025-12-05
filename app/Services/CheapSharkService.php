@@ -197,10 +197,22 @@ class CheapSharkService
 
     /**
      * Clear all CheapShark caches.
+     *
+     * Note: This method clears specific known cache keys. For a more robust
+     * solution in production, consider using cache tags.
      */
     public function clearCache(): void
     {
-        // Note: For a more robust solution, use tagged caching
-        Cache::forget('cheapshark.deals.*');
+        // Clear the main deals cache with default params
+        $defaultParams = [
+            'pageSize' => 60,
+            'pageNumber' => 0,
+            'sortBy' => 'Savings',
+            'desc' => 1,
+            'onSale' => 1,
+        ];
+        Cache::forget('cheapshark.deals.'.md5(serialize($defaultParams)));
+
+        // Note: Individual deal caches expire naturally after TTL
     }
 }
