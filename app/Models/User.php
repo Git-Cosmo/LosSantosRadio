@@ -263,12 +263,21 @@ class User extends Authenticatable
     {
         $today = now()->toDateString();
         $yesterday = now()->subDay()->toDateString();
+        $lastActivity = $this->last_activity_date?->toDateString();
 
-        if ($this->last_activity_date === null) {
+        // Skip if already logged in today
+        if ($lastActivity === $today) {
+            return;
+        }
+
+        if ($lastActivity === null) {
+            // First ever activity
             $this->current_streak = 1;
-        } elseif ($this->last_activity_date->toDateString() === $yesterday) {
+        } elseif ($lastActivity === $yesterday) {
+            // Consecutive day - increment streak
             $this->current_streak++;
-        } elseif ($this->last_activity_date->toDateString() !== $today) {
+        } else {
+            // Streak broken - reset to 1
             $this->current_streak = 1;
         }
 

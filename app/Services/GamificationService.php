@@ -8,6 +8,11 @@ use App\Models\User;
 class GamificationService
 {
     /**
+     * Maximum streak days for bonus cap.
+     */
+    public const MAX_STREAK_BONUS_DAYS = 7;
+
+    /**
      * XP rewards for various actions.
      */
     public const XP_REWARDS = [
@@ -38,7 +43,7 @@ class GamificationService
 
         // Award streak bonus
         if ($user->current_streak > 1) {
-            $streakBonus = min($user->current_streak, 7) * self::XP_REWARDS['streak_bonus'];
+            $streakBonus = min($user->current_streak, self::MAX_STREAK_BONUS_DAYS) * self::XP_REWARDS['streak_bonus'];
             $user->addXp($streakBonus, "Daily streak bonus ({$user->current_streak} days)");
             $rewards['streak_bonus'] = $streakBonus;
         }
