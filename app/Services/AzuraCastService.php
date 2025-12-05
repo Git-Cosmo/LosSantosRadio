@@ -81,6 +81,52 @@ class AzuraCastService
     }
 
     /**
+     * Get all public stations.
+     *
+     * Fetches all public stations from the AzuraCast instance.
+     *
+     * @return Collection<int, StationDTO>
+     */
+    public function getAllStations(): Collection
+    {
+        $cacheKey = 'azuracast.stations.all';
+
+        $data = Cache::remember($cacheKey, 300, function () {
+            return $this->makeRequest('/api/stations');
+        });
+
+        // Handle paginated response format (with 'items' key) or plain array
+        $items = $this->extractItems($data);
+
+        return collect($items)
+            ->filter(fn ($item) => is_array($item))
+            ->map(fn ($item) => StationDTO::fromApi($item));
+    }
+
+    /**
+     * Get now playing data for all stations.
+     *
+     * Fetches now playing information for all public stations.
+     *
+     * @return Collection<int, NowPlayingDTO>
+     */
+    public function getAllNowPlaying(): Collection
+    {
+        $cacheKey = 'azuracast.nowplaying.all';
+
+        $data = Cache::remember($cacheKey, $this->cacheTtl, function () {
+            return $this->makeRequest('/api/nowplaying');
+        });
+
+        // Handle paginated response format (with 'items' key) or plain array
+        $items = $this->extractItems($data);
+
+        return collect($items)
+            ->filter(fn ($item) => is_array($item))
+            ->map(fn ($item) => NowPlayingDTO::fromApi($item));
+    }
+
+    /**
      * Get station playlists.
      *
      * Fetches all playlists for the station using the AzuraCast API.
