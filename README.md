@@ -361,6 +361,30 @@ composer dev
 
 This starts the web server, queue worker, log viewer, and Vite dev server concurrently.
 
+### Troubleshooting
+
+#### Cache Errors (filemtime, view cache, etc.)
+
+If you encounter errors like `filemtime(): stat failed` or other cache-related issues, clear all Laravel caches:
+
+```bash
+php artisan view:clear
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+```
+
+Or clear everything at once:
+
+```bash
+php artisan optimize:clear
+```
+
+This is commonly needed after:
+- Pulling new changes from git
+- Switching branches
+- When compiled view files become stale
+
 ## 📁 Project Structure
 
 ```
