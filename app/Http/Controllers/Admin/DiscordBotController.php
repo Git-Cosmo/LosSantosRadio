@@ -91,8 +91,8 @@ class DiscordBotController extends Controller
         // Only allow non-sensitive settings to be updated via the admin panel
         // Bot token and guild ID must be set via environment variables
         $validated = $request->validate([
-            'discord_log_channel' => 'nullable|string|max:20',
-            'discord_welcome_channel' => 'nullable|string|max:20',
+            'discord_log_channel' => 'nullable|string|max:25',
+            'discord_welcome_channel' => 'nullable|string|max:25',
         ]);
 
         foreach ($validated as $key => $value) {

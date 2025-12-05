@@ -59,16 +59,15 @@ class SearchController extends Controller
      * Perform a search across multiple models.
      * Note: This uses basic LIKE queries. For better performance at scale,
      * consider implementing Laravel Scout with Meilisearch or database full-text search.
+     * Laravel's parameter binding in Eloquent automatically prevents SQL injection.
      */
     protected function performSearch(string $query, int $limit = 20): array
     {
-        // Sanitize the search query - escape special characters for LIKE
-        $escapedQuery = str_replace(['%', '_'], ['\%', '\_'], $query);
         $results = [];
 
         // Search News
-        $news = News::where('title', 'like', "%{$escapedQuery}%")
-            ->orWhere('content', 'like', "%{$escapedQuery}%")
+        $news = News::where('title', 'like', "%{$query}%")
+            ->orWhere('content', 'like', "%{$query}%")
             ->published()
             ->orderBy('created_at', 'desc')
             ->limit($limit)
@@ -86,8 +85,8 @@ class SearchController extends Controller
         $results = array_merge($results, $news->toArray());
 
         // Search Events
-        $events = Event::where('title', 'like', "%{$escapedQuery}%")
-            ->orWhere('description', 'like', "%{$escapedQuery}%")
+        $events = Event::where('title', 'like', "%{$query}%")
+            ->orWhere('description', 'like', "%{$query}%")
             ->published()
             ->orderBy('start_date', 'desc')
             ->limit($limit)
@@ -105,8 +104,8 @@ class SearchController extends Controller
         $results = array_merge($results, $events->toArray());
 
         // Search Free Games
-        $games = FreeGame::where('title', 'like', "%{$escapedQuery}%")
-            ->orWhere('description', 'like', "%{$escapedQuery}%")
+        $games = FreeGame::where('title', 'like', "%{$query}%")
+            ->orWhere('description', 'like', "%{$query}%")
             ->active()
             ->orderBy('created_at', 'desc')
             ->limit($limit)
@@ -124,7 +123,7 @@ class SearchController extends Controller
         $results = array_merge($results, $games->toArray());
 
         // Search Game Deals
-        $deals = GameDeal::where('title', 'like', "%{$escapedQuery}%")
+        $deals = GameDeal::where('title', 'like', "%{$query}%")
             ->onSale()
             ->orderBy('savings_percent', 'desc')
             ->limit($limit)
@@ -142,8 +141,8 @@ class SearchController extends Controller
         $results = array_merge($results, $deals->toArray());
 
         // Search Videos
-        $videos = Video::where('title', 'like', "%{$escapedQuery}%")
-            ->orWhere('description', 'like', "%{$escapedQuery}%")
+        $videos = Video::where('title', 'like', "%{$query}%")
+            ->orWhere('description', 'like', "%{$query}%")
             ->active()
             ->orderBy('posted_at', 'desc')
             ->limit($limit)
