@@ -1094,6 +1094,68 @@
             width: 100%;
         }
 
+        /* Navigation Dropdowns */
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .nav-dropdown-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .nav-dropdown-toggle::after {
+            display: none;
+        }
+
+        .nav-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 180px;
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 0.5rem;
+            z-index: 100;
+            margin-top: 0.5rem;
+        }
+
+        .nav-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.875rem;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-dropdown-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            text-decoration: none;
+        }
+
+        .nav-dropdown-item.active {
+            background-color: var(--color-accent);
+            color: white;
+        }
+
+        .nav-dropdown-item i {
+            width: 18px;
+            text-align: center;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
         /* Footer Enhancement */
         .footer {
             background: linear-gradient(180deg, transparent 0%, rgba(88, 166, 255, 0.05) 100%);
@@ -1343,17 +1405,14 @@
                 <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Home
                 </a>
-                <a href="{{ route('stations') }}" class="nav-link {{ request()->routeIs('stations') ? 'active' : '' }}">
-                    <i class="fas fa-broadcast-tower"></i> Stations
-                </a>
-                <a href="{{ route('djs.index') }}" class="nav-link {{ request()->routeIs('djs.*') ? 'active' : '' }}">
-                    <i class="fas fa-headphones"></i> DJs
+                <a href="{{ route('schedule') }}" class="nav-link {{ request()->routeIs('schedule') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-alt"></i> Schedule
                 </a>
                 <a href="{{ route('news.index') }}" class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}">
                     <i class="fas fa-newspaper"></i> News
                 </a>
                 <a href="{{ route('events.index') }}" class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-star"></i> Events
+                    <i class="fas fa-calendar-check"></i> Events
                 </a>
                 <a href="{{ route('polls.index') }}" class="nav-link {{ request()->routeIs('polls.*') ? 'active' : '' }}">
                     <i class="fas fa-poll"></i> Polls
@@ -1361,6 +1420,34 @@
                 <a href="{{ route('requests.index') }}" class="nav-link {{ request()->routeIs('requests.*') ? 'active' : '' }}">
                     <i class="fas fa-music"></i> Request
                 </a>
+                <!-- Games Dropdown -->
+                <div class="nav-dropdown" x-data="{ open: false }">
+                    <button @click="open = !open" class="nav-link nav-dropdown-toggle {{ request()->routeIs('games.*') ? 'active' : '' }}">
+                        <i class="fas fa-gamepad"></i> Games <i class="fas fa-chevron-down" style="font-size: 0.625rem; margin-left: 0.25rem;"></i>
+                    </button>
+                    <div x-show="open" @click.away="open = false" class="nav-dropdown-menu" x-cloak>
+                        <a href="{{ route('games.free') }}" class="nav-dropdown-item {{ request()->routeIs('games.free') ? 'active' : '' }}">
+                            <i class="fas fa-gift"></i> Free Games
+                        </a>
+                        <a href="{{ route('games.deals') }}" class="nav-dropdown-item {{ request()->routeIs('games.deals') ? 'active' : '' }}">
+                            <i class="fas fa-tags"></i> Game Deals
+                        </a>
+                    </div>
+                </div>
+                <!-- Videos Dropdown -->
+                <div class="nav-dropdown" x-data="{ open: false }">
+                    <button @click="open = !open" class="nav-link nav-dropdown-toggle {{ request()->routeIs('videos.*') ? 'active' : '' }}">
+                        <i class="fas fa-video"></i> Videos <i class="fas fa-chevron-down" style="font-size: 0.625rem; margin-left: 0.25rem;"></i>
+                    </button>
+                    <div x-show="open" @click.away="open = false" class="nav-dropdown-menu" x-cloak>
+                        <a href="{{ route('videos.ylyl') }}" class="nav-dropdown-item {{ request()->routeIs('videos.ylyl') ? 'active' : '' }}">
+                            <i class="fas fa-laugh-squint"></i> YLYL
+                        </a>
+                        <a href="{{ route('videos.clips') }}" class="nav-dropdown-item {{ request()->routeIs('videos.clips') ? 'active' : '' }}">
+                            <i class="fas fa-tv"></i> Streamers Clips
+                        </a>
+                    </div>
+                </div>
                 @auth
                     <a href="{{ route('messages.index') }}" class="nav-link {{ request()->routeIs('messages.*') ? 'active' : '' }}">
                         <i class="fas fa-envelope"></i> Messages

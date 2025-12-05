@@ -26,10 +26,16 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Now Playing Widget** - Real-time display of currently playing songs with album art, progress bar, and auto-refresh
 - **Recently Played** - Song history with timestamps
 - **Up Next** - Preview the next song in queue
-- **Song Requests** - Browse the song library and request tracks
+- **Song Requests** - Browse the song library with a media grid layout and request tracks via modal
 - **Live Stream Player** - Built-in audio player with volume control
 - **Song Ratings** - Upvote/downvote songs to shape the playlist
 - **Trending Songs** - Top-rated tracks displayed in real-time
+
+### Schedule System
+- **Playlist Schedule** - Automatically displays schedules from AzuraCast playlists
+- **Weekly View** - Schedule grouped by day with time slots
+- **Live Status** - Shows which playlists are currently active
+- **Now Playing** - Real-time display of current track during scheduled shows
 
 ### Community Features
 - **User Profiles** - Customizable profiles with bio, avatar, and activity stats
@@ -46,11 +52,24 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Music Polls** - Let the community vote on playlists and preferences
 - **DJ/Staff Profiles** - Showcase your DJ team with bios and schedules
 
-### Schedule System
-- **Playlist Schedule** - Automatically displays schedules from AzuraCast playlists
-- **Weekly View** - Schedule grouped by day with time slots
-- **Live Status** - Shows which playlists are currently active
-- **Now Playing** - Real-time display of current track during scheduled shows
+### Games Section
+- **Free Games** - Browse and claim free game offers from various platforms
+- **Game Deals** - Find the best deals powered by CheapShark API
+- **Store Filtering** - Filter deals by store (Steam, Epic, GOG, etc.)
+- **Savings Display** - See how much you save on each deal
+- **Reddit Integration** - Automatically fetch free game posts from Reddit
+
+### Videos Section
+- **YLYL (You Laugh You Lose)** - Funny videos from Reddit
+- **Streamer Clips** - Best clips from Twitch, YouTube, and Kick
+- **Platform Filtering** - Filter clips by streaming platform
+- **Embedded Players** - Watch videos directly on the site
+- **Reddit Integration** - Automatically fetch videos from r/funnyvideos and r/LivestreamFail
+
+### Search System
+- **Global Search** - Search across news, events, games, videos, and deals
+- **Search API** - JSON API endpoint for search functionality
+- **Category Icons** - Visual distinction between result types
 
 ### DJ/Presenter System
 - **DJ Profiles** - Featured DJ pages with social links and genres
@@ -66,8 +85,18 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Events Management** - Schedule and manage community events
 - **Polls Management** - Create and monitor music polls
 - **DJ Profile Management** - Add DJs and manage schedules
+- **Games Management** - Manage free games and deals, sync from Reddit/CheapShark
+- **Videos Management** - Manage YLYL and clips, sync from Reddit
+- **Discord Bot Panel** - Monitor and manage Discord integration
 - **Settings** - Configure application settings
 - **Activity Log** - Audit trail of admin actions
+
+### Discord Bot Integration
+- **User/Role Sync** - Sync Discord server roles and members to database
+- **Member Linking** - Link Discord accounts to website accounts
+- **Bot Monitoring** - View bot status and activity logs
+- **Admin Controls** - Manage bot settings from admin panel
+- **API Integration** - Uses Discord API v10 for all operations
 
 ### Gamification
 - **XP Rewards** - Earn XP for daily logins, song requests, ratings, comments, and poll votes
@@ -90,6 +119,7 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **PWA Support** - Progressive Web App for mobile experience
 - **Real-time Updates** - Auto-refresh of now playing data
 - **Toast Notifications** - User feedback for actions
+- **Dropdown Navigation** - Games and Videos sections have dropdown menus
 
 ## 📋 Requirements
 
@@ -122,6 +152,7 @@ php artisan key:generate
    - AzuraCast API credentials
    - Icecast connection details
    - OAuth provider credentials (Discord, Twitch, Steam, Battle.net)
+   - Discord bot credentials (optional)
 
 5. **Run migrations and seed:**
 ```bash
@@ -165,6 +196,10 @@ DISCORD_CLIENT_ID=
 DISCORD_CLIENT_SECRET=
 DISCORD_REDIRECT_URI=
 
+# Discord Bot (optional)
+DISCORD_BOT_TOKEN=
+DISCORD_GUILD_ID=
+
 TWITCH_CLIENT_ID=
 TWITCH_CLIENT_SECRET=
 TWITCH_REDIRECT_URI=
@@ -181,6 +216,15 @@ REQUEST_USER_MIN_INTERVAL_SECONDS=60
 REQUEST_USER_MAX_PER_WINDOW=10
 REQUEST_USER_WINDOW_MINUTES=20
 ```
+
+### Discord Bot Setup
+
+1. Create a Discord application at [Discord Developer Portal](https://discord.com/developers/applications)
+2. Create a bot user and get the bot token
+3. Enable Server Members Intent and Message Content Intent
+4. Add the bot to your server with appropriate permissions
+5. Get your Guild (Server) ID by enabling Developer Mode in Discord
+6. Add `DISCORD_BOT_TOKEN` and `DISCORD_GUILD_ID` to your `.env` file
 
 ### Request Limits
 
@@ -206,6 +250,9 @@ Access the admin panel at `/admin`. Admin users must have the `admin` or `staff`
 - Event management
 - Poll creation and monitoring
 - DJ profile and schedule management
+- Games management (free games + deals)
+- Videos management (YLYL + clips)
+- Discord bot monitoring and settings
 - Application settings
 - Activity log auditing
 
@@ -224,9 +271,9 @@ The application uses a multi-layer caching strategy for optimal performance:
 | Endpoint | Cache Duration |
 |----------|----------------|
 | `/api/radio/*` | 30 seconds |
-| `/api/stations/*` | 60 seconds |
 | `/api/playlists/*` | 5 minutes |
 | `/api/leaderboard` | 60 seconds |
+| `/api/search` | No cache |
 
 ### AzuraCast API Integration
 
@@ -238,11 +285,20 @@ All radio data is fetched using official AzuraCast API endpoints:
 - `GET /api/station/{station_id}/requests` - Requestable songs (paginated)
 - `POST /api/station/{station_id}/request/{song_id}` - Submit song request
 
+### External API Integrations
+
+- **CheapShark API** - Game deals from multiple stores
+- **Reddit JSON API** - Free games and video content
+- **Discord API v10** - Bot integration for user/role sync
+
 ### Services
 - `AzuraCastService` - Radio data fetching and caching
 - `IcecastService` - Stream status and listener counts
 - `RequestLimitService` - Request rate limiting logic
 - `GamificationService` - XP and achievement processing
+- `CheapSharkService` - Game deals fetching and sync
+- `RedditScraperService` - Reddit content fetching
+- `DiscordBotService` - Discord API integration
 
 ### Data Transfer Objects (DTOs)
 - `NowPlayingDTO` - Current song and stream data
@@ -260,6 +316,9 @@ All radio data is fetched using official AzuraCast API endpoints:
 - News / Comment
 - SongRequest / SongRating
 - XpTransaction
+- FreeGame / GameDeal / GameStore
+- Video
+- DiscordRole / DiscordMember / DiscordLog
 
 ## 🧪 Development
 
@@ -309,6 +368,8 @@ app/
 ├── DTOs/                 # Data Transfer Objects
 ├── Http/
 │   ├── Controllers/      # Request handlers
+│   │   ├── Admin/        # Admin panel controllers
+│   │   └── Auth/         # Authentication controllers
 │   └── Middleware/       # Request middleware
 ├── Models/               # Eloquent models
 ├── Services/             # Business logic services
@@ -317,10 +378,16 @@ app/
 resources/
 ├── views/
 │   ├── admin/           # Admin panel views
+│   │   ├── discord/     # Discord bot admin views
+│   │   ├── games/       # Games admin views
+│   │   └── videos/      # Videos admin views
 │   ├── djs/             # DJ profile views
 │   ├── events/          # Event views
+│   ├── games/           # Games public views
 │   ├── polls/           # Poll views
 │   ├── profile/         # User profile views
+│   ├── search/          # Search views
+│   ├── videos/          # Videos public views
 │   └── layouts/         # Layout components
 
 database/
