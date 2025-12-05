@@ -1296,22 +1296,22 @@
                 <a href="{{ route('stations') }}" class="nav-link {{ request()->routeIs('stations') ? 'active' : '' }}">
                     <i class="fas fa-broadcast-tower"></i> Stations
                 </a>
+                <a href="{{ route('djs.index') }}" class="nav-link {{ request()->routeIs('djs.*') ? 'active' : '' }}">
+                    <i class="fas fa-headphones"></i> DJs
+                </a>
                 <a href="{{ route('news.index') }}" class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}">
                     <i class="fas fa-newspaper"></i> News
                 </a>
-                <a href="{{ route('schedule') }}" class="nav-link {{ request()->routeIs('schedule') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-alt"></i> Schedule
+                <a href="{{ route('events.index') }}" class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-star"></i> Events
                 </a>
-                <a href="{{ route('songs') }}" class="nav-link {{ request()->routeIs('songs') ? 'active' : '' }}">
-                    <i class="fas fa-compact-disc"></i> Songs
+                <a href="{{ route('polls.index') }}" class="nav-link {{ request()->routeIs('polls.*') ? 'active' : '' }}">
+                    <i class="fas fa-poll"></i> Polls
                 </a>
                 <a href="{{ route('requests.index') }}" class="nav-link {{ request()->routeIs('requests.*') ? 'active' : '' }}">
-                    <i class="fas fa-music"></i> Request a Song
+                    <i class="fas fa-music"></i> Request
                 </a>
                 @auth
-                    <a href="{{ route('requests.history') }}" class="nav-link">
-                        <i class="fas fa-history"></i> My Requests
-                    </a>
                     <a href="{{ route('messages.index') }}" class="nav-link {{ request()->routeIs('messages.*') ? 'active' : '' }}">
                         <i class="fas fa-envelope"></i> Messages
                     </a>
