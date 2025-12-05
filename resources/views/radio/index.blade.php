@@ -180,33 +180,6 @@
                 </div>
             </div>
 
-            <!-- DJ Profiles Section -->
-            <div class="card" style="margin-bottom: 1.5rem;">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-users" style="color: var(--color-accent);"></i>
-                        Our DJs
-                    </h2>
-                </div>
-                <div class="card-body">
-                    <div class="dj-profiles">
-                        <div class="dj-profile">
-                            <div class="dj-avatar">
-                                <i class="fas fa-headphones-alt"></i>
-                            </div>
-                            <div class="dj-info">
-                                <h4 class="dj-name">AutoDJ</h4>
-                                <p class="dj-bio">Your 24/7 music companion. Always playing the best hits from Los Santos!</p>
-                            </div>
-                        </div>
-                        <p class="dj-cta" style="color: var(--color-text-muted); text-align: center; padding: 1rem; margin-top: 1rem; border-top: 1px solid var(--color-border);">
-                            <i class="fas fa-microphone" style="margin-right: 0.5rem;"></i>
-                            Want to become a DJ? Join our Discord to learn more!
-                        </p>
-                    </div>
-                </div>
-            </div>
-
             <!-- Station Info -->
             @if(isset($station))
                 <div class="card">
@@ -241,7 +214,7 @@
                 </div>
                 <div class="card-body" style="padding: 0.5rem;">
                     @if($history->count() > 0)
-                        @foreach($history->take(8) as $item)
+                        @foreach($history->take(2) as $item)
                             <div class="history-item">
                                 <img src="{{ $item->song->art ?? '' }}"
                                      alt=""
