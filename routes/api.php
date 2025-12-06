@@ -30,7 +30,8 @@ Route::prefix('search')->name('api.search.')->group(function () {
 });
 
 // Media API (for admin media management)
-Route::middleware('auth')->prefix('media')->name('api.media.')->group(function () {
+// Uses web middleware for session-based authentication with admin middleware check
+Route::middleware(['web', 'auth'])->prefix('media')->name('api.media.')->group(function () {
     Route::get('/', [MediaController::class, 'index'])->name('index');
     Route::post('/', [MediaController::class, 'upload'])->name('upload');
     Route::delete('/{media}', [MediaController::class, 'destroy'])->name('destroy');

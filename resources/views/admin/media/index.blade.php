@@ -369,7 +369,8 @@
             } catch (error) {
                 toastr.error('Upload failed: ' + error.message);
             } finally {
-                uploadBtn.disabled = false;
+                // Re-enable button based on whether a file is still selected
+                uploadBtn.disabled = !fileInput.files.length;
                 uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload';
             }
         });
@@ -427,6 +428,16 @@
 
                 item.style.display = matchesSearch && matchesType ? '' : 'none';
             });
+
+            // Hide pagination if a filter is active to avoid confusion with filtered counts
+            const pagination = document.querySelector('.pagination');
+            if (pagination) {
+                if (search || type) {
+                    pagination.style.display = 'none';
+                } else {
+                    pagination.style.display = '';
+                }
+            }
         }
 
         searchInput.addEventListener('input', filterMedia);

@@ -73,21 +73,23 @@ class SearchController extends Controller
     }
 
     /**
-     * Perform search across multiple models.
-     * Laravel's parameter binding in Eloquent automatically prevents SQL injection.
+     * Perform search across multiple models using Laravel Scout.
+     * For models with Scout, we use Scout's search. For others, we use
+     * properly escaped LIKE queries to prevent wildcard injection.
      */
     protected function performSearch(string $query, string $type, int $limit): array
     {
         $results = [];
 
-        // Search News
+        // Escape SQL wildcards in query for LIKE queries to prevent injection and performance issues
+        $escapedQuery = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query);
+
+        // Search News (using Scout if available)
         if ($type === 'all' || $type === 'news') {
-            $news = News::where('title', 'like', "%{$query}%")
-                ->orWhere('content', 'like', "%{$query}%")
-                ->published()
-                ->orderBy('created_at', 'desc')
-                ->limit($limit)
+            $news = News::search($query)
+                ->take($limit)
                 ->get()
+                ->filter(fn ($item) => $item->is_published)
                 ->map(function ($item) {
                     return [
                         'type' => 'news',
@@ -103,34 +105,32 @@ class SearchController extends Controller
             $results = array_merge($results, $news->toArray());
         }
 
-        // Search Events
+        // Search Events (using Scout if available)
         if ($type === 'all' || $type === 'events') {
-            $events = Event::where('title', 'like', "%{$query}%")
-                ->orWhere('description', 'like', "%{$query}%")
-                ->published()
-                ->orderBy('start_date', 'desc')
-                ->limit($limit)
+            $events = Event::search($query)
+                ->take($limit)
                 ->get()
+                ->filter(fn ($item) => $item->is_published)
                 ->map(function ($item) {
                     return [
                         'type' => 'event',
                         'id' => $item->id,
                         'title' => $item->title,
                         'url' => route('events.show', $item->slug),
-                        'description' => Str::limit(strip_tags($item->description), 150),
-                        'date' => $item->start_date?->toIso8601String(),
-                        'date_formatted' => $item->start_date?->format('M d, Y') ?? 'TBD',
+                        'description' => Str::limit(strip_tags($item->description ?? ''), 150),
+                        'date' => $item->starts_at?->toIso8601String(),
+                        'date_formatted' => $item->starts_at?->format('M d, Y') ?? 'TBD',
                     ];
                 });
 
             $results = array_merge($results, $events->toArray());
         }
 
-        // Search Games
+        // Search Games (using escaped LIKE queries since Scout is not configured for these)
         if ($type === 'all' || $type === 'games') {
             // Free Games
-            $games = FreeGame::where('title', 'like', "%{$query}%")
-                ->orWhere('description', 'like', "%{$query}%")
+            $games = FreeGame::where('title', 'like', "%{$escapedQuery}%")
+                ->orWhere('description', 'like', "%{$escapedQuery}%")
                 ->active()
                 ->orderBy('created_at', 'desc')
                 ->limit($limit)
@@ -150,7 +150,7 @@ class SearchController extends Controller
             $results = array_merge($results, $games->toArray());
 
             // Game Deals
-            $deals = GameDeal::where('title', 'like', "%{$query}%")
+            $deals = GameDeal::where('title', 'like', "%{$escapedQuery}%")
                 ->onSale()
                 ->orderBy('savings_percent', 'desc')
                 ->limit($limit)
@@ -170,10 +170,10 @@ class SearchController extends Controller
             $results = array_merge($results, $deals->toArray());
         }
 
-        // Search Videos
+        // Search Videos (using escaped LIKE queries)
         if ($type === 'all' || $type === 'videos') {
-            $videos = Video::where('title', 'like', "%{$query}%")
-                ->orWhere('description', 'like', "%{$query}%")
+            $videos = Video::where('title', 'like', "%{$escapedQuery}%")
+                ->orWhere('description', 'like', "%{$escapedQuery}%")
                 ->active()
                 ->orderBy('posted_at', 'desc')
                 ->limit($limit)

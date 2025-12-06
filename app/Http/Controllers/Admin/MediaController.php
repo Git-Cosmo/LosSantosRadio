@@ -3,13 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Intervention\Image\Laravel\Facades\Image;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaController extends Controller
 {
+    /**
+     * Image quality settings for optimization.
+     */
+    private const IMAGE_QUALITY_JPEG = 85;
+
+    private const IMAGE_QUALITY_WEBP = 85;
+
     /**
      * Display media library index page.
      */
@@ -41,17 +51,22 @@ class MediaController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|max:10240|mimes:jpg,jpeg,png,gif,webp,svg,pdf,mp3,mp4,webm',
+            // Note: SVG files are excluded from allowed types due to XSS security risks
+            'file' => 'required|file|max:10240|mimes:jpg,jpeg,png,gif,webp,pdf,mp3,mp4,webm',
             'collection' => 'nullable|string|max:100',
-            'model_type' => 'nullable|string|max:255',
-            'model_id' => 'nullable|integer',
         ]);
 
         $file = $request->file('file');
         $collection = $request->input('collection', 'uploads');
 
         // Check if it's an image and optimize it
-        $isImage = str_starts_with($file->getMimeType(), 'image/') && ! str_contains($file->getMimeType(), 'svg');
+        $isImage = str_starts_with($file->getMimeType(), 'image/');
+
+        // Get or create a Setting model for media attachment
+        $setting = Setting::firstOrCreate(
+            ['key' => 'media_library'],
+            ['value' => 'enabled', 'type' => 'string', 'group' => 'system', 'description' => 'Media library placeholder']
+        );
 
         if ($isImage) {
             // Process image with Intervention Image for web friendliness
@@ -60,8 +75,9 @@ class MediaController extends Controller
             // Resize if too large (max 2000px on longest side)
             $image->scaleDown(2000, 2000);
 
-            // Generate optimized file path
-            $optimizedPath = storage_path('app/temp/'.uniqid().'_'.$file->getClientOriginalName());
+            // Generate optimized file path with UUID for uniqueness
+            $uniqueId = Str::uuid()->toString();
+            $optimizedPath = storage_path("app/temp/{$uniqueId}_{$file->getClientOriginalName()}");
 
             // Ensure temp directory exists
             if (! file_exists(storage_path('app/temp'))) {
@@ -71,64 +87,45 @@ class MediaController extends Controller
             // Save with quality optimization
             $extension = strtolower($file->getClientOriginalExtension());
             if ($extension === 'jpg' || $extension === 'jpeg') {
-                $image->toJpeg(85)->save($optimizedPath);
+                $image->toJpeg(self::IMAGE_QUALITY_JPEG)->save($optimizedPath);
             } elseif ($extension === 'png') {
                 $image->toPng()->save($optimizedPath);
             } elseif ($extension === 'webp') {
-                $image->toWebp(85)->save($optimizedPath);
+                $image->toWebp(self::IMAGE_QUALITY_WEBP)->save($optimizedPath);
             } else {
                 $image->save($optimizedPath);
             }
 
-            // Get file size after optimization
-            $fileSize = filesize($optimizedPath);
+            // Add media to the Setting model using Spatie Media Library
+            $media = $setting->addMedia($optimizedPath)
+                ->usingFileName(Str::uuid()->toString().'_'.$file->getClientOriginalName())
+                ->toMediaCollection($collection);
 
-            // Store the optimized image
-            $storedPath = $this->storeFile($optimizedPath, $file->getClientOriginalName(), $collection);
-
-            // Clean up temp file
-            @unlink($optimizedPath);
+            // Clean up temp file with proper error handling
+            if (file_exists($optimizedPath)) {
+                if (! unlink($optimizedPath)) {
+                    Log::warning("Failed to delete temp file: {$optimizedPath}");
+                }
+            }
         } else {
-            // Store non-image files directly
-            $storedPath = $file->storeAs(
-                "media/{$collection}",
-                time().'_'.$file->getClientOriginalName(),
-                'public'
-            );
-            $fileSize = $file->getSize();
+            // Add non-image files directly using Spatie Media Library
+            $media = $setting->addMedia($file)
+                ->usingFileName(Str::uuid()->toString().'_'.$file->getClientOriginalName())
+                ->toMediaCollection($collection);
         }
 
         return response()->json([
             'success' => true,
             'data' => [
-                'path' => $storedPath,
-                'name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
-                'file_name' => $file->getClientOriginalName(),
-                'mime_type' => $file->getMimeType(),
-                'size' => $fileSize,
-                'url' => asset('storage/'.$storedPath),
+                'id' => $media->id,
+                'path' => $media->getPath(),
+                'name' => $media->name,
+                'file_name' => $media->file_name,
+                'mime_type' => $media->mime_type,
+                'size' => $media->size,
+                'url' => $media->getUrl(),
             ],
         ], 201);
-    }
-
-    /**
-     * Store a file and return the path.
-     */
-    protected function storeFile(string $sourcePath, string $originalName, string $collection): string
-    {
-        $storagePath = "media/{$collection}";
-        $fileName = time().'_'.$originalName;
-        $fullPath = storage_path("app/public/{$storagePath}");
-
-        // Ensure directory exists
-        if (! file_exists($fullPath)) {
-            mkdir($fullPath, 0755, true);
-        }
-
-        // Copy file to storage
-        copy($sourcePath, "{$fullPath}/{$fileName}");
-
-        return "{$storagePath}/{$fileName}";
     }
 
     /**

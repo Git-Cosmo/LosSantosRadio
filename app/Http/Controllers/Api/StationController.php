@@ -60,6 +60,13 @@ class StationController extends Controller
      */
     public function submitRequest(Request $request, int $stationId, string $requestId): JsonResponse
     {
+        // Validate optional input fields
+        $validated = $request->validate([
+            'song_title' => 'nullable|string|max:255',
+            'song_artist' => 'nullable|string|max:255',
+            'guest_email' => 'nullable|email|max:255',
+        ]);
+
         // Check rate limits
         $canRequest = $this->requestLimiter->canRequest($request);
         if (! $canRequest['allowed']) {
@@ -96,11 +103,11 @@ class StationController extends Controller
             $songRequest = SongRequest::create([
                 'user_id' => $request->user()?->id,
                 'song_id' => $requestId,
-                'song_title' => $request->input('song_title', 'Unknown'),
-                'song_artist' => $request->input('song_artist', 'Unknown'),
+                'song_title' => $validated['song_title'] ?? 'Unknown',
+                'song_artist' => $validated['song_artist'] ?? 'Unknown',
                 'ip_address' => $request->ip(),
-                'session_id' => $request->session()->getId(),
-                'guest_email' => $request->input('guest_email'),
+                'session_id' => $request->hasSession() ? $request->session()->getId() : null,
+                'guest_email' => $validated['guest_email'] ?? null,
                 'status' => SongRequest::STATUS_PENDING,
             ]);
 
