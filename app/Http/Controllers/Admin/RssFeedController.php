@@ -165,10 +165,14 @@ class RssFeedController extends Controller
      */
     public function seed(): RedirectResponse
     {
+        // Run the RSS feed seeder
         \Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\RssFeedSeeder']);
 
+        // Get the count of feeds from the database after seeding
+        $feedCount = RssFeed::count();
+
         return redirect()->route('admin.rss-feeds.index')
-            ->with('success', 'RSS feeds populated successfully! 15 gaming news sources have been added.');
+            ->with('success', "RSS feeds populated successfully! {$feedCount} gaming news sources have been added.");
     }
 
     /**

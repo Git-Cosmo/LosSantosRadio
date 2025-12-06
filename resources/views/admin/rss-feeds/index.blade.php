@@ -28,7 +28,7 @@
                 <div class="alert" style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); text-align: center; padding: 2rem;">
                     <i class="fas fa-rss" style="font-size: 3rem; color: var(--color-text-muted); margin-bottom: 1rem;"></i>
                     <p style="color: var(--color-text-secondary); margin-bottom: 1rem; font-size: 1.125rem; font-weight: 600;">No RSS feeds configured yet.</p>
-                    <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">Get started by adding individual feeds or use Quick Populate to automatically add 15 high-quality gaming news sources.</p>
+                    <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">Get started by adding individual feeds or use Quick Populate to automatically add 15 high-quality gaming news sources (IGN, GameSpot, Polygon, PC Gamer, and more).</p>
                     <div style="display: flex; gap: 0.75rem; justify-content: center;">
                         <form action="{{ route('admin.rss-feeds.seed') }}" method="POST" style="margin: 0;">
                             @csrf
