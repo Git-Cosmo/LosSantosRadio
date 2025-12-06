@@ -161,6 +161,24 @@ class RssFeedController extends Controller
     }
 
     /**
+     * Populate the database with a curated list of default RSS feeds.
+     *
+     * Runs the RssFeedSeeder to add gaming news sources, then redirects to the RSS feeds index
+     * with a success message showing the total count of feeds in the database after seeding.
+     */
+    public function seed(): RedirectResponse
+    {
+        // Run the RSS feed seeder directly
+        (new \Database\Seeders\RssFeedSeeder)->run();
+
+        // Get the total count of feeds from the database
+        $feedCount = RssFeed::count();
+
+        return redirect()->route('admin.rss-feeds.index')
+            ->with('success', "RSS feeds populated successfully! {$feedCount} gaming news sources are now available.");
+    }
+
+    /**
      * Validate feed URL to prevent SSRF attacks.
      */
     protected function validateFeedUrl(string $url): void

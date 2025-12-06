@@ -1,5 +1,44 @@
 # Release Notes
 
+## Los Santos Radio - Recent Updates
+
+### [December 6, 2025] - Major Feature Improvements & UI Overhaul
+
+#### Added
+- **Enhanced RSS Feed System**
+  - Added "Quick Populate" feature to automatically add 15 high-quality gaming news RSS feeds
+  - Expanded RSS feed seeder with detailed descriptions and better categorization
+  - New feeds include: VG247, Game Informer, Nintendo Life, PlayStation Blog, Xbox Wire, Destructoid, and GameRant
+  - Added `/admin/rss-feeds/seed` route for easy feed population
+  - Enhanced UI with prominent "Quick Populate" button when no feeds exist
+
+- **Modern Now Playing UI**
+  - Redesigned Now Playing section with modern gradient backgrounds
+  - Enhanced album artwork display (280x280px) with hover effects and shadows
+  - Animated audio visualizer with glowing effects
+  - Gradient text styling for song titles
+  - Real-time listener count with improved visual design
+  - Enhanced progress bar with gradient and glow effects
+  - Improved rating buttons with better styling and spacing
+  - Enhanced "Up Next" preview card with better visual hierarchy
+  - Prominent player controls with larger, more accessible buttons
+  - Modernized DJ/AutoDJ info card with better visual design
+  - Added animated background overlays for depth
+
+#### Fixed
+- **Critical Bug #1**: Fixed undefined `$slot` variable error in `layouts/app.blade.php`
+  - Updated `offline.blade.php` to use component syntax instead of `@extends`
+  - Ensures proper component-based layout rendering
+  
+- **Critical Bug #2**: Fixed null assignment error in `ShoutcastService::$adminPassword`
+  - Changed property type from `string` to `?string` (nullable)
+  - Properly handles cases where admin password is not configured
+
+#### Improved
+- Discord Bot admin controls documentation
+- RSS feed management interface with better empty state
+- Overall homepage visual appeal and user experience
+
 ## [Unreleased](https://github.com/laravel/laravel/compare/v12.10.0...12.x)
 
 ## [v12.10.0](https://github.com/laravel/laravel/compare/v12.9.1...v12.10.0) - 2025-11-04

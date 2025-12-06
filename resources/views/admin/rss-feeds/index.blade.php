@@ -2,9 +2,17 @@
     <div class="admin-header">
         <h1>RSS Feeds Management</h1>
         <div style="display: flex; gap: 0.5rem;">
+            @if($feeds->isEmpty())
+                <form action="{{ route('admin.rss-feeds.seed') }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <button type="submit" class="btn btn-success" title="Automatically add popular gaming news RSS feeds">
+                        <i class="fas fa-magic"></i> Quick Populate
+                    </button>
+                </form>
+            @endif
             <form action="{{ route('admin.rss-feeds.import-all') }}" method="POST" style="margin: 0;">
                 @csrf
-                <button type="submit" class="btn btn-secondary" onclick="return confirm('Import articles from all active feeds?')">
+                <button type="submit" class="btn btn-secondary" data-confirm="Import articles from all active feeds?">
                     <i class="fas fa-sync-alt"></i> Import All Feeds
                 </button>
             </form>
@@ -19,10 +27,19 @@
             @if($feeds->isEmpty())
                 <div class="alert" style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); text-align: center; padding: 2rem;">
                     <i class="fas fa-rss" style="font-size: 3rem; color: var(--color-text-muted); margin-bottom: 1rem;"></i>
-                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">No RSS feeds configured yet.</p>
-                    <a href="{{ route('admin.rss-feeds.create') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Your First Feed
-                    </a>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem; font-size: 1.125rem; font-weight: 600;">No RSS feeds configured yet.</p>
+                    <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">Get started by adding individual feeds or use Quick Populate to automatically add 15 high-quality gaming news sources (IGN, GameSpot, Polygon, PC Gamer, and more).</p>
+                    <div style="display: flex; gap: 0.75rem; justify-content: center;">
+                        <form action="{{ route('admin.rss-feeds.seed') }}" method="POST" style="margin: 0;">
+                            @csrf
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-magic"></i> Quick Populate (15 Feeds)
+                            </button>
+                        </form>
+                        <a href="{{ route('admin.rss-feeds.create') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Custom Feed
+                        </a>
+                    </div>
                 </div>
             @else
                 <div class="table-responsive">
@@ -134,4 +151,19 @@
             </ul>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        // Handle confirmation dialogs for forms with data-confirm attribute
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('button[data-confirm]').forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    if (!confirm(this.getAttribute('data-confirm'))) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+    @endpush
 </x-admin.layouts.app>
