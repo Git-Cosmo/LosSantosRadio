@@ -31,8 +31,27 @@ class RadioController extends Controller
                 'history' => collect(),
                 'station' => null,
                 'streamStatus' => $this->icecast->getStatus(),
+                'recentNews' => collect(),
+                'upcomingEvents' => collect(),
+                'activePolls' => collect(),
             ]);
         }
+
+        // Fetch additional homepage content
+        $recentNews = \App\Models\News::published()
+            ->orderBy('published_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        $upcomingEvents = \App\Models\Event::upcoming()
+            ->orderBy('start_date', 'asc')
+            ->limit(3)
+            ->get();
+
+        $activePolls = \App\Models\Poll::active()
+            ->orderBy('created_at', 'desc')
+            ->limit(2)
+            ->get();
 
         return view('radio.index', [
             'nowPlaying' => $nowPlaying,
@@ -40,6 +59,9 @@ class RadioController extends Controller
             'station' => $station,
             'streamStatus' => $streamStatus,
             'streamUrl' => $this->icecast->getStreamUrl(),
+            'recentNews' => $recentNews,
+            'upcomingEvents' => $upcomingEvents,
+            'activePolls' => $activePolls,
         ]);
     }
 
