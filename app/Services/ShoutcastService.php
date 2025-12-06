@@ -187,8 +187,9 @@ class ShoutcastService
     protected function getBaseUrl(): string
     {
         $protocol = $this->ssl ? 'https' : 'http';
+        $host = rtrim($this->host, '/');
 
-        return "{$protocol}://{$this->host}:{$this->port}";
+        return "{$protocol}://{$host}:{$this->port}";
     }
 
     /**

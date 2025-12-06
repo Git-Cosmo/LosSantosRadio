@@ -2117,18 +2117,36 @@
             return {
                 showBanner: false,
                 consentGiven: false,
+                storageAvailable: true,
 
                 init() {
+                    // Check if localStorage is available
+                    try {
+                        const test = '__localStorage_test__';
+                        localStorage.setItem(test, test);
+                        localStorage.removeItem(test);
+                        this.storageAvailable = true;
+                    } catch (e) {
+                        this.storageAvailable = false;
+                    }
+
                     // Check if consent was already given
-                    const consent = localStorage.getItem('cookie_consent');
-                    if (!consent) {
-                        // Show banner after a short delay for better UX
+                    try {
+                        const consent = this.storageAvailable ? localStorage.getItem('cookie_consent') : null;
+                        if (!consent) {
+                            // Show banner after a short delay for better UX
+                            setTimeout(() => {
+                                this.showBanner = true;
+                            }, 1000);
+                        } else {
+                            this.consentGiven = true;
+                            this.applyConsent(consent);
+                        }
+                    } catch (e) {
+                        // If localStorage fails, show the banner
                         setTimeout(() => {
                             this.showBanner = true;
                         }, 1000);
-                    } else {
-                        this.consentGiven = true;
-                        this.applyConsent(consent);
                     }
                 },
 
@@ -2151,8 +2169,15 @@
                 },
 
                 saveConsent(level) {
-                    localStorage.setItem('cookie_consent', level);
-                    localStorage.setItem('cookie_consent_date', new Date().toISOString());
+                    try {
+                        if (this.storageAvailable) {
+                            localStorage.setItem('cookie_consent', level);
+                            localStorage.setItem('cookie_consent_date', new Date().toISOString());
+                        }
+                    } catch (e) {
+                        // Storage failed, consent will only persist for this session
+                        console.warn('Could not save cookie consent to localStorage');
+                    }
                     this.consentGiven = true;
                 },
 

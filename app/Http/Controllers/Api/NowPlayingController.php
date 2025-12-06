@@ -109,6 +109,10 @@ class NowPlayingController extends Controller
      *
      * This endpoint acts as a proxy for AzuraCast's SSE stream,
      * useful when direct access to AzuraCast is not possible.
+     *
+     * Note: For best performance, clients should connect directly to AzuraCast's
+     * SSE endpoint when possible. This proxy is designed for cases where
+     * direct access is blocked (e.g., CORS issues, firewall restrictions).
      */
     public function sseProxy(): StreamedResponse
     {
@@ -124,13 +128,18 @@ class NowPlayingController extends Controller
                 ob_end_clean();
             }
 
-            $baseUrl = rtrim(config('services.azuracast.base_url', ''), '/');
             $stationId = config('services.azuracast.station_id', 1);
             $lastData = null;
-            $pollInterval = 5; // seconds
 
-            // Set script timeout to 30 seconds (auto-reconnect expected)
-            set_time_limit(30);
+            // Poll interval - balance between responsiveness and server load
+            // AzuraCast caches now-playing for 30 seconds, so polling more frequently
+            // than 10 seconds provides little benefit while increasing server load
+            $pollInterval = (int) config('services.radio.polling_interval', 15);
+            $pollInterval = max(10, min($pollInterval, 30)); // Clamp between 10-30 seconds
+
+            // Set script timeout with buffer for graceful shutdown
+            $maxRuntime = 55; // Stay under typical 60-second timeouts
+            set_time_limit($maxRuntime + 5);
 
             // Send initial event
             echo "event: connect\n";
@@ -138,7 +147,6 @@ class NowPlayingController extends Controller
             flush();
 
             $startTime = time();
-            $maxRuntime = 25; // Max runtime before graceful close
 
             while (time() - $startTime < $maxRuntime) {
                 try {

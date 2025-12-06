@@ -125,9 +125,11 @@ class RadioServerController extends Controller
         if (! empty($validated['azuracast_station_id'])) {
             Setting::set('azuracast_station_id', $validated['azuracast_station_id']);
         }
-        // Only update API key if a new one was provided (not the masked value)
-        if (! empty($validated['azuracast_api_key']) && $validated['azuracast_api_key'] !== '••••••••') {
-            Setting::set('azuracast_api_key', $validated['azuracast_api_key']);
+        // Only update API key if a new one was provided
+        // Check that the field is not empty and doesn't consist entirely of bullet characters (masked value)
+        $apiKey = $validated['azuracast_api_key'] ?? '';
+        if (! empty($apiKey) && preg_match('/[^•]/', $apiKey)) {
+            Setting::set('azuracast_api_key', $apiKey);
         }
 
         // Save Icecast settings
