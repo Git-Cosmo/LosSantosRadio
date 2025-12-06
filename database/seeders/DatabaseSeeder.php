@@ -24,14 +24,6 @@ class DatabaseSeeder extends Seeder
         // Create roles for Online Radio Station / Gaming Community
         $this->createRoles();
 
-        // Create admin user
-        $admin = User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@lossantosradio.com',
-            'password' => bcrypt('password'),
-        ]);
-        $admin->assignRole('admin');
-
         // Create default settings
         $this->createDefaultSettings();
     }
