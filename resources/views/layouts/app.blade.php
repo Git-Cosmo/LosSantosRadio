@@ -8,9 +8,12 @@
     {{-- SEO: Basic Meta Tags --}}
     <title>{{ isset($title) ? $title . ' - Los Santos Radio' : 'Los Santos Radio - 24/7 Online Radio & Gaming Community' }}</title>
     <meta name="description" content="{{ $metaDescription ?? 'Los Santos Radio - Your 24/7 online radio station. Listen live, request songs, join our gaming community, and connect with listeners worldwide.' }}">
-    <meta name="keywords" content="Los Santos Radio, online radio, music streaming, song requests, gaming community, live DJ, Discord, radio station">
+    <meta name="keywords" content="Los Santos Radio, online radio, music streaming, song requests, gaming community, live DJ, Discord, radio station, internet radio, 24/7 music">
     <meta name="author" content="Los Santos Radio">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="msapplication-TileColor" content="#0d1117">
 
     {{-- SEO: Canonical URL --}}
     <link rel="canonical" href="{{ $canonicalUrl ?? url()->current() }}">
@@ -36,25 +39,96 @@
     <meta name="twitter:image" content="{{ $ogImage ?? asset('images/icons/icon-512x512.png') }}">
     <meta name="twitter:image:alt" content="{{ $ogImageAlt ?? 'Los Santos Radio Logo' }}">
 
-    {{-- SEO: Structured Data (JSON-LD) --}}
+    {{-- SEO: Structured Data (JSON-LD) - RadioStation --}}
     <script type="application/ld+json">
     {!! json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'RadioStation',
+        '@id' => config('app.url') . '/#radiostation',
         'name' => 'Los Santos Radio',
+        'alternateName' => 'LSR',
         'description' => $metaDescription ?? 'Los Santos Radio - Your 24/7 online radio station featuring music streaming, song requests, and an active gaming community.',
         'url' => config('app.url'),
-        'logo' => asset('images/icons/icon-512x512.png'),
+        'logo' => [
+            '@type' => 'ImageObject',
+            'url' => asset('images/icons/icon-512x512.png'),
+            'width' => 512,
+            'height' => 512
+        ],
+        'image' => asset('images/icons/icon-512x512.png'),
         'broadcaster' => [
             '@type' => 'Organization',
-            'name' => 'Los Santos Radio'
+            'name' => 'Los Santos Radio',
+            'url' => config('app.url')
         ],
         'areaServed' => [
             '@type' => 'Place',
             'name' => 'Worldwide'
+        ],
+        'potentialAction' => [
+            '@type' => 'ListenAction',
+            'target' => [
+                '@type' => 'EntryPoint',
+                'urlTemplate' => config('app.url'),
+                'actionPlatform' => [
+                    'http://schema.org/DesktopWebPlatform',
+                    'http://schema.org/MobileWebPlatform'
+                ]
+            ],
+            'expectsAcceptanceOf' => [
+                '@type' => 'Offer',
+                'price' => 0,
+                'priceCurrency' => 'USD',
+                'eligibleRegion' => [
+                    '@type' => 'Place',
+                    'name' => 'Worldwide'
+                ]
+            ]
+        ],
+        'sameAs' => array_filter([
+            config('services.discord.invite_url'),
+        ])
+    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+
+    {{-- SEO: Structured Data (JSON-LD) - WebSite with SearchAction --}}
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        '@id' => config('app.url') . '/#website',
+        'name' => 'Los Santos Radio',
+        'url' => config('app.url'),
+        'potentialAction' => [
+            '@type' => 'SearchAction',
+            'target' => [
+                '@type' => 'EntryPoint',
+                'urlTemplate' => config('app.url') . '/search?q={search_term_string}'
+            ],
+            'query-input' => 'required name=search_term_string'
         ]
     ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
+
+    {{-- SEO: Structured Data (JSON-LD) - BreadcrumbList --}}
+    @if(isset($breadcrumbs) && count($breadcrumbs) > 0)
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => collect($breadcrumbs)->map(function($item, $index) {
+            return [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $item['name'],
+                'item' => $item['url'] ?? null
+            ];
+        })->values()->toArray()
+    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    @endif
+
+    {{-- Additional page-specific structured data --}}
     @if(isset($structuredData))
     <script type="application/ld+json">
     {!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
