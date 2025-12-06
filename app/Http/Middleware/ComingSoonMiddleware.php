@@ -40,8 +40,16 @@ class ComingSoonMiddleware
         }
 
         // Allow admin users to bypass
-        if (Auth::check() && Auth::user()->hasAnyRole(['admin', 'staff'])) {
-            return $next($request);
+        if (Auth::check()) {
+            try {
+                $user = Auth::user();
+                if (method_exists($user, 'hasAnyRole') && $user->hasAnyRole(['admin', 'staff'])) {
+                    return $next($request);
+                }
+            } catch (\Exception $e) {
+                // If role checking fails, continue to coming soon page
+                // This ensures the site doesn't break if roles aren't configured
+            }
         }
 
         // Check if the current route is in the allowed routes

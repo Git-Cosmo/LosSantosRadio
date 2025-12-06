@@ -136,4 +136,16 @@ return [
 
     'coming_soon' => env('COMINGSOON', false),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Launch Date
+    |--------------------------------------------------------------------------
+    |
+    | The target launch date for the countdown timer on the coming soon page.
+    | Format should be ISO 8601 (e.g., '2024-12-10T18:00:00Z').
+    |
+    */
+
+    'launch_date' => env('LAUNCH_DATE', '2024-12-10T18:00:00Z'),
+
 ];

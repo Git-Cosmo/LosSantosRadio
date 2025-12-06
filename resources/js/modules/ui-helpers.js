@@ -77,7 +77,7 @@ export function addEntranceAnimations() {
 
 /**
  * Global toast notification helper
- * Uses toastr if available, falls back to console
+ * Uses toastr if available, falls back silently in production
  * @param {string} type - Type of toast: 'success', 'error', 'warning', 'info'
  * @param {string} message - Message to display
  */
@@ -99,9 +99,9 @@ export function showToast(type, message) {
             default:
                 toastr.info(message);
         }
-    } else {
-        console.log(`[${type.toUpperCase()}] ${message}`);
     }
+    // Silent fallback - toastr not available, notification is skipped
+    // This prevents console noise in production when toastr isn't loaded
 }
 
 // Make functions available globally

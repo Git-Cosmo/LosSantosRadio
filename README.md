@@ -205,6 +205,7 @@ ICECAST_SSL=false
 
 # Coming Soon Mode
 COMINGSOON=false
+LAUNCH_DATE="2024-12-10T18:00:00Z"
 
 # OAuth Providers
 DISCORD_CLIENT_ID=
@@ -251,11 +252,13 @@ Default limits (configurable via admin panel):
 
 Enable pre-launch mode by setting `COMINGSOON=true` in your `.env` file. When enabled:
 - All visitors see a stylish "Coming Soon" landing page
-- A countdown timer shows time until December 10th, 18:00 UTC
+- A countdown timer shows time until the configured launch date
 - An integrated "Now Playing" section displays current track information
 - An audio player allows visitors to listen to the stream
 - Admin and staff users can still access the full site normally
 - API endpoints remain accessible for the audio player functionality
+
+Configure the launch date with `LAUNCH_DATE` environment variable (ISO 8601 format, e.g., `2024-12-10T18:00:00Z`).
 
 To disable coming soon mode and launch the site, set `COMINGSOON=false` or remove the variable entirely.
 

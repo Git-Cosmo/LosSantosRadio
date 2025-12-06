@@ -15,6 +15,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <!-- Toastr CSS for notifications -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -760,8 +763,8 @@
                 minutes: '00',
                 seconds: '00',
                 interval: null,
-                // Target: December 10th, 2024, 18:00 UTC
-                targetDate: new Date('2024-12-10T18:00:00Z'),
+                // Target date is passed from Laravel config
+                targetDate: new Date('{{ config('app.launch_date', '2024-12-10T18:00:00Z') }}'),
 
                 init() {
                     this.updateCountdown();
@@ -834,7 +837,7 @@
 
                 togglePlay() {
                     if (!this.streamUrl) {
-                        alert('Stream not available yet. Check back at launch!');
+                        showToast('info', 'Stream not available yet. Check back at launch!');
                         return;
                     }
 
@@ -851,7 +854,7 @@
                             this.isPlaying = true;
                         }).catch((e) => {
                             console.error('Playback failed:', e);
-                            alert('Unable to play stream. Please try again.');
+                            showToast('error', 'Unable to play stream. Please try again.');
                         });
                     }
                 },
@@ -872,6 +875,51 @@
                     this.setVolume();
                 }
             };
+        }
+    </script>
+
+    <!-- jQuery (required for Toastr) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        // Configure Toastr options
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Global toast helper function
+        function showToast(type, message) {
+            switch(type) {
+                case 'success':
+                    toastr.success(message);
+                    break;
+                case 'error':
+                    toastr.error(message);
+                    break;
+                case 'warning':
+                    toastr.warning(message);
+                    break;
+                case 'info':
+                    toastr.info(message);
+                    break;
+                default:
+                    toastr.info(message);
+            }
         }
     </script>
 </body>
