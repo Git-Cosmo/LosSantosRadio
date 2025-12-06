@@ -561,7 +561,17 @@ RADIO_SERVER_TYPE=azuracast          # azuracast, shoutcast, or icecast
 RADIO_NOW_PLAYING_METHOD=sse         # sse or polling
 RADIO_POLLING_INTERVAL=15            # seconds
 RADIO_SSE_ENABLED=true               # Enable SSE high-performance updates
+RADIO_SSE_MAX_RUNTIME=28             # Max runtime for SSE proxy (reduce for load balancers with shorter timeouts)
 ```
+
+#### SSE Proxy Considerations
+
+The SSE proxy endpoint (`/api/nowplaying/sse`) keeps a PHP worker occupied for the connection duration. For production environments with high traffic, consider:
+
+1. **Direct Connection**: Configure clients to connect directly to AzuraCast's SSE endpoint when possible
+2. **CORS Setup**: If using direct connection, ensure AzuraCast has proper CORS headers configured for your domain
+3. **Timeout Compatibility**: The default `RADIO_SSE_MAX_RUNTIME` of 28 seconds is designed to work with most load balancers (AWS ALB, Nginx default is 30s). Adjust if needed.
+4. **Resource Planning**: Each active SSE connection uses one PHP worker. Plan your PHP-FPM pool size accordingly.
 
 ### Bug Fixes
 - **Login Route 404s Fixed** - Added support for both `/auth/{provider}/callback` and `/login/{provider}/callback` OAuth redirect URIs. OAuth providers (Discord, Twitch, Steam, Battle.net) can now be configured with either route pattern, resolving 404 errors when callbacks use the `/login` prefix.
