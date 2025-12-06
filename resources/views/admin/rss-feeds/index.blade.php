@@ -12,7 +12,7 @@
             @endif
             <form action="{{ route('admin.rss-feeds.import-all') }}" method="POST" style="margin: 0;">
                 @csrf
-                <button type="submit" class="btn btn-secondary" onclick="return confirm('Import articles from all active feeds?')">
+                <button type="submit" class="btn btn-secondary" data-confirm="Import articles from all active feeds?">
                     <i class="fas fa-sync-alt"></i> Import All Feeds
                 </button>
             </form>
@@ -151,4 +151,19 @@
             </ul>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        // Handle confirmation dialogs for forms with data-confirm attribute
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('button[data-confirm]').forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    if (!confirm(this.getAttribute('data-confirm'))) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+    @endpush
 </x-admin.layouts.app>

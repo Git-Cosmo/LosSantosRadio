@@ -161,12 +161,15 @@ class RssFeedController extends Controller
     }
 
     /**
-     * Populate database with default RSS feeds.
+     * Populate the database with a curated list of default RSS feeds.
+     *
+     * Runs the RssFeedSeeder to add gaming news sources, then redirects to the RSS feeds index
+     * with a success message indicating the number of feeds added.
      */
     public function seed(): RedirectResponse
     {
-        // Run the RSS feed seeder
-        \Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\RssFeedSeeder']);
+        // Run the RSS feed seeder directly
+        (new \Database\Seeders\RssFeedSeeder)->run();
 
         // Get the count of feeds from the database after seeding
         $feedCount = RssFeed::count();

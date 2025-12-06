@@ -1,4 +1,22 @@
 <x-layouts.app>
+    @push('styles')
+    <style>
+        /* Hover effect for album artwork */
+        .now-playing-art:hover {
+            transform: scale(1.05) !important;
+        }
+
+        /* Accessibility fallback for gradient text */
+        @supports not (-webkit-background-clip: text) {
+            .now-playing-title {
+                color: var(--color-text) !important;
+                background: none !important;
+                -webkit-text-fill-color: inherit !important;
+            }
+        }
+    </style>
+    @endpush
+
     @if(isset($error))
         <div class="alert alert-error">
             {{ $error }}
@@ -40,9 +58,7 @@
                                          alt="Album art for {{ $nowPlaying->currentSong->title }} by {{ $nowPlaying->currentSong->artist }}"
                                          class="now-playing-art"
                                          style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
-                                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2230%22>🎵</text></svg>'"
-                                         onmouseover="this.style.transform='scale(1.05)'"
-                                         onmouseout="this.style.transform='scale(1)'">
+                                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2230%22>🎵</text></svg>'">
                                     
                                     <!-- Animated Visualizer Overlay -->
                                     <div class="now-playing-equalizer" style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 4px; height: 30px; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 20px;" aria-hidden="true">
@@ -55,7 +71,7 @@
                                 </div>
                             </div>
                             <div class="now-playing-info" style="flex: 1; min-width: 0;">
-                                <h3 class="now-playing-title" id="song-title" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; background: linear-gradient(135deg, var(--color-text), var(--color-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ $nowPlaying->currentSong->title }}</h3>
+                                <h3 class="now-playing-title" id="song-title" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; color: var(--color-text); background: linear-gradient(135deg, var(--color-text), var(--color-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ $nowPlaying->currentSong->title }}</h3>
                                 <p class="now-playing-artist" id="song-artist" style="font-size: 1.25rem; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 1rem;">{{ $nowPlaying->currentSong->artist }}</p>
                                 @if($nowPlaying->currentSong->album)
                                     <p style="color: var(--color-text-muted); font-size: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
@@ -73,11 +89,11 @@
                                      aria-label="Rate this song"
                                      style="margin-bottom: 1.5rem;">
                                     <div style="display: flex; gap: 1rem; align-items: center;">
-                                        <button class="rating-btn upvote" onclick="rateSong(1)" title="Like this song" aria-label="Like this song" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
+                                        <button class="rating-btn upvote" data-rating="1" title="Like this song" aria-label="Like this song" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
                                             <i class="fas fa-thumbs-up" aria-hidden="true" style="color: #43b581; font-size: 1.125rem;"></i>
                                             <span id="upvote-count" style="font-size: 1rem;">0</span>
                                         </button>
-                                        <button class="rating-btn downvote" onclick="rateSong(-1)" title="Dislike this song" aria-label="Dislike this song" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
+                                        <button class="rating-btn downvote" data-rating="-1" title="Dislike this song" aria-label="Dislike this song" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
                                             <i class="fas fa-thumbs-down" aria-hidden="true" style="color: #f04747; font-size: 1.125rem;"></i>
                                             <span id="downvote-count" style="font-size: 1rem;">0</span>
                                         </button>
@@ -117,7 +133,7 @@
 
                         <!-- Enhanced Audio Player Controls -->
                         <div style="margin-top: 2rem; display: flex; align-items: center; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border);">
-                            <button id="play-btn" class="btn btn-primary" onclick="togglePlayback()" style="flex: 1; padding: 1rem 2rem; font-size: 1.125rem; font-weight: 600; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3); transition: all 0.3s ease;">
+                            <button id="play-btn" class="btn btn-primary" style="flex: 1; padding: 1rem 2rem; font-size: 1.125rem; font-weight: 600; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3); transition: all 0.3s ease;">
                                 <i class="fas fa-play" style="font-size: 1.25rem;"></i> 
                                 <span>Listen Live</span>
                             </button>
@@ -594,6 +610,20 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Attach event listener to play button
+            const playBtn = document.getElementById('play-btn');
+            if (playBtn) {
+                playBtn.addEventListener('click', togglePlayback);
+            }
+
+            // Attach event listeners to rating buttons
+            document.querySelectorAll('.rating-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    rateSong(rating);
+                });
+            });
+
             loadSongRating();
             loadTrendingSongs();
             createScrollToTop();
