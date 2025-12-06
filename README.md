@@ -493,6 +493,86 @@ database/
 
 ## 🔄 Recent Updates
 
+### Site Revamp (December 2024)
+
+#### Multi-Server Support
+- **Shoutcast Integration** - Added full support for Shoutcast radio servers alongside AzuraCast and Icecast
+- **Radio Server Admin Panel** - New admin section (`/admin/radio`) for managing radio server settings:
+  - Server type selection (AzuraCast, Shoutcast, Icecast)
+  - Connection testing for all server types
+  - Server-specific configuration options
+  - Real-time status indicators
+
+#### High-Performance Now Playing Updates
+- **Server-Sent Events (SSE)** - Implemented real-time now playing updates as recommended by [AzuraCast documentation](https://azuracast.com/docs/developers/now-playing-data/#high-performance-updates)
+- **Automatic Fallback** - Falls back to polling when SSE is unavailable
+- **Configurable Update Method** - Choose between SSE and polling in admin panel
+- **API Endpoints**:
+  - `GET /api/nowplaying` - Current now playing data
+  - `GET /api/nowplaying/sse-config` - SSE configuration for clients
+  - `GET /api/nowplaying/sse` - SSE proxy endpoint
+
+#### Enhanced Now Playing Widget
+- **Visual Improvements** - Gradient accents, animated progress bar with handle, pulse effects
+- **Better Animations** - Enhanced equalizer bars, smooth transitions
+- **Rating UI** - Redesigned upvote/downvote buttons with hover states
+- **Live Badge** - Animated pulse effect for live broadcasts
+
+#### Legal Compliance & Cookie Consent
+- **Cookie Consent Banner** - Modern, accessible cookie consent popup with:
+  - "Accept All" and "Essential Only" options
+  - Local storage persistence
+  - Dark/light mode support
+- **Legal Pages** - Complete legal documentation:
+  - Terms of Service (`/legal/terms`)
+  - Privacy Policy (`/legal/privacy`)
+  - Cookie Policy (`/legal/cookies`)
+- **Footer Enhancement** - New footer design with:
+  - Brand logo and tagline
+  - Quick navigation links
+  - Legal page links
+  - Disclaimer (not affiliated with video games)
+
+#### SEO Improvements
+- **Enhanced Meta Tags** - Extended robots meta with googlebot, max-image-preview, max-snippet
+- **Theme Colors** - Added theme-color and msapplication-TileColor meta tags
+- **Structured Data** - Improved JSON-LD with:
+  - RadioStation schema with ListenAction
+  - WebSite schema with SearchAction
+  - BreadcrumbList support for navigation
+- **Sitemap Updates** - Legal pages added to sitemap
+
+#### CheapShark API Fix
+- **Sorting Issue Fixed** - Corrected the API call to properly fetch high-savings deals first
+- **Verified Integration** - Game deals now correctly sorted by savings percentage
+
+### Environment Variables (New)
+
+```env
+# Shoutcast Configuration (NEW)
+SHOUTCAST_HOST=localhost
+SHOUTCAST_PORT=8000
+SHOUTCAST_ADMIN_PASSWORD=
+SHOUTCAST_SSL=false
+SHOUTCAST_STREAM_ID=1
+
+# Radio Server Configuration (NEW)
+RADIO_SERVER_TYPE=azuracast          # azuracast, shoutcast, or icecast
+RADIO_NOW_PLAYING_METHOD=sse         # sse or polling
+RADIO_POLLING_INTERVAL=15            # seconds
+RADIO_SSE_ENABLED=true               # Enable SSE high-performance updates
+RADIO_SSE_MAX_RUNTIME=28             # Max runtime for SSE proxy (reduce for load balancers with shorter timeouts)
+```
+
+#### SSE Proxy Considerations
+
+The SSE proxy endpoint (`/api/nowplaying/sse`) keeps a PHP worker occupied for the connection duration. For production environments with high traffic, consider:
+
+1. **Direct Connection**: Configure clients to connect directly to AzuraCast's SSE endpoint when possible
+2. **CORS Setup**: If using direct connection, ensure AzuraCast has proper CORS headers configured for your domain
+3. **Timeout Compatibility**: The default `RADIO_SSE_MAX_RUNTIME` of 28 seconds is designed to work with most load balancers (AWS ALB, Nginx default is 30s). Adjust if needed.
+4. **Resource Planning**: Each active SSE connection uses one PHP worker. Plan your PHP-FPM pool size accordingly.
+
 ### Bug Fixes
 - **Login Route 404s Fixed** - Added support for both `/auth/{provider}/callback` and `/login/{provider}/callback` OAuth redirect URIs. OAuth providers (Discord, Twitch, Steam, Battle.net) can now be configured with either route pattern, resolving 404 errors when callbacks use the `/login` prefix.
 - **Request Page Song List** - Fixed the song library not displaying songs on the request page despite showing the correct total count. The AzuraCast API response uses a `rows` key for paginated request data which is now properly handled.

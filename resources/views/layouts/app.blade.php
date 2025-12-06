@@ -8,9 +8,12 @@
     {{-- SEO: Basic Meta Tags --}}
     <title>{{ isset($title) ? $title . ' - Los Santos Radio' : 'Los Santos Radio - 24/7 Online Radio & Gaming Community' }}</title>
     <meta name="description" content="{{ $metaDescription ?? 'Los Santos Radio - Your 24/7 online radio station. Listen live, request songs, join our gaming community, and connect with listeners worldwide.' }}">
-    <meta name="keywords" content="Los Santos Radio, online radio, music streaming, song requests, gaming community, live DJ, Discord, radio station">
+    <meta name="keywords" content="Los Santos Radio, online radio, music streaming, song requests, gaming community, live DJ, Discord, radio station, internet radio, 24/7 music">
     <meta name="author" content="Los Santos Radio">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="msapplication-TileColor" content="#0d1117">
 
     {{-- SEO: Canonical URL --}}
     <link rel="canonical" href="{{ $canonicalUrl ?? url()->current() }}">
@@ -36,25 +39,96 @@
     <meta name="twitter:image" content="{{ $ogImage ?? asset('images/icons/icon-512x512.png') }}">
     <meta name="twitter:image:alt" content="{{ $ogImageAlt ?? 'Los Santos Radio Logo' }}">
 
-    {{-- SEO: Structured Data (JSON-LD) --}}
+    {{-- SEO: Structured Data (JSON-LD) - RadioStation --}}
     <script type="application/ld+json">
     {!! json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'RadioStation',
+        '@id' => config('app.url') . '/#radiostation',
         'name' => 'Los Santos Radio',
+        'alternateName' => 'LSR',
         'description' => $metaDescription ?? 'Los Santos Radio - Your 24/7 online radio station featuring music streaming, song requests, and an active gaming community.',
         'url' => config('app.url'),
-        'logo' => asset('images/icons/icon-512x512.png'),
+        'logo' => [
+            '@type' => 'ImageObject',
+            'url' => asset('images/icons/icon-512x512.png'),
+            'width' => 512,
+            'height' => 512
+        ],
+        'image' => asset('images/icons/icon-512x512.png'),
         'broadcaster' => [
             '@type' => 'Organization',
-            'name' => 'Los Santos Radio'
+            'name' => 'Los Santos Radio',
+            'url' => config('app.url')
         ],
         'areaServed' => [
             '@type' => 'Place',
             'name' => 'Worldwide'
+        ],
+        'potentialAction' => [
+            '@type' => 'ListenAction',
+            'target' => [
+                '@type' => 'EntryPoint',
+                'urlTemplate' => config('app.url'),
+                'actionPlatform' => [
+                    'http://schema.org/DesktopWebPlatform',
+                    'http://schema.org/MobileWebPlatform'
+                ]
+            ],
+            'expectsAcceptanceOf' => [
+                '@type' => 'Offer',
+                'price' => 0,
+                'priceCurrency' => 'USD',
+                'eligibleRegion' => [
+                    '@type' => 'Place',
+                    'name' => 'Worldwide'
+                ]
+            ]
+        ],
+        'sameAs' => array_filter([
+            config('services.discord.invite_url'),
+        ])
+    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+
+    {{-- SEO: Structured Data (JSON-LD) - WebSite with SearchAction --}}
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        '@id' => config('app.url') . '/#website',
+        'name' => 'Los Santos Radio',
+        'url' => config('app.url'),
+        'potentialAction' => [
+            '@type' => 'SearchAction',
+            'target' => [
+                '@type' => 'EntryPoint',
+                'urlTemplate' => config('app.url') . '/search?q={search_term_string}'
+            ],
+            'query-input' => 'required name=search_term_string'
         ]
     ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
+
+    {{-- SEO: Structured Data (JSON-LD) - BreadcrumbList --}}
+    @if(isset($breadcrumbs) && count($breadcrumbs) > 0)
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => collect($breadcrumbs)->map(function($item, $index) {
+            return [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $item['name'],
+                'item' => $item['url'] ?? null
+            ];
+        })->values()->toArray()
+    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    @endif
+
+    {{-- Additional page-specific structured data --}}
     @if(isset($structuredData))
     <script type="application/ld+json">
     {!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
@@ -1336,7 +1410,216 @@
 
         /* Footer Enhancement */
         .footer {
-            background: linear-gradient(180deg, transparent 0%, rgba(88, 166, 255, 0.05) 100%);
+            background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            border-top: 1px solid var(--color-border);
+            padding: 2rem 1.5rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-main {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-accent), #a855f7);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .footer-brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .footer-tagline {
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--color-accent);
+            text-decoration: none;
+        }
+
+        .footer-legal {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .footer-legal a {
+            color: var(--color-text-muted);
+            font-size: 0.8125rem;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-legal a:hover {
+            color: var(--color-accent);
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .footer-bottom p {
+            color: var(--color-text-muted);
+            font-size: 0.8125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-disclaimer {
+            font-size: 0.75rem !important;
+            color: var(--color-text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.8;
+        }
+
+        /* Cookie Consent Banner */
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--color-bg-secondary);
+            border-top: 1px solid var(--color-border);
+            padding: 1rem 1.5rem;
+            z-index: 9999;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .cookie-consent-enter {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .cookie-consent-leave {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(100%); opacity: 0; }
+        }
+
+        .cookie-consent-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .cookie-consent-text {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .cookie-icon {
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            flex-shrink: 0;
+        }
+
+        .cookie-title {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .cookie-description {
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .cookie-learn-more {
+            color: var(--color-accent);
+            text-decoration: underline;
+        }
+
+        .cookie-consent-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .footer-links {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .footer-legal {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .cookie-consent-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cookie-consent-text {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cookie-consent-actions {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         /* Scroll to Top Indicator */
@@ -1700,10 +1983,67 @@
     </main>
 
     <footer class="footer">
-        <p>&copy; {{ date('Y') }} Los Santos Radio. Powered by AzuraCast.</p>
+        <div class="footer-content">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-radio"></i>
+                    </div>
+                    <span class="footer-brand-name">Los Santos Radio</span>
+                </div>
+                <p class="footer-tagline">Your 24/7 online radio station</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="{{ route('home') }}">Home</a>
+                <a href="{{ route('schedule') }}">Schedule</a>
+                <a href="{{ route('requests.index') }}">Request</a>
+                <a href="{{ route('news.index') }}">News</a>
+            </div>
+
+            <div class="footer-legal">
+                <a href="{{ route('legal.terms') }}">Terms of Service</a>
+                <a href="{{ route('legal.privacy') }}">Privacy Policy</a>
+                <a href="{{ route('legal.cookies') }}">Cookie Policy</a>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; {{ date('Y') }} Los Santos Radio. All rights reserved. Powered by AzuraCast.</p>
+                <p class="footer-disclaimer">
+                    This website is an independent project and is not affiliated with, endorsed by, or connected to
+                    Rockstar Games, Take-Two Interactive, or any video game franchise.
+                </p>
+            </div>
+        </div>
     </footer>
 
+    <!-- Cookie Consent Banner -->
+    <div x-data="cookieConsent()" x-init="init()" x-show="showBanner" x-cloak
+         class="cookie-consent" x-transition:enter="cookie-consent-enter" x-transition:leave="cookie-consent-leave">
+        <div class="cookie-consent-content">
+            <div class="cookie-consent-text">
+                <i class="fas fa-cookie-bite cookie-icon"></i>
+                <div>
+                    <p class="cookie-title">We use cookies</p>
+                    <p class="cookie-description">
+                        We use cookies to enhance your browsing experience, analyze site traffic, and personalize content.
+                        By clicking "Accept All", you consent to our use of cookies.
+                        <a href="{{ route('legal.cookies') }}" class="cookie-learn-more">Learn more</a>
+                    </p>
+                </div>
+            </div>
+            <div class="cookie-consent-actions">
+                <button @click="acceptEssential()" class="btn btn-secondary btn-sm">Essential Only</button>
+                <button @click="acceptAll()" class="btn btn-primary btn-sm">Accept All</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Initialize cookie consent with default (essential only) until user chooses
+        // This ensures scripts can check consent status early in page lifecycle
+        window.cookieConsent = { analytics: false, marketing: false };
+
         // CSRF token for AJAX requests
         window.csrfToken = '{{ csrf_token() }}';
 
@@ -1772,6 +2112,89 @@
                 },
                 getFormatLabel() {
                     return this.format === '24' ? '24H' : '12H';
+                }
+            };
+        }
+
+        // Cookie Consent Alpine.js component
+        function cookieConsent() {
+            return {
+                showBanner: false,
+                consentGiven: false,
+                storageAvailable: true,
+
+                init() {
+                    // Check if localStorage is available
+                    try {
+                        const test = '__localStorage_test__';
+                        localStorage.setItem(test, test);
+                        localStorage.removeItem(test);
+                        this.storageAvailable = true;
+                    } catch (e) {
+                        this.storageAvailable = false;
+                    }
+
+                    // Check if consent was already given
+                    try {
+                        const consent = this.storageAvailable ? localStorage.getItem('cookie_consent') : null;
+                        if (!consent) {
+                            // Show banner immediately for GDPR compliance
+                            this.showBanner = true;
+                        } else {
+                            this.consentGiven = true;
+                            this.applyConsent(consent);
+                        }
+                    } catch (e) {
+                        // If localStorage fails, show the banner immediately
+                        this.showBanner = true;
+                    }
+                },
+
+                acceptAll() {
+                    this.saveConsent('all');
+                    this.showBanner = false;
+                    this.applyConsent('all');
+                    if (window.showToast) {
+                        window.showToast('success', 'Cookie preferences saved');
+                    }
+                },
+
+                acceptEssential() {
+                    this.saveConsent('essential');
+                    this.showBanner = false;
+                    this.applyConsent('essential');
+                    if (window.showToast) {
+                        window.showToast('info', 'Only essential cookies enabled');
+                    }
+                },
+
+                saveConsent(level) {
+                    try {
+                        if (this.storageAvailable) {
+                            localStorage.setItem('cookie_consent', level);
+                            localStorage.setItem('cookie_consent_date', new Date().toISOString());
+                        }
+                    } catch (e) {
+                        // Storage failed, consent will only persist for this session
+                        console.warn('Could not save cookie consent to localStorage');
+                    }
+                    this.consentGiven = true;
+                },
+
+                applyConsent(level) {
+                    // Apply consent settings
+                    if (level === 'all') {
+                        // Enable analytics and other optional cookies
+                        window.cookieConsent = { analytics: true, marketing: true };
+                    } else {
+                        // Only essential cookies
+                        window.cookieConsent = { analytics: false, marketing: false };
+                    }
+
+                    // Dispatch event for other scripts to listen to
+                    document.dispatchEvent(new CustomEvent('cookieConsentChanged', {
+                        detail: window.cookieConsent
+                    }));
                 }
             };
         }

@@ -580,7 +580,163 @@
             loadTrendingSongs();
             createScrollToTop();
             addEntranceAnimations();
+            initHighPerformanceUpdates();
         });
+
+        // High-performance Now Playing updates using SSE
+        function initHighPerformanceUpdates() {
+            fetch('/api/nowplaying/sse-config')
+                .then(response => response.json())
+                .then(config => {
+                    if (config.success && config.sse_enabled) {
+                        // Use SSE for real-time updates
+                        initSSEUpdates(config);
+                    } else {
+                        // Fall back to polling
+                        initPollingUpdates(config.polling_interval || 15);
+                    }
+                })
+                .catch(() => {
+                    // Default to polling on error
+                    initPollingUpdates(15);
+                });
+        }
+
+        // Initialize SSE-based updates
+        function initSSEUpdates(config) {
+            // Connect directly to AzuraCast's SSE endpoint
+            const sseUrl = new URL(config.sse_url);
+            Object.keys(config.sse_params || {}).forEach(key => {
+                sseUrl.searchParams.append(key, config.sse_params[key]);
+            });
+
+            let eventSource = null;
+            let reconnectAttempts = 0;
+            const maxReconnectAttempts = 5;
+            const reconnectDelay = 3000;
+
+            function connect() {
+                try {
+                    eventSource = new EventSource(sseUrl.toString());
+                } catch (err) {
+                    console.error('Failed to create EventSource:', err);
+                    // Fall back to polling immediately
+                    initPollingUpdates(config.polling_interval || 15);
+                    return;
+                }
+
+                eventSource.addEventListener('message', function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        // Check if this is a nowplaying update for our station
+                        if (data.np) {
+                            updateNowPlayingUI(data.np);
+                        }
+                    } catch (e) {
+                        console.error('SSE parse error:', e);
+                    }
+                });
+
+                eventSource.addEventListener('open', function() {
+                    console.log('SSE connected');
+                    reconnectAttempts = 0;
+                });
+
+                eventSource.addEventListener('error', function(event) {
+                    console.warn('SSE error, will reconnect...');
+                    eventSource.close();
+
+                    if (reconnectAttempts < maxReconnectAttempts) {
+                        reconnectAttempts++;
+                        // True exponential backoff: 3s, 6s, 12s, 24s, 48s
+                        setTimeout(connect, reconnectDelay * Math.pow(2, reconnectAttempts - 1));
+                    } else {
+                        console.log('SSE max reconnects reached, falling back to polling');
+                        initPollingUpdates(config.polling_interval || 15);
+                    }
+                });
+            }
+
+            connect();
+
+            // Clean up on page unload
+            window.addEventListener('beforeunload', () => {
+                if (eventSource) {
+                    eventSource.close();
+                }
+            });
+        }
+
+        // Initialize polling-based updates
+        function initPollingUpdates(interval) {
+            setInterval(function() {
+                fetch('/api/nowplaying/')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateNowPlayingUI(data.data);
+                        }
+                    })
+                    .catch(console.error);
+            }, interval * 1000);
+        }
+
+        // Update UI with now playing data
+        function updateNowPlayingUI(data) {
+            // Dispatch custom event for other listeners
+            document.dispatchEvent(new CustomEvent('nowPlayingUpdate', { detail: data }));
+
+            // Update song info
+            const songTitle = document.getElementById('song-title');
+            const songArtist = document.getElementById('song-artist');
+            const currentSong = data.current_song || data.currentSong;
+
+            if (songTitle && currentSong) {
+                songTitle.textContent = currentSong.title;
+            }
+            if (songArtist && currentSong) {
+                songArtist.textContent = currentSong.artist;
+            }
+
+            // Update album art if available
+            const artElement = document.querySelector('.now-playing-art');
+            if (artElement && currentSong && currentSong.art) {
+                artElement.src = currentSong.art;
+            }
+
+            // Update listener count
+            const listenerCount = document.querySelector('.listeners-count');
+            if (listenerCount && data.listeners !== undefined) {
+                listenerCount.innerHTML = '<i class="fas fa-headphones"></i> ' + data.listeners + ' listeners';
+            }
+
+            // Update progress
+            const progressFill = document.getElementById('progress-fill');
+            const duration = data.duration || 0;
+            const elapsed = data.elapsed || 0;
+            if (progressFill && duration > 0) {
+                const progress = (elapsed / duration) * 100;
+                progressFill.style.width = progress + '%';
+            }
+
+            // Update times
+            const elapsedTime = document.getElementById('elapsed-time');
+            const totalTime = document.getElementById('total-time');
+            if (elapsedTime) elapsedTime.textContent = formatTime(elapsed);
+            if (totalTime) totalTime.textContent = formatTime(duration);
+
+            // Update rating data
+            const ratingEl = document.getElementById('song-rating');
+            if (ratingEl && currentSong) {
+                const songId = currentSong.id || currentSong.song_id;
+                if (ratingEl.dataset.songId !== songId) {
+                    ratingEl.dataset.songId = songId;
+                    ratingEl.dataset.songTitle = currentSong.title;
+                    ratingEl.dataset.songArtist = currentSong.artist;
+                    loadSongRating();
+                }
+            }
+        }
     </script>
     <style>
         /* Equalizer bar animation for Now Playing */
@@ -589,13 +745,200 @@
             100% { transform: scaleY(1); }
         }
 
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(88, 166, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(88, 166, 255, 0.5); }
+        }
+
+        @keyframes vinyl-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slide-in-up {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .now-playing-card {
             overflow: hidden;
+            position: relative;
+        }
+
+        .now-playing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-accent), #a855f7, #38bdf8);
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
         }
 
         .now-playing-album-container {
             position: relative;
             flex-shrink: 0;
+        }
+
+        .now-playing-art {
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .now-playing.is-playing .now-playing-art {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .now-playing-art:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 40px rgba(88, 166, 255, 0.2);
+        }
+
+        .now-playing-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-text-primary), var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+            animation: slide-in-up 0.3s ease-out;
+        }
+
+        .now-playing-artist {
+            font-size: 1.125rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--color-bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-accent), #a855f7);
+            border-radius: 3px;
+            transition: width 1s linear;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -0.1875rem;
+            bottom: -0.1875rem;
+            width: 0.75rem;
+            height: 0.75rem;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 0.625rem rgba(88, 166, 255, 0.5);
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .rating-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .rating-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-accent);
+        }
+
+        .rating-btn.upvote:hover,
+        .rating-btn.upvote.active {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+
+        .rating-btn.downvote:hover,
+        .rating-btn.downvote.active {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .song-rating {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .listeners-count {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background: var(--color-bg-tertiary);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+        }
+
+        .listeners-count i {
+            color: var(--color-accent);
+        }
+
+        .badge-live {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+        }
+
+        .pulse-animation {
+            animation: pulse-live 2s infinite;
+        }
+
+        @keyframes pulse-live {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .now-playing-equalizer {
+            opacity: 0.8;
+        }
+
+        .now-playing.is-playing .now-playing-equalizer {
+            opacity: 1;
         }
 
         /* Responsive adjustments for Now Playing */

@@ -115,6 +115,24 @@ class SitemapController extends Controller
                 'changefreq' => 'daily',
                 'priority' => '0.6',
             ],
+            [
+                'loc' => route('legal.terms'),
+                'lastmod' => $now,
+                'changefreq' => 'monthly',
+                'priority' => '0.3',
+            ],
+            [
+                'loc' => route('legal.privacy'),
+                'lastmod' => $now,
+                'changefreq' => 'monthly',
+                'priority' => '0.3',
+            ],
+            [
+                'loc' => route('legal.cookies'),
+                'lastmod' => $now,
+                'changefreq' => 'monthly',
+                'priority' => '0.3',
+            ],
         ];
     }
 
