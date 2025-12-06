@@ -43,6 +43,10 @@ function updatePlayState() {
 
     if (btn) btn.innerHTML = '<i class="fas fa-pause"></i> Stop Listening';
     if (nowPlayingEl) nowPlayingEl.classList.add('is-playing');
+
+    // Dispatch event for popup player
+    const nowPlayingData = extractNowPlayingData();
+    window.dispatchEvent(new CustomEvent('radioPlayerStarted', { detail: nowPlayingData }));
 }
 
 /**
@@ -55,6 +59,24 @@ function updatePauseState() {
 
     if (btn) btn.innerHTML = '<i class="fas fa-play"></i> Listen Live';
     if (nowPlayingEl) nowPlayingEl.classList.remove('is-playing');
+
+    // Dispatch event for popup player
+    window.dispatchEvent(new Event('radioPlayerStopped'));
+}
+
+/**
+ * Extract current now playing data from the page
+ */
+function extractNowPlayingData() {
+    const songTitleEl = document.querySelector('[data-song-title]');
+    const songArtistEl = document.querySelector('[data-song-artist]');
+    const artworkEl = document.querySelector('.now-playing-art');
+    
+    return {
+        song: songTitleEl?.textContent || 'Unknown Song',
+        artist: songArtistEl?.textContent || 'Unknown Artist',
+        artwork: artworkEl?.src || '/images/default-album.png'
+    };
 }
 
 /**

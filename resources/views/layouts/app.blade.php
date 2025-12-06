@@ -2580,7 +2580,398 @@
             padding: 0.125rem 0.5rem;
             border-radius: 4px;
         }
+
+        /* Popup Player Styles */
+        .popup-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: none;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .popup-player.active {
+            display: block;
+        }
+
+        .popup-player.minimized {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+        }
+
+        .popup-player.minimized .popup-player-content {
+            display: none;
+        }
+
+        .popup-player.minimized .popup-player-minimize-icon {
+            display: flex;
+        }
+
+        .popup-player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--color-bg-tertiary);
+            border-bottom: 1px solid var(--color-border);
+            cursor: move;
+        }
+
+        .popup-player-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .popup-player-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .popup-player-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .popup-player-btn:hover {
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+        }
+
+        .popup-player-content {
+            padding: 16px;
+        }
+
+        .popup-player-artwork {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup-player-info {
+            margin-bottom: 12px;
+        }
+
+        .popup-player-song {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .popup-player-artist {
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .popup-player-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .popup-player-action-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .popup-player-action-btn:hover {
+            background: var(--color-bg-secondary);
+            border-color: var(--color-accent);
+        }
+
+        .popup-player-action-btn.playing {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            color: white;
+        }
+
+        .popup-player-minimize-icon {
+            display: none;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+
+        .popup-player-listeners {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            background: var(--color-bg-tertiary);
+            border-radius: 6px;
+            margin-top: 12px;
+        }
+
+        .popup-player-listeners i {
+            color: var(--color-accent);
+        }
+
+        @media (max-width: 640px) {
+            .popup-player {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+            }
+        }
     </style>
+
+    <!-- Popup Player -->
+    <div id="popup-player" class="popup-player" x-data="popupPlayer()" x-show="isActive" x-transition>
+        <div class="popup-player-minimize-icon" @click="toggleMinimize">
+            <i class="fas fa-music"></i>
+        </div>
+        
+        <div class="popup-player-content">
+            <div class="popup-player-header">
+                <div class="popup-player-title">
+                    <i class="fas fa-radio"></i>
+                    <span x-text="isLive ? 'Live DJ' : 'Now Playing'"></span>
+                </div>
+                <div class="popup-player-controls">
+                    <button class="popup-player-btn" @click="toggleMinimize" title="Minimize">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="popup-player-btn" @click="close" title="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div style="padding: 16px;">
+                <img :src="artwork" :alt="songTitle" class="popup-player-artwork" @error="$event.target.src='/images/default-album.png'">
+                
+                <div class="popup-player-info">
+                    <div class="popup-player-song" x-text="songTitle"></div>
+                    <div class="popup-player-artist" x-text="songArtist"></div>
+                </div>
+
+                <div class="popup-player-actions">
+                    <button class="popup-player-action-btn" :class="{ 'playing': isPlaying }" @click="togglePlay">
+                        <i class="fas" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
+                        <span x-text="isPlaying ? 'Pause' : 'Play'"></span>
+                    </button>
+                    <button class="popup-player-action-btn" @click="openFullPlayer">
+                        <i class="fas fa-expand"></i>
+                        <span>Full Player</span>
+                    </button>
+                </div>
+
+                <div class="popup-player-listeners" x-show="listeners > 0">
+                    <i class="fas fa-users"></i>
+                    <span x-text="listeners + ' listening now'"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function popupPlayer() {
+            return {
+                isActive: false,
+                isMinimized: false,
+                isPlaying: false,
+                isLive: false,
+                songTitle: 'No song playing',
+                songArtist: 'Los Santos Radio',
+                artwork: '/images/default-album.png',
+                listeners: 0,
+                audioPlayer: null,
+                streamUrl: '{{ config("services.icecast.stream_url") ?? "" }}',
+                updateInterval: null,
+
+                init() {
+                    // Listen for global play events
+                    window.addEventListener('radioPlayerStarted', (e) => {
+                        this.isActive = true;
+                        this.isPlaying = true;
+                        if (e.detail) {
+                            this.updatePlayerInfo(e.detail);
+                        }
+                        this.startUpdates();
+                    });
+
+                    // Listen for player state changes
+                    window.addEventListener('radioPlayerStopped', () => {
+                        this.isPlaying = false;
+                    });
+
+                    // Listen for now playing updates
+                    window.addEventListener('nowPlayingUpdate', (e) => {
+                        if (e.detail) {
+                            this.updatePlayerInfo(e.detail);
+                        }
+                    });
+
+                    // Load saved state
+                    const savedState = localStorage.getItem('popupPlayerState');
+                    if (savedState) {
+                        const state = JSON.parse(savedState);
+                        this.isActive = state.isActive || false;
+                        this.isMinimized = state.isMinimized || false;
+                        if (this.isActive) {
+                            this.fetchNowPlaying();
+                            this.startUpdates();
+                        }
+                    }
+                },
+
+                toggleMinimize() {
+                    this.isMinimized = !this.isMinimized;
+                    const player = document.getElementById('popup-player');
+                    if (this.isMinimized) {
+                        player.classList.add('minimized');
+                    } else {
+                        player.classList.remove('minimized');
+                    }
+                    this.saveState();
+                },
+
+                close() {
+                    this.isActive = false;
+                    if (this.audioPlayer) {
+                        this.audioPlayer.pause();
+                    }
+                    if (this.updateInterval) {
+                        clearInterval(this.updateInterval);
+                    }
+                    this.saveState();
+                    window.dispatchEvent(new Event('popupPlayerClosed'));
+                },
+
+                togglePlay() {
+                    if (!this.audioPlayer && this.streamUrl) {
+                        this.audioPlayer = new Audio(this.streamUrl);
+                        this.audioPlayer.addEventListener('playing', () => {
+                            this.isPlaying = true;
+                        });
+                        this.audioPlayer.addEventListener('pause', () => {
+                            this.isPlaying = false;
+                        });
+                    }
+
+                    if (this.isPlaying) {
+                        this.audioPlayer?.pause();
+                        window.dispatchEvent(new Event('radioPlayerStopped'));
+                    } else {
+                        this.audioPlayer?.play();
+                        window.dispatchEvent(new CustomEvent('radioPlayerStarted', {
+                            detail: {
+                                song: this.songTitle,
+                                artist: this.songArtist,
+                                artwork: this.artwork
+                            }
+                        }));
+                    }
+                },
+
+                openFullPlayer() {
+                    window.location.href = '{{ route("home") }}';
+                },
+
+                updatePlayerInfo(data) {
+                    this.songTitle = data.song || data.title || 'Unknown Song';
+                    this.songArtist = data.artist || 'Unknown Artist';
+                    this.artwork = data.artwork || data.art || '/images/default-album.png';
+                    this.isLive = data.is_live || false;
+                    this.listeners = data.listeners || 0;
+                },
+
+                async fetchNowPlaying() {
+                    try {
+                        const response = await fetch('/api/radio/now-playing');
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success && result.data) {
+                                this.updatePlayerInfo(result.data);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch now playing:', error);
+                    }
+                },
+
+                startUpdates() {
+                    if (this.updateInterval) {
+                        clearInterval(this.updateInterval);
+                    }
+                    this.updateInterval = setInterval(() => {
+                        if (this.isActive) {
+                            this.fetchNowPlaying();
+                        }
+                    }, 10000); // Update every 10 seconds
+                },
+
+                saveState() {
+                    localStorage.setItem('popupPlayerState', JSON.stringify({
+                        isActive: this.isActive,
+                        isMinimized: this.isMinimized
+                    }));
+                }
+            }
+        }
+    </script>
 
     @stack('scripts')
 </body>
