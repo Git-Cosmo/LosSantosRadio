@@ -11,6 +11,12 @@
         </div>
     </x-slot>
 
+    {{-- Store API routes as data attributes for JavaScript --}}
+    <div id="media-config"
+         data-upload-url="{{ route('admin.media.upload') }}"
+         data-delete-url-template="{{ route('admin.media.destroy', ['media' => ':id']) }}"
+         style="display: none;"></div>
+
     <div class="card">
         <div class="card-header">
             <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
@@ -331,6 +337,11 @@
         }
 
         // Upload form
+        // Get API URLs from config
+        const mediaConfig = document.getElementById('media-config');
+        const uploadUrl = mediaConfig.dataset.uploadUrl;
+        const deleteUrlTemplate = mediaConfig.dataset.deleteUrlTemplate;
+
         document.getElementById('upload-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
@@ -338,7 +349,7 @@
             uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
 
             try {
-                const response = await fetch('/api/media', {
+                const response = await fetch(uploadUrl, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -367,8 +378,9 @@
         async function deleteMedia(id) {
             if (!confirm('Are you sure you want to delete this media?')) return;
 
+            const deleteUrl = deleteUrlTemplate.replace(':id', id);
             try {
-                const response = await fetch(`/api/media/${id}`, {
+                const response = await fetch(deleteUrl, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),

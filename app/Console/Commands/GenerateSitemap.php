@@ -16,7 +16,9 @@ class GenerateSitemap extends Command
      *
      * @var string
      */
-    protected $signature = 'sitemap:generate';
+    protected $signature = 'sitemap:generate
+                            {--limit=1000 : Maximum items per content type}
+                            {--poll-limit=500 : Maximum polls to include}';
 
     /**
      * The console command description.
@@ -26,11 +28,25 @@ class GenerateSitemap extends Command
     protected $description = 'Generate the sitemap for SEO';
 
     /**
+     * Maximum items per content type (configurable via --limit option).
+     */
+    protected int $maxItemsPerType;
+
+    /**
+     * Maximum polls to include (configurable via --poll-limit option).
+     */
+    protected int $maxPolls;
+
+    /**
      * Execute the console command.
      */
     public function handle(): int
     {
+        $this->maxItemsPerType = (int) $this->option('limit');
+        $this->maxPolls = (int) $this->option('poll-limit');
+
         $this->info('Generating sitemap...');
+        $this->info("Max items per type: {$this->maxItemsPerType}, Max polls: {$this->maxPolls}");
 
         $sitemap = Sitemap::create();
 
@@ -151,7 +167,7 @@ class GenerateSitemap extends Command
     {
         News::where('is_published', true)
             ->orderBy('published_at', 'desc')
-            ->take(1000)
+            ->take($this->maxItemsPerType)
             ->cursor()
             ->each(function ($news) use ($sitemap) {
                 $sitemap->add(
@@ -170,7 +186,7 @@ class GenerateSitemap extends Command
     {
         Event::where('is_published', true)
             ->orderBy('start_date', 'desc')
-            ->take(1000)
+            ->take($this->maxItemsPerType)
             ->cursor()
             ->each(function ($event) use ($sitemap) {
                 $sitemap->add(
@@ -189,7 +205,7 @@ class GenerateSitemap extends Command
     {
         Poll::where('is_published', true)
             ->orderBy('created_at', 'desc')
-            ->take(500)
+            ->take($this->maxPolls)
             ->cursor()
             ->each(function ($poll) use ($sitemap) {
                 $sitemap->add(

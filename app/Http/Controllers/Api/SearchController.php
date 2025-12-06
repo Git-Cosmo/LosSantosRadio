@@ -193,7 +193,11 @@ class SearchController extends Controller
             $results = array_merge($results, $videos->toArray());
         }
 
-        // Limit total results
-        return array_slice($results, 0, $limit * 2);
+        // Limit total results to double the requested limit since we search across
+        // multiple content types and want to provide a reasonable spread of results
+        // without returning an overwhelming number for a single query
+        $maxTotalResults = $limit * 2;
+
+        return array_slice($results, 0, $maxTotalResults);
     }
 }

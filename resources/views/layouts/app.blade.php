@@ -1840,7 +1840,8 @@
     </script>
 
     <!-- Search Modal -->
-    <div x-data="searchModal()" @open-search-modal.window="openModal()" @keydown.escape.window="closeModal()">
+    <div x-data="searchModal()" @open-search-modal.window="openModal()" @keydown.escape.window="closeModal()"
+         data-search-url="{{ route('search.api') }}">
         <div x-show="isOpen" x-cloak class="search-modal-overlay" @click="closeModal()">
             <div class="search-modal" @click.stop>
                 <div class="search-modal-header">
@@ -1938,7 +1939,9 @@
                     this.loading = true;
 
                     try {
-                        const response = await fetch(`/api/search?q=${encodeURIComponent(this.query)}`);
+                        // Use the data attribute for the search URL from Laravel route helper
+                        const searchUrl = this.$root.dataset.searchUrl || '/api/search';
+                        const response = await fetch(`${searchUrl}?q=${encodeURIComponent(this.query)}`);
                         const data = await response.json();
 
                         if (data.success) {

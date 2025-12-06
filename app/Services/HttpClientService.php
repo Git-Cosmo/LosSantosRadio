@@ -16,6 +16,11 @@ class HttpClientService
 
     /**
      * User agents to rotate through for making requests appear unique.
+     *
+     * Note: These user agents represent common browser versions as of late 2024.
+     * For best results, these should be periodically updated to reflect current
+     * browser versions. You can use addUserAgents() or setUserAgents() to
+     * customize the list, or override this array in a service provider.
      */
     protected array $userAgents = [
         // Chrome on Windows

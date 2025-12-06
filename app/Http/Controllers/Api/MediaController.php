@@ -56,9 +56,11 @@ class MediaController extends Controller
         $file = $request->file('file');
         $collection = $request->input('collection', 'uploads');
 
-        // Create a temporary model to attach media to
-        // In a real application, you'd typically attach media to specific models
-        // For now, we'll use a generic approach
+        // Note: This is a standalone media library approach where media files are not
+        // attached to specific models. We use a placeholder model (Setting with ID 1)
+        // to satisfy Spatie Media Library's polymorphic relationship requirement.
+        // In a more complex implementation, you could create a dedicated Media model
+        // or use a MediaLibrary package that supports standalone media.
 
         $media = Media::create([
             'model_type' => 'App\Models\Setting',
