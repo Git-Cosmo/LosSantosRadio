@@ -28,12 +28,21 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 ## 📦 Features
 
 ### Radio Experience
-- **Now Playing Widget** - Real-time display of currently playing songs with album art, progress bar, and auto-refresh
-- **Recently Played** - Song history with timestamps
-- **Up Next** - Preview the next song in queue
+- **Enhanced Now Playing Widget** - Modern, visually appealing display with:
+  - Large album artwork (280x280px) with hover effects and shadows
+  - Animated audio visualizer with glowing effects
+  - Gradient text styling for song titles
+  - Real-time listener count with animated updates
+  - Enhanced progress bar with gradient and glow effects
+  - Interactive rating buttons (like/dislike) with improved styling
+  - "Up Next" preview card with enhanced design
+  - Live/AutoDJ status indicator with peak listener stats
+- **Real-time Updates** - Auto-refresh of currently playing songs with smooth transitions
+- **Recently Played** - Song history with timestamps and album art
+- **Up Next** - Enhanced preview of the next song with album artwork
 - **Song Requests** - Browse the song library with a media grid layout and request tracks via modal
-- **Live Stream Player** - Built-in audio player with volume control
-- **Song Ratings** - Upvote/downvote songs to shape the playlist
+- **Live Stream Player** - Built-in audio player with prominent controls and volume management
+- **Song Ratings** - Modern upvote/downvote interface to shape the playlist
 - **Trending Songs** - Top-rated tracks displayed in real-time
 
 ### Schedule System
@@ -105,16 +114,28 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **User/Role Sync** - Sync Discord server roles and members to database
 - **Member Linking** - Link Discord accounts to website accounts
 - **Bot Monitoring** - View bot status and activity logs
-- **Admin Controls** - Manage bot settings, toggle on/off, and restart bot from admin panel (`/admin/discord/settings`)
+- **Admin Controls** - Manage bot settings from admin panel at `/admin/discord/settings`
+  - Toggle bot on/off
+  - Restart bot connection
+  - Monitor bot status in real-time
+  - Configure channel IDs for logging and welcome messages
+  - Enable/disable auto-sync
 - **API Integration** - Uses Discord API v10 for all operations
 
 ### RSS News Feeds
 - **Automatic Import** - Import gaming news articles automatically from RSS feeds
-- **Feed Management** - Add, edit, and delete RSS feeds from admin panel
-- **Prepopulated Feeds** - Includes popular gaming news sources (IGN, GameSpot, PC Gamer, Kotaku, Polygon, etc.)
-- **Image Extraction** - Automatically extracts images from RSS feed content
-- **Category Organization** - Organize feeds by category (Gaming News, PC Gaming, etc.)
-- **Scheduled Import** - Feeds are checked based on configured fetch intervals
+- **Feed Management** - Add, edit, and delete RSS feeds from admin panel at `/admin/rss-feeds`
+- **Quick Populate** - One-click button to populate database with 15 high-quality gaming news sources
+- **Prepopulated Feeds** - Includes popular gaming news sources:
+  - **Major Sites**: IGN, GameSpot, Polygon, Kotaku, Eurogamer
+  - **PC Gaming**: PC Gamer, Rock Paper Shotgun
+  - **Platform Specific**: PlayStation Blog, Xbox Wire, Nintendo Life
+  - **Other Sources**: VG247, Game Informer, GamesRadar+, Destructoid, GameRant
+- **Rich Media Support** - Automatically extracts images from RSS feed content
+- **Category Organization** - Organize feeds by category (Gaming News, PC Gaming, PlayStation, Xbox, Nintendo)
+- **Detailed Descriptions** - Each feed includes comprehensive description for easy identification
+- **Scheduled Import** - Feeds checked based on configured fetch intervals (30 mins to 1 hour)
+- **Import All Feature** - Batch import from all active feeds with a single click
 - **CLI Import** - Manual import via `php artisan rss:import` command
 
 ### Gamification
