@@ -19,6 +19,11 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Caching**: Redis (optional) / File cache
 - **Database**: SQLite / MySQL / PostgreSQL
 - **Real-time**: Event broadcasting (optional WebSocket support)
+- **HTTP Client**: Guzzle with random user agent rotation
+- **Search**: Laravel Scout with collection driver
+- **Permissions**: Spatie Laravel Permission
+- **Media**: Spatie Laravel Media Library with Intervention Image
+- **Sitemap**: Spatie Laravel Sitemap (auto-generated every 6 hours)
 
 ## 📦 Features
 
@@ -70,6 +75,9 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Global Search** - Search across news, events, games, videos, and deals
 - **Search API** - JSON API endpoint for search functionality
 - **Category Icons** - Visual distinction between result types
+- **Search Modal** - Click search icon in navbar to open modern search overlay
+- **Real-time Results** - Instant search suggestions as you type
+- **Laravel Scout Integration** - Searchable models with collection driver
 
 ### DJ/Presenter System
 - **DJ Profiles** - Featured DJ pages with social links and genres
@@ -87,6 +95,7 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **DJ Profile Management** - Add DJs and manage schedules
 - **Games Management** - Manage free games and deals, sync from Reddit/CheapShark
 - **Videos Management** - Manage YLYL and clips, sync from Reddit
+- **Media Library** - Upload, organize, and manage media files with image optimization
 - **Discord Bot Panel** - Monitor and manage Discord integration
 - **Settings** - Configure application settings
 - **Activity Log** - Audit trail of admin actions
@@ -240,9 +249,15 @@ Access the admin panel at `/admin`. Admin users must have the `admin` or `staff`
 
 ### User Roles
 
-- **Admin**: The first user to sign up automatically becomes an admin. Full access to all features.
-- **Staff**: Can access the admin panel with limited permissions.
+The application uses Spatie Laravel Permission for role-based access control. Roles are automatically created when the database is seeded.
+
+- **Admin**: The first user to sign up automatically becomes an admin. Full access to all features and all permissions.
+- **Staff**: Can access the admin panel with permissions for content management (news, events, polls) and request management.
+- **DJ**: Radio DJs with permissions for schedule management, going live, and request management.
+- **Moderator**: Community moderators with permissions for viewing users, managing requests, and viewing activity logs.
+- **VIP**: Premium listeners with special privileges.
 - **Listener**: Default role for all subsequent users. Can request songs, rate tracks, and participate in polls.
+- **Guest**: Reference role for unauthenticated visitors.
 
 **Features:**
 - Dashboard with stats and recent activity
@@ -254,6 +269,7 @@ Access the admin panel at `/admin`. Admin users must have the `admin` or `staff`
 - DJ profile and schedule management
 - Games management (free games + deals)
 - Videos management (YLYL + clips)
+- Media library management with image optimization
 - Discord bot monitoring and settings
 - Application settings
 - Activity log auditing
@@ -287,6 +303,24 @@ All radio data is fetched using official AzuraCast API endpoints:
 - `GET /api/station/{station_id}/requests` - Requestable songs (paginated)
 - `POST /api/station/{station_id}/request/{song_id}` - Submit song request
 
+### Local API Endpoints
+
+The application provides the following API endpoints:
+
+**Station API** (AzuraCast compatible):
+- `GET /api/station/{stationId}/request` - Get list of requestable songs
+- `POST /api/station/{stationId}/request/{requestId}` - Submit a song request
+  - Response codes: `200` (success), `403` (rate limited), `404` (song not found), `500` (server error)
+
+**Search API**:
+- `GET /api/search?q={query}` - Search across all content types
+- `GET /api/search/instant?q={query}` - Quick search for real-time suggestions
+
+**Media API** (requires authentication):
+- `GET /api/media` - List media items
+- `POST /api/media` - Upload new media
+- `DELETE /api/media/{id}` - Delete media
+
 ### External API Integrations
 
 - **CheapShark API** - Game deals from multiple stores
@@ -301,6 +335,7 @@ All radio data is fetched using official AzuraCast API endpoints:
 - `CheapSharkService` - Game deals fetching and sync
 - `RedditScraperService` - Reddit content fetching
 - `DiscordBotService` - Discord API integration
+- `HttpClientService` - Global HTTP client with random user agent rotation
 
 ### Data Transfer Objects (DTOs)
 - `NowPlayingDTO` - Current song and stream data
@@ -362,6 +397,22 @@ composer dev
 ```
 
 This starts the web server, queue worker, log viewer, and Vite dev server concurrently.
+
+### Scheduled Tasks
+
+The application includes scheduled commands that run automatically:
+
+- **Sitemap Generation** - Runs every 6 hours to generate `/sitemap.xml`
+
+To run the scheduler, add this cron entry to your server:
+```bash
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+You can also manually generate the sitemap:
+```bash
+php artisan sitemap:generate
+```
 
 ### Troubleshooting
 

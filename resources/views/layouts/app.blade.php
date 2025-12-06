@@ -1628,6 +1628,11 @@
             </nav>
 
             <div class="user-menu">
+                <!-- Search Button -->
+                <button @click="$dispatch('open-search-modal')" class="btn btn-secondary search-toggle" title="Search">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                </button>
+
                 <!-- Live Clock -->
                 <div class="live-clock" @click="toggleFormat()" title="Click to toggle 12/24 hour format" x-data="liveClock()" x-init="init()">
                     <i class="fas fa-clock" aria-hidden="true"></i>
@@ -1833,6 +1838,326 @@
             }
         };
     </script>
+
+    <!-- Search Modal -->
+    <div x-data="searchModal()" @open-search-modal.window="openModal()" @keydown.escape.window="closeModal()"
+         data-search-url="{{ route('search.api') }}">
+        <div x-show="isOpen" x-cloak class="search-modal-overlay" @click="closeModal()">
+            <div class="search-modal" @click.stop>
+                <div class="search-modal-header">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text"
+                               x-model="query"
+                               @input.debounce.300ms="search()"
+                               placeholder="Search news, events, games, videos..."
+                               class="search-input"
+                               x-ref="searchInput"
+                               autocomplete="off">
+                        <button x-show="query" @click="clearSearch()" class="search-clear-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <button @click="closeModal()" class="search-close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="search-modal-body">
+                    <div x-show="loading" class="search-loading">
+                        <i class="fas fa-spinner fa-spin"></i> Searching...
+                    </div>
+
+                    <div x-show="!loading && results.length > 0" class="search-results-list">
+                        <template x-for="result in results" :key="result.id + '-' + result.type">
+                            <a :href="result.url" class="search-result-item">
+                                <div class="search-result-icon">
+                                    <i :class="getResultIcon(result.type)"></i>
+                                </div>
+                                <div class="search-result-content">
+                                    <div class="search-result-title" x-text="result.title"></div>
+                                    <div class="search-result-meta">
+                                        <span class="search-result-type" x-text="formatType(result.type)"></span>
+                                        <span x-text="result.date_formatted"></span>
+                                    </div>
+                                </div>
+                            </a>
+                        </template>
+                    </div>
+
+                    <div x-show="!loading && query.length >= 2 && results.length === 0" class="search-no-results">
+                        <i class="fas fa-search"></i>
+                        <p>No results found for "<span x-text="query"></span>"</p>
+                    </div>
+
+                    <div x-show="!loading && query.length < 2" class="search-prompt">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>Type at least 2 characters to search</p>
+                        <div class="search-shortcuts">
+                            <span><kbd>ESC</kbd> to close</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchModal() {
+            return {
+                isOpen: false,
+                query: '',
+                results: [],
+                loading: false,
+                searchTimeout: null,
+
+                openModal() {
+                    this.isOpen = true;
+                    this.$nextTick(() => {
+                        this.$refs.searchInput.focus();
+                    });
+                    document.body.style.overflow = 'hidden';
+                },
+
+                closeModal() {
+                    this.isOpen = false;
+                    document.body.style.overflow = '';
+                },
+
+                clearSearch() {
+                    this.query = '';
+                    this.results = [];
+                    this.$refs.searchInput.focus();
+                },
+
+                async search() {
+                    if (this.query.length < 2) {
+                        this.results = [];
+                        return;
+                    }
+
+                    this.loading = true;
+
+                    try {
+                        // Use the data attribute for the search URL from Laravel route helper
+                        const searchUrl = this.$root.dataset.searchUrl || '/api/search';
+                        const response = await fetch(`${searchUrl}?q=${encodeURIComponent(this.query)}`);
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.results = data.results;
+                        }
+                    } catch (error) {
+                        console.error('Search error:', error);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                getResultIcon(type) {
+                    const icons = {
+                        'news': 'fas fa-newspaper',
+                        'event': 'fas fa-calendar-alt',
+                        'free_game': 'fas fa-gift',
+                        'deal': 'fas fa-tags',
+                        'video': 'fas fa-video'
+                    };
+                    return icons[type] || 'fas fa-file';
+                },
+
+                formatType(type) {
+                    return type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .search-toggle {
+            padding: 0.5rem;
+            min-width: 36px;
+        }
+
+        .search-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 10vh;
+        }
+
+        .search-modal {
+            background: var(--color-bg-primary);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            animation: searchModalIn 0.2s ease-out;
+        }
+
+        @keyframes searchModalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .search-modal-header {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-border);
+            gap: 0.75rem;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            gap: 0.5rem;
+        }
+
+        .search-input-wrapper .search-icon {
+            color: var(--color-text-muted);
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            color: var(--color-text-primary);
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .search-clear-btn,
+        .search-close-btn {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .search-clear-btn:hover,
+        .search-close-btn:hover {
+            color: var(--color-text-primary);
+        }
+
+        .search-modal-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .search-loading,
+        .search-no-results,
+        .search-prompt {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            color: var(--color-text-muted);
+        }
+
+        .search-loading i,
+        .search-no-results i,
+        .search-prompt i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .search-shortcuts {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+        }
+
+        .search-shortcuts kbd {
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            padding: 0.125rem 0.375rem;
+            font-family: monospace;
+        }
+
+        .search-results-list {
+            padding: 0.5rem;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .search-result-item:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .search-result-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--color-bg-tertiary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-accent);
+            flex-shrink: 0;
+        }
+
+        .search-result-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .search-result-title {
+            color: var(--color-text-primary);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .search-result-meta {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .search-result-type {
+            background: var(--color-bg-tertiary);
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+        }
+    </style>
 
     @stack('scripts')
 </body>

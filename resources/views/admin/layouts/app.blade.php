@@ -578,6 +578,9 @@
                     <a href="{{ route('admin.videos.index') }}" class="nav-link {{ request()->routeIs('admin.videos.*') ? 'active' : '' }}">
                         <i class="fas fa-video"></i> Videos
                     </a>
+                    <a href="{{ route('admin.media.index') }}" class="nav-link {{ request()->routeIs('admin.media.*') ? 'active' : '' }}">
+                        <i class="fas fa-photo-video"></i> Media Library
+                    </a>
                 </div>
 
                 <div class="nav-group">

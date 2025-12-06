@@ -16,6 +16,7 @@
 /public/build
 /public/hot
 /public/storage
+/public/sitemap.xml
 /public/css/filament
 /public/fonts/filament
 /public/js/filament
@@ -25,3 +26,4 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+database/database.sqlite
