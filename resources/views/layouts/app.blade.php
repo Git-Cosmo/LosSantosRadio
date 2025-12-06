@@ -2040,6 +2040,10 @@
     </div>
 
     <script>
+        // Initialize cookie consent with default (essential only) until user chooses
+        // This ensures scripts can check consent status early in page lifecycle
+        window.cookieConsent = { analytics: false, marketing: false };
+
         // CSRF token for AJAX requests
         window.csrfToken = '{{ csrf_token() }}';
 
@@ -2134,19 +2138,15 @@
                     try {
                         const consent = this.storageAvailable ? localStorage.getItem('cookie_consent') : null;
                         if (!consent) {
-                            // Show banner after a short delay for better UX
-                            setTimeout(() => {
-                                this.showBanner = true;
-                            }, 1000);
+                            // Show banner immediately for GDPR compliance
+                            this.showBanner = true;
                         } else {
                             this.consentGiven = true;
                             this.applyConsent(consent);
                         }
                     } catch (e) {
-                        // If localStorage fails, show the banner
-                        setTimeout(() => {
-                            this.showBanner = true;
-                        }, 1000);
+                        // If localStorage fails, show the banner immediately
+                        this.showBanner = true;
                     }
                 },
 

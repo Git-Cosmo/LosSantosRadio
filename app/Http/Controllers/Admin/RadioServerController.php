@@ -128,7 +128,7 @@ class RadioServerController extends Controller
         // Only update API key if a new one was provided
         // Check that the field is not empty and doesn't consist entirely of bullet characters (masked value)
         $apiKey = $validated['azuracast_api_key'] ?? '';
-        if (! empty($apiKey) && preg_match('/[^•]/', $apiKey)) {
+        if (! empty($apiKey) && ! preg_match('/^•+$/', $apiKey)) {
             Setting::set('azuracast_api_key', $apiKey);
         }
 

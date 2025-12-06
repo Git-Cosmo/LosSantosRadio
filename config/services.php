@@ -111,6 +111,7 @@ return [
         'now_playing_method' => env('RADIO_NOW_PLAYING_METHOD', 'sse'), // 'sse' or 'polling'
         'polling_interval' => env('RADIO_POLLING_INTERVAL', 15), // seconds
         'sse_enabled' => env('RADIO_SSE_ENABLED', true),
+        'sse_max_runtime' => env('RADIO_SSE_MAX_RUNTIME', 28), // seconds, max time for SSE proxy connections
     ],
 
     /*

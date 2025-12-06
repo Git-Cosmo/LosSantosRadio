@@ -137,8 +137,10 @@ class NowPlayingController extends Controller
             $pollInterval = (int) config('services.radio.polling_interval', 15);
             $pollInterval = max(10, min($pollInterval, 30)); // Clamp between 10-30 seconds
 
-            // Set script timeout with buffer for graceful shutdown
-            $maxRuntime = 55; // Stay under typical 60-second timeouts
+            // Many web servers/load balancers (e.g., AWS ALB, Nginx) have 30s timeouts by default.
+            // Make this configurable and clamp to 10-28s for compatibility.
+            $maxRuntime = (int) config('services.radio.sse_max_runtime', 28);
+            $maxRuntime = max(10, min($maxRuntime, 28)); // Clamp between 10-28 seconds
             set_time_limit($maxRuntime + 5);
 
             // Send initial event

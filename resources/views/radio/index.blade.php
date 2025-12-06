@@ -616,7 +616,14 @@
             const reconnectDelay = 3000;
 
             function connect() {
-                eventSource = new EventSource(sseUrl.toString());
+                try {
+                    eventSource = new EventSource(sseUrl.toString());
+                } catch (err) {
+                    console.error('Failed to create EventSource:', err);
+                    // Fall back to polling immediately
+                    initPollingUpdates(config.polling_interval || 15);
+                    return;
+                }
 
                 eventSource.addEventListener('message', function(event) {
                     try {
@@ -641,7 +648,8 @@
 
                     if (reconnectAttempts < maxReconnectAttempts) {
                         reconnectAttempts++;
-                        setTimeout(connect, reconnectDelay * reconnectAttempts);
+                        // True exponential backoff: 3s, 6s, 12s, 24s, 48s
+                        setTimeout(connect, reconnectDelay * Math.pow(2, reconnectAttempts - 1));
                     } else {
                         console.log('SSE max reconnects reached, falling back to polling');
                         initPollingUpdates(config.polling_interval || 15);
@@ -770,7 +778,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--color-accent), #a855f7, var(--color-accent));
+            background: linear-gradient(90deg, var(--color-accent), #a855f7, #38bdf8);
             background-size: 200% 200%;
             animation: gradient-shift 3s ease infinite;
         }
@@ -832,13 +840,13 @@
             content: '';
             position: absolute;
             right: 0;
-            top: -3px;
-            bottom: -3px;
-            width: 12px;
-            height: 12px;
+            top: -0.1875rem;
+            bottom: -0.1875rem;
+            width: 0.75rem;
+            height: 0.75rem;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+            box-shadow: 0 0 0.625rem rgba(88, 166, 255, 0.5);
         }
 
         .time-info {
