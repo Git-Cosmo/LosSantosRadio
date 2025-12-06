@@ -20,7 +20,7 @@ class ShoutcastService
 
     protected int $port;
 
-    protected string $adminPassword;
+    protected ?string $adminPassword;
 
     protected bool $ssl;
 
@@ -30,7 +30,7 @@ class ShoutcastService
     {
         $this->host = config('services.shoutcast.host', 'localhost');
         $this->port = (int) config('services.shoutcast.port', 8000);
-        $this->adminPassword = config('services.shoutcast.admin_password', '');
+        $this->adminPassword = config('services.shoutcast.admin_password') ?: null;
         $this->ssl = (bool) config('services.shoutcast.ssl', false);
         $this->streamId = (int) config('services.shoutcast.stream_id', 1);
     }
