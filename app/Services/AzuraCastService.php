@@ -235,19 +235,49 @@ class AzuraCastService
         // Clear relevant caches when a request is made
         Cache::forget("azuracast.requests.queue.{$this->stationId}");
 
-        $response = $this->http->post("/api/station/{$this->stationId}/request/{$songId}");
+        try {
+            $response = $this->http->post("/api/station/{$this->stationId}/request/{$songId}");
 
-        if ($response->successful()) {
+            if ($response->successful()) {
+                return [
+                    'success' => true,
+                    'message' => $response->json('message', 'Request submitted successfully'),
+                ];
+            }
+
+            // Handle specific HTTP errors with better messages
+            $errorMessage = match ($response->status()) {
+                404 => 'This song is not available for requests or was not found in the library.',
+                429 => 'Too many requests. Please wait before requesting another song.',
+                400 => $response->json('message', 'This song cannot be requested at this time.'),
+                default => $response->json('message', 'Failed to submit request. Please try again.'),
+            };
+
             return [
-                'success' => true,
-                'message' => $response->json('message', 'Request submitted successfully'),
+                'success' => false,
+                'message' => $errorMessage,
+            ];
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            Log::warning('Song request failed', [
+                'song_id' => $songId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Unable to submit request. The song may not be available or the service is temporarily unavailable.',
+            ];
+        } catch (\Exception $e) {
+            Log::error('Song request exception', [
+                'song_id' => $songId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'An error occurred while submitting your request. Please try again later.',
             ];
         }
-
-        return [
-            'success' => false,
-            'message' => $response->json('message', 'Failed to submit request'),
-        ];
     }
 
     /**

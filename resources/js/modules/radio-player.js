@@ -69,7 +69,7 @@ export function rateSong(rating) {
     const songTitle = ratingEl.dataset.songTitle;
     const songArtist = ratingEl.dataset.songArtist;
 
-    fetch('/api/ratings/', {
+    fetch('/api/ratings', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
