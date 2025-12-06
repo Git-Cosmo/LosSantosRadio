@@ -30,7 +30,8 @@ export function searchModal() {
         },
 
         async search() {
-            if (this.query.length < 2) {
+            // Input validation: minimum 2 characters, maximum 100 characters
+            if (this.query.length < 2 || this.query.length > 100) {
                 this.results = [];
                 return;
             }

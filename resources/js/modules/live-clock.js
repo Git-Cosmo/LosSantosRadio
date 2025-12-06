@@ -7,17 +7,31 @@ export function liveClock() {
         time: '',
         interval: null,
         format: localStorage.getItem('clockFormat') || '24',
+        _onStorage: null,
 
         init() {
             this.updateTime();
             this.interval = setInterval(() => this.updateTime(), 1000);
             // Listen for clock format changes via storage event (for cross-tab sync)
-            window.addEventListener('storage', (e) => {
+            this._onStorage = (e) => {
                 if (e.key === 'clockFormat') {
                     this.format = e.newValue || '24';
                     this.updateTime();
                 }
-            });
+            };
+            window.addEventListener('storage', this._onStorage);
+        },
+
+        destroy() {
+            // Cleanup function to prevent memory leaks
+            if (this.interval) {
+                clearInterval(this.interval);
+                this.interval = null;
+            }
+            if (this._onStorage) {
+                window.removeEventListener('storage', this._onStorage);
+                this._onStorage = null;
+            }
         },
 
         toggleFormat() {

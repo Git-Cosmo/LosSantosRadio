@@ -3,6 +3,9 @@
  * Handles audio playback and now playing updates for the radio stream
  */
 
+// Configuration constants
+const NOW_PLAYING_REFRESH_INTERVAL = 10000; // 10 seconds
+
 let audioPlayer = null;
 let isPlaying = false;
 
@@ -11,9 +14,6 @@ let isPlaying = false;
  * @param {string} streamUrl - The URL of the audio stream
  */
 export function togglePlayback(streamUrl) {
-    const btn = document.getElementById('play-btn');
-    const nowPlayingEl = document.getElementById('now-playing');
-
     if (!streamUrl) {
         window.showToast?.('error', 'Stream URL not available');
         return;
@@ -73,7 +73,7 @@ export function rateSong(rating) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': window.csrfToken
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
         },
         body: JSON.stringify({
             song_id: songId,
@@ -138,7 +138,9 @@ export function loadSongRating() {
                 }
             }
         })
-        .catch(console.error);
+        .catch((err) => {
+            console.error('Failed to load song rating:', err);
+        });
 }
 
 /**
@@ -244,8 +246,8 @@ export function handleNowPlayingUpdate(data) {
 export function startNowPlayingRefresh() {
     // Initial update
     updateNowPlaying();
-    // Refresh every 10 seconds
-    setInterval(updateNowPlaying, 10000);
+    // Refresh at configured interval
+    setInterval(updateNowPlaying, NOW_PLAYING_REFRESH_INTERVAL);
 }
 
 /**
@@ -260,7 +262,9 @@ function updateNowPlaying() {
                 document.dispatchEvent(event);
             }
         })
-        .catch(console.error);
+        .catch((err) => {
+            console.error('Failed to update now playing:', err);
+        });
 }
 
 // Make functions available globally

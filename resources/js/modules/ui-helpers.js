@@ -46,7 +46,7 @@ export function createScrollToTop() {
             });
             ticking = true;
         }
-    });
+    }, { passive: true });
 }
 
 /**

@@ -740,21 +740,24 @@
         <!-- Footer -->
         <footer class="footer">
             <div class="social-links">
-                <a href="#" class="social-link" title="Discord" aria-label="Join our Discord">
+                <span role="button" tabindex="0" class="social-link" title="Discord - Coming Soon" aria-label="Join our Discord (Coming Soon)">
                     <i class="fab fa-discord" aria-hidden="true"></i>
-                </a>
-                <a href="#" class="social-link" title="Twitter" aria-label="Follow us on Twitter">
+                </span>
+                <span role="button" tabindex="0" class="social-link" title="Twitter - Coming Soon" aria-label="Follow us on Twitter (Coming Soon)">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
-                </a>
-                <a href="#" class="social-link" title="Instagram" aria-label="Follow us on Instagram">
+                </span>
+                <span role="button" tabindex="0" class="social-link" title="Instagram - Coming Soon" aria-label="Follow us on Instagram (Coming Soon)">
                     <i class="fab fa-instagram" aria-hidden="true"></i>
-                </a>
+                </span>
             </div>
             <p>&copy; {{ date('Y') }} Los Santos Radio. All rights reserved.</p>
         </footer>
     </div>
 
     <script>
+        // Configuration constants
+        const NOW_PLAYING_REFRESH_INTERVAL = 10000; // 10 seconds
+
         // Countdown Timer
         function countdown() {
             return {
@@ -769,6 +772,14 @@
                 init() {
                     this.updateCountdown();
                     this.interval = setInterval(() => this.updateCountdown(), 1000);
+                },
+
+                destroy() {
+                    // Cleanup interval to prevent memory leaks
+                    if (this.interval) {
+                        clearInterval(this.interval);
+                        this.interval = null;
+                    }
                 },
 
                 updateCountdown() {
@@ -815,7 +826,15 @@
 
                 init() {
                     this.fetchNowPlaying();
-                    this.refreshInterval = setInterval(() => this.fetchNowPlaying(), 10000);
+                    this.refreshInterval = setInterval(() => this.fetchNowPlaying(), NOW_PLAYING_REFRESH_INTERVAL);
+                },
+
+                destroy() {
+                    // Cleanup interval to prevent memory leaks
+                    if (this.refreshInterval) {
+                        clearInterval(this.refreshInterval);
+                        this.refreshInterval = null;
+                    }
                 },
 
                 fetchNowPlaying() {
@@ -825,11 +844,14 @@
                             if (data.success && data.data) {
                                 this.songTitle = data.data.current_song?.title || 'Unknown Title';
                                 this.songArtist = data.data.current_song?.artist || 'Unknown Artist';
-                                this.albumArt = data.data.current_song?.art || null;
+                                // Validate album art URL to prevent XSS
+                                const artUrl = data.data.current_song?.art;
+                                this.albumArt = (artUrl && (artUrl.startsWith('http://') || artUrl.startsWith('https://'))) ? artUrl : null;
                                 this.isLive = data.data.is_live || false;
                             }
                         })
-                        .catch(() => {
+                        .catch((error) => {
+                            console.error('Failed to fetch now playing:', error);
                             this.songTitle = 'Stream Offline';
                             this.songArtist = 'Check back soon';
                         });
@@ -837,7 +859,7 @@
 
                 togglePlay() {
                     if (!this.streamUrl) {
-                        showToast('info', 'Stream not available yet. Check back at launch!');
+                        window.showToast?.('info', 'Stream not available yet. Check back at launch!');
                         return;
                     }
 
@@ -854,7 +876,7 @@
                             this.isPlaying = true;
                         }).catch((e) => {
                             console.error('Playback failed:', e);
-                            showToast('error', 'Unable to play stream. Please try again.');
+                            window.showToast?.('error', 'Unable to play stream. Please try again.');
                         });
                     }
                 },

@@ -46,9 +46,15 @@ class ComingSoonMiddleware
                 if (method_exists($user, 'hasAnyRole') && $user->hasAnyRole(['admin', 'staff'])) {
                     return $next($request);
                 }
+            } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
+                // Role doesn't exist, continue to coming soon page
+                \Log::debug('ComingSoonMiddleware: Role check skipped - role does not exist', ['error' => $e->getMessage()]);
             } catch (\Exception $e) {
-                // If role checking fails, continue to coming soon page
-                // This ensures the site doesn't break if roles aren't configured
+                // If role checking fails unexpectedly, log the error and continue to coming soon page
+                \Log::warning('ComingSoonMiddleware: Unexpected error during role check', [
+                    'error' => $e->getMessage(),
+                    'user_id' => Auth::id(),
+                ]);
             }
         }
 
