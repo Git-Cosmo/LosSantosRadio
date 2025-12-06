@@ -12,7 +12,7 @@ services:
       - ../../storage:/var/www/storage
     environment:
       - APP_ENV=production
-      - APP_DEBUG=false
+      - APP_DEBUG=false  # Set to true for development
       - DB_CONNECTION=mysql
       - DB_HOST=db
       - DB_PORT=3306

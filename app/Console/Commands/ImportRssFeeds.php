@@ -35,8 +35,14 @@ class ImportRssFeeds extends Command
     {
         $feedId = $this->option('feed');
 
-        if ($feedId) {
-            return $this->importSingleFeed($feedId);
+        if ($feedId !== null) {
+            if (! is_numeric($feedId)) {
+                $this->error('Feed ID must be a number.');
+
+                return self::FAILURE;
+            }
+
+            return $this->importSingleFeed((int) $feedId);
         }
 
         return $this->importAllFeeds();

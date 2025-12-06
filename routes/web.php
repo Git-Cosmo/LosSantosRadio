@@ -343,7 +343,7 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
     });
 
     // RSS Feeds Admin
+    Route::post('/rss-feeds/import-all', [\App\Http\Controllers\Admin\RssFeedController::class, 'importAll'])->name('rss-feeds.import-all');
     Route::resource('rss-feeds', \App\Http\Controllers\Admin\RssFeedController::class)->except(['show']);
     Route::post('/rss-feeds/{rssFeed}/import', [\App\Http\Controllers\Admin\RssFeedController::class, 'import'])->name('rss-feeds.import');
-    Route::post('/rss-feeds-import-all', [\App\Http\Controllers\Admin\RssFeedController::class, 'importAll'])->name('rss-feeds.import-all');
 });

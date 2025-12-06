@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('rss_feeds', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('url');
+            $table->string('url')->unique();
             $table->string('category')->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);

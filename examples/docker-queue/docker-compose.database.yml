@@ -104,7 +104,7 @@ services:
     working_dir: /var/www
     volumes:
       - ../../:/var/www
-    command: sh -c "while true; do php artisan schedule:run --verbose --no-interaction & sleep 60; done"
+    command: sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
     environment:
       - APP_ENV=production
       - DB_CONNECTION=mysql

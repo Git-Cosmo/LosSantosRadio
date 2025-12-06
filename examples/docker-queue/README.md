@@ -293,7 +293,10 @@ For high-volume queues, adjust worker parameters:
 php artisan queue:work redis --sleep=1 --tries=3 --timeout=60 --max-jobs=1000
 
 # Process multiple jobs in parallel (requires multiple workers)
-docker-compose -f docker-compose.redis.yml up -d --scale queue_redis=5
+# Note: If your docker-compose.redis.yml defines a `container_name` for the queue service,
+# scaling will fail due to container name conflicts. To use --scale, remove the `container_name`
+# from the service definition, or use Docker Compose v3+ with `deploy.replicas`.
+# Example: docker-compose -f docker-compose.redis.yml up -d --scale queue_redis=5
 ```
 
 ## Production Recommendations

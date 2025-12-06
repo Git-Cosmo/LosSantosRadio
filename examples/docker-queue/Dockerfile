@@ -32,7 +32,12 @@ WORKDIR /var/www
 COPY . /var/www
 
 # Install application dependencies
-RUN composer install --optimize-autoloader --no-dev
+ARG APP_ENV=production
+RUN if [ "$APP_ENV" = "production" ]; then \
+    composer install --optimize-autoloader --no-dev; \
+    else \
+    composer install --optimize-autoloader; \
+    fi
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache

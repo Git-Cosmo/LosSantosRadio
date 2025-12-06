@@ -39,7 +39,7 @@
 
                 <div class="form-group">
                     <label class="form-check">
-                        <input type="checkbox" name="discord_bot_enabled" value="1" class="form-check-input" {{ ($settings['discord_bot_enabled'] ?? true) ? 'checked' : '' }}>
+                        <input type="checkbox" name="discord_bot_enabled" value="1" class="form-check-input" @checked(old('discord_bot_enabled', $settings['discord_bot_enabled'] ?? true))>
                         <span class="form-check-label" style="font-weight: 600;">Enable Discord Bot</span>
                     </label>
                     <small style="color: var(--color-text-muted); display: block; margin-top: 0.25rem;">Toggle the Discord bot functionality on or off. When disabled, all Discord integration features will be paused.</small>

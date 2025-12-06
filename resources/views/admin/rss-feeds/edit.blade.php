@@ -54,7 +54,7 @@
 
                 <div class="form-group">
                     <label class="form-check">
-                        <input type="checkbox" name="is_active" value="1" class="form-check-input" {{ old('is_active', $rssFeed->is_active) ? 'checked' : '' }}>
+                        <input type="checkbox" name="is_active" value="1" class="form-check-input" @checked(old('is_active', $rssFeed->is_active))>
                         <span class="form-check-label">Active</span>
                     </label>
                     <small style="color: var(--color-text-muted); display: block; margin-top: 0.25rem;">Only active feeds will be automatically fetched</small>
