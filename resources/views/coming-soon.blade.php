@@ -673,7 +673,7 @@
             <div class="now-playing-content">
                 <div class="album-art">
                     <template x-if="albumArt">
-                        <img :src="albumArt" :alt="songTitle + ' album art'" @error="albumArt = null">
+                        <img :src="albumArt" :alt="songTitle + ' album art'" @@error="albumArt = null">
                     </template>
                     <template x-if="!albumArt">
                         <i class="fas fa-music album-art-placeholder" aria-hidden="true"></i>
@@ -821,7 +821,7 @@
                 songArtist: 'Please wait',
                 albumArt: null,
                 audio: null,
-                streamUrl: '{{ $streamUrl ?? '' }}',
+                streamUrl: 'https://radio.lossantosradio.com/listen/los_santos_radio/radio.mp3',
                 refreshInterval: null,
 
                 init() {

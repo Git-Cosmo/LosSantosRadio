@@ -329,7 +329,7 @@
         function togglePlayback() {
             const btn = document.getElementById('play-btn');
             const nowPlayingEl = document.getElementById('now-playing');
-            const streamUrl = '{{ $streamUrl ?? '' }}';
+            const streamUrl = 'https://radio.lossantosradio.com/listen/los_santos_radio/radio.mp3';
 
             if (!streamUrl) {
                 alert('Stream URL not available');
