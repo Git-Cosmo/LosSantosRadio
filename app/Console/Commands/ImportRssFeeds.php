@@ -80,13 +80,8 @@ class ImportRssFeeds extends Command
      */
     protected function importAllFeeds(): int
     {
-        $feeds = RssFeed::where('is_active', true)
-            ->whereNull('last_fetched_at')
-            ->orWhere(function ($query) {
-                $query->where('is_active', true)
-                    ->whereRaw('last_fetched_at < DATE_SUB(NOW(), INTERVAL fetch_interval SECOND)');
-            })
-            ->get();
+        $feeds = RssFeed::where('is_active', true)->get()
+            ->filter(fn ($feed) => $feed->isDueForFetch());
 
         if ($feeds->isEmpty()) {
             $this->info('No RSS feeds are due for fetching.');
