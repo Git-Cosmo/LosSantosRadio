@@ -580,7 +580,155 @@
             loadTrendingSongs();
             createScrollToTop();
             addEntranceAnimations();
+            initHighPerformanceUpdates();
         });
+
+        // High-performance Now Playing updates using SSE
+        function initHighPerformanceUpdates() {
+            fetch('/api/nowplaying/sse-config')
+                .then(response => response.json())
+                .then(config => {
+                    if (config.success && config.sse_enabled) {
+                        // Use SSE for real-time updates
+                        initSSEUpdates(config);
+                    } else {
+                        // Fall back to polling
+                        initPollingUpdates(config.polling_interval || 15);
+                    }
+                })
+                .catch(() => {
+                    // Default to polling on error
+                    initPollingUpdates(15);
+                });
+        }
+
+        // Initialize SSE-based updates
+        function initSSEUpdates(config) {
+            // Connect directly to AzuraCast's SSE endpoint
+            const sseUrl = new URL(config.sse_url);
+            Object.keys(config.sse_params || {}).forEach(key => {
+                sseUrl.searchParams.append(key, config.sse_params[key]);
+            });
+
+            let eventSource = null;
+            let reconnectAttempts = 0;
+            const maxReconnectAttempts = 5;
+            const reconnectDelay = 3000;
+
+            function connect() {
+                eventSource = new EventSource(sseUrl.toString());
+
+                eventSource.addEventListener('message', function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        // Check if this is a nowplaying update for our station
+                        if (data.np) {
+                            updateNowPlayingUI(data.np);
+                        }
+                    } catch (e) {
+                        console.error('SSE parse error:', e);
+                    }
+                });
+
+                eventSource.addEventListener('open', function() {
+                    console.log('SSE connected');
+                    reconnectAttempts = 0;
+                });
+
+                eventSource.addEventListener('error', function(event) {
+                    console.warn('SSE error, will reconnect...');
+                    eventSource.close();
+
+                    if (reconnectAttempts < maxReconnectAttempts) {
+                        reconnectAttempts++;
+                        setTimeout(connect, reconnectDelay * reconnectAttempts);
+                    } else {
+                        console.log('SSE max reconnects reached, falling back to polling');
+                        initPollingUpdates(config.polling_interval || 15);
+                    }
+                });
+            }
+
+            connect();
+
+            // Clean up on page unload
+            window.addEventListener('beforeunload', () => {
+                if (eventSource) {
+                    eventSource.close();
+                }
+            });
+        }
+
+        // Initialize polling-based updates
+        function initPollingUpdates(interval) {
+            setInterval(function() {
+                fetch('/api/nowplaying/')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateNowPlayingUI(data.data);
+                        }
+                    })
+                    .catch(console.error);
+            }, interval * 1000);
+        }
+
+        // Update UI with now playing data
+        function updateNowPlayingUI(data) {
+            // Dispatch custom event for other listeners
+            document.dispatchEvent(new CustomEvent('nowPlayingUpdate', { detail: data }));
+
+            // Update song info
+            const songTitle = document.getElementById('song-title');
+            const songArtist = document.getElementById('song-artist');
+            const currentSong = data.current_song || data.currentSong;
+
+            if (songTitle && currentSong) {
+                songTitle.textContent = currentSong.title;
+            }
+            if (songArtist && currentSong) {
+                songArtist.textContent = currentSong.artist;
+            }
+
+            // Update album art if available
+            const artElement = document.querySelector('.now-playing-art');
+            if (artElement && currentSong && currentSong.art) {
+                artElement.src = currentSong.art;
+            }
+
+            // Update listener count
+            const listenerCount = document.querySelector('.listeners-count');
+            if (listenerCount && data.listeners !== undefined) {
+                listenerCount.innerHTML = '<i class="fas fa-headphones"></i> ' + data.listeners + ' listeners';
+            }
+
+            // Update progress
+            const progressFill = document.getElementById('progress-fill');
+            const duration = data.duration || 0;
+            const elapsed = data.elapsed || 0;
+            if (progressFill && duration > 0) {
+                const progress = (elapsed / duration) * 100;
+                progressFill.style.width = progress + '%';
+            }
+
+            // Update times
+            const elapsedTime = document.getElementById('elapsed-time');
+            const totalTime = document.getElementById('total-time');
+            if (elapsedTime) elapsedTime.textContent = formatTime(elapsed);
+            if (totalTime) totalTime.textContent = formatTime(duration);
+
+            // Update rating data
+            const ratingEl = document.getElementById('song-rating');
+            if (ratingEl && currentSong) {
+                const songId = currentSong.id || currentSong.song_id;
+                if (ratingEl.dataset.songId !== songId) {
+                    ratingEl.dataset.songId = songId;
+                    ratingEl.dataset.songTitle = currentSong.title;
+                    ratingEl.dataset.songArtist = currentSong.artist;
+                    loadSongRating();
+                }
+            }
+        }
     </script>
     <style>
         /* Equalizer bar animation for Now Playing */

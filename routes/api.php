@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\MediaController;
+use App\Http\Controllers\Api\NowPlayingController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\StationController;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,13 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+// Now Playing API endpoints (high-performance updates)
+Route::prefix('nowplaying')->name('api.nowplaying.')->group(function () {
+    Route::get('/', [NowPlayingController::class, 'index'])->name('index');
+    Route::get('/sse-config', [NowPlayingController::class, 'sseConfig'])->name('sse-config');
+    Route::get('/sse', [NowPlayingController::class, 'sseProxy'])->name('sse');
+});
 
 // Station-related API endpoints
 Route::prefix('station/{stationId}')->name('api.station.')->group(function () {
