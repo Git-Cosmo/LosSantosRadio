@@ -209,6 +209,32 @@
         .dj-avatar:hover {
             transform: rotate(360deg);
         }
+
+        /* Accessibility: Reduce motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+            .now-playing-art,
+            .now-playing-art:hover,
+            .now-playing-album-container::before,
+            .up-next-card,
+            .up-next-card:hover,
+            .dj-avatar,
+            .dj-avatar:hover,
+            .rating-btn,
+            .rating-btn:hover,
+            .rating-btn::before {
+                transition: none !important;
+                animation: none !important;
+                transform: none !important;
+            }
+            
+            .badge-live,
+            .listeners-count,
+            .now-playing-title,
+            .now-playing-card,
+            .progress-fill::after {
+                animation: none !important;
+            }
+        }
     </style>
     @endpush
 
@@ -229,7 +255,7 @@
                     <div style="position: absolute; width: 80px; height: 80px; border-radius: 50%; background: rgba(168, 85, 247, 0.1); bottom: 20%; right: 20%; animation: float 8s ease-in-out infinite 2s;"></div>
                 </div>
                 
-                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); position: relative; z-index: 1; backdrop-filter: blur(10px);">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); position: relative; z-index: 1; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);">
                     <h2 class="card-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.25rem;">
                         <i class="fas fa-broadcast-tower" style="color: var(--color-accent); animation: broadcast-pulse 2s ease-in-out infinite;"></i>
                         Now Playing
@@ -259,7 +285,7 @@
                                          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2230%22>🎵</text></svg>'">
                                     
                                     <!-- Animated Visualizer Overlay -->
-                                    <div class="now-playing-equalizer" style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 4px; height: 30px; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 20px;" aria-hidden="true">
+                                    <div class="now-playing-equalizer" style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 4px; height: 30px; background: rgba(0,0,0,0.3); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 20px;" aria-hidden="true">
                                         <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate; height: 12px; box-shadow: 0 0 10px var(--color-accent);"></div>
                                         <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate 0.1s; height: 22px; box-shadow: 0 0 10px var(--color-accent);"></div>
                                         <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate 0.2s; height: 16px; box-shadow: 0 0 10px var(--color-accent);"></div>
@@ -310,7 +336,7 @@
                                 </div>
 
                                 @if($nowPlaying->nextSong)
-                                    <div style="margin-top: 1.5rem; padding: 1.25rem; background: var(--color-bg-tertiary); border-radius: 12px; border-left: 4px solid var(--color-accent);">
+                                    <div class="up-next-card" style="margin-top: 1.5rem; padding: 1.25rem; background: var(--color-bg-tertiary); border-radius: 12px; border-left: 4px solid var(--color-accent);">
                                         <p style="color: var(--color-text-muted); font-size: 0.75rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
                                             <i class="fas fa-forward" aria-hidden="true" style="color: var(--color-accent);"></i> UP NEXT
                                         </p>
@@ -342,7 +368,7 @@
                         </div>
 
                         <!-- Enhanced DJ/Host Info -->
-                        <div style="margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, var(--color-bg-tertiary), rgba(88, 166, 255, 0.05)); border-radius: 12px; display: flex; align-items: center; gap: 1.5rem; border: 1px solid var(--color-border); backdrop-filter: blur(10px);">
+                        <div style="margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, var(--color-bg-tertiary), rgba(88, 166, 255, 0.05)); border-radius: 12px; display: flex; align-items: center; gap: 1.5rem; border: 1px solid var(--color-border); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);">
                             <div class="dj-avatar" style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.4), 0 0 20px rgba(88, 166, 255, 0.2);">
                                 <i class="fas fa-{{ $nowPlaying->isLive ? 'microphone' : 'robot' }}" style="color: white; font-size: 1.5rem;"></i>
                             </div>
