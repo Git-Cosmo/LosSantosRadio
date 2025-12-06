@@ -45,6 +45,13 @@ Route::get('/', [RadioController::class, 'index'])->name('home');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
 
+// Legal pages
+Route::prefix('legal')->name('legal.')->group(function () {
+    Route::get('/terms', [\App\Http\Controllers\LegalController::class, 'terms'])->name('terms');
+    Route::get('/privacy', [\App\Http\Controllers\LegalController::class, 'privacy'])->name('privacy');
+    Route::get('/cookies', [\App\Http\Controllers\LegalController::class, 'cookies'])->name('cookies');
+});
+
 // News pages
 Route::prefix('news')->name('news.')->group(function () {
     Route::get('/', [NewsController::class, 'index'])->name('index');
