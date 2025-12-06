@@ -2838,7 +2838,7 @@
                 artwork: '/images/default-album.png',
                 listeners: 0,
                 audioPlayer: null,
-                streamUrl: '{{ config("services.icecast.stream_url") ?? "" }}',
+                streamUrl: {!! json_encode(config("services.icecast.stream_url") ?? "") !!},
                 updateInterval: null,
 
                 init() {
@@ -2927,7 +2927,7 @@
                 },
 
                 openFullPlayer() {
-                    window.location.href = '{{ route("home") }}';
+                    window.location.href = {!! json_encode(route("home")) !!};
                 },
 
                 updatePlayerInfo(data) {

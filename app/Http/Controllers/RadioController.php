@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\AzuraCastException;
+use App\Models\Event;
+use App\Models\News;
+use App\Models\Poll;
 use App\Services\AzuraCastService;
 use App\Services\IcecastService;
 use Illuminate\Http\JsonResponse;
@@ -38,17 +41,17 @@ class RadioController extends Controller
         }
 
         // Fetch additional homepage content
-        $recentNews = \App\Models\News::published()
+        $recentNews = News::published()
             ->orderBy('published_at', 'desc')
             ->limit(3)
             ->get();
 
-        $upcomingEvents = \App\Models\Event::upcoming()
+        $upcomingEvents = Event::upcoming()
             ->orderBy('start_date', 'asc')
             ->limit(3)
             ->get();
 
-        $activePolls = \App\Models\Poll::active()
+        $activePolls = Poll::active()
             ->orderBy('created_at', 'desc')
             ->limit(2)
             ->get();

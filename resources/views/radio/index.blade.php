@@ -671,7 +671,7 @@
                             @endif
                         </div>
                         <div style="background: var(--color-bg-tertiary); height: 4px; border-radius: 2px; overflow: hidden;">
-                            <div style="background: var(--color-accent); height: 100%; width: {{ min(100, ($poll->total_votes / max(1, $poll->total_votes * 1.5)) * 100) }}%; transition: width 0.3s;"></div>
+                            <div style="background: var(--color-accent); height: 100%; width: {{ min(100, $poll->total_votes > 0 ? 50 + ($poll->total_votes > 10 ? 30 : ($poll->total_votes * 3)) : 20) }}%; transition: width 0.3s;"></div>
                         </div>
                     </a>
                     @endforeach
