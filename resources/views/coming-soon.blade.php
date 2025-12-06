@@ -740,13 +740,13 @@
         <!-- Footer -->
         <footer class="footer">
             <div class="social-links">
-                <span role="button" tabindex="0" class="social-link" title="Discord - Coming Soon" aria-label="Join our Discord (Coming Soon)">
+                <span role="button" tabindex="0" class="social-link" title="Discord - Coming Soon" aria-label="Join our Discord (Coming Soon)" @click="window.showToast?.('info', 'Discord link coming soon!')" @keydown.enter="window.showToast?.('info', 'Discord link coming soon!')" @keydown.space.prevent="window.showToast?.('info', 'Discord link coming soon!')">
                     <i class="fab fa-discord" aria-hidden="true"></i>
                 </span>
-                <span role="button" tabindex="0" class="social-link" title="Twitter - Coming Soon" aria-label="Follow us on Twitter (Coming Soon)">
+                <span role="button" tabindex="0" class="social-link" title="Twitter - Coming Soon" aria-label="Follow us on Twitter (Coming Soon)" @click="window.showToast?.('info', 'Twitter link coming soon!')" @keydown.enter="window.showToast?.('info', 'Twitter link coming soon!')" @keydown.space.prevent="window.showToast?.('info', 'Twitter link coming soon!')">
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </span>
-                <span role="button" tabindex="0" class="social-link" title="Instagram - Coming Soon" aria-label="Follow us on Instagram (Coming Soon)">
+                <span role="button" tabindex="0" class="social-link" title="Instagram - Coming Soon" aria-label="Follow us on Instagram (Coming Soon)" @click="window.showToast?.('info', 'Instagram link coming soon!')" @keydown.enter="window.showToast?.('info', 'Instagram link coming soon!')" @keydown.space.prevent="window.showToast?.('info', 'Instagram link coming soon!')">
                     <i class="fab fa-instagram" aria-hidden="true"></i>
                 </span>
             </div>
@@ -924,8 +924,8 @@
             "hideMethod": "fadeOut"
         };
 
-        // Global toast helper function
-        function showToast(type, message) {
+        // Global toast helper function - attached to window for consistency with optional chaining
+        window.showToast = function(type, message) {
             switch(type) {
                 case 'success':
                     toastr.success(message);
@@ -942,7 +942,7 @@
                 default:
                     toastr.info(message);
             }
-        }
+        };
     </script>
 </body>
 </html>
