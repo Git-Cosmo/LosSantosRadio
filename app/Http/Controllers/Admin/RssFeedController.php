@@ -161,6 +161,17 @@ class RssFeedController extends Controller
     }
 
     /**
+     * Populate database with default RSS feeds.
+     */
+    public function seed(): RedirectResponse
+    {
+        \Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\RssFeedSeeder']);
+
+        return redirect()->route('admin.rss-feeds.index')
+            ->with('success', 'RSS feeds populated successfully! 15 gaming news sources have been added.');
+    }
+
+    /**
      * Validate feed URL to prevent SSRF attacks.
      */
     protected function validateFeedUrl(string $url): void
