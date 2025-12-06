@@ -4,6 +4,28 @@
     </div>
 
     <div class="card">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="card-title">Bot Configuration</h2>
+            @if($botStatus)
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="badge badge-live pulse-animation" style="background: #43b581;">
+                        <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                        Bot Online
+                    </span>
+                    <form action="{{ route('admin.discord.restart') }}" method="POST" style="margin: 0;">
+                        @csrf
+                        <button type="submit" class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" onclick="return confirm('Are you sure you want to restart the bot connection?')">
+                            <i class="fas fa-sync-alt"></i> Restart Bot
+                        </button>
+                    </form>
+                </div>
+            @else
+                <span class="badge" style="background: #f04747; color: white;">
+                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                    Bot Offline
+                </span>
+            @endif
+        </div>
         <div class="card-body">
             <form action="{{ route('admin.discord.settings.update') }}" method="POST">
                 @csrf
@@ -13,6 +35,14 @@
                         <i class="fas fa-shield-alt" style="color: var(--color-accent);"></i>
                         <strong>Important:</strong> The Discord bot token and guild ID must be configured via environment variables only. For security reasons, they cannot be set or overridden from this form.
                     </p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-check">
+                        <input type="checkbox" name="discord_bot_enabled" value="1" class="form-check-input" @checked(old('discord_bot_enabled', $settings['discord_bot_enabled'] ?? true))>
+                        <span class="form-check-label" style="font-weight: 600;">Enable Discord Bot</span>
+                    </label>
+                    <small style="color: var(--color-text-muted); display: block; margin-top: 0.25rem;">Toggle the Discord bot functionality on or off. When disabled, all Discord integration features will be paused.</small>
                 </div>
 
                 <div class="form-group">

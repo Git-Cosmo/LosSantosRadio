@@ -332,6 +332,7 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::post('/sync-users', [\App\Http\Controllers\Admin\DiscordBotController::class, 'syncUsers'])->name('sync-users');
         Route::get('/settings', [\App\Http\Controllers\Admin\DiscordBotController::class, 'settings'])->name('settings');
         Route::post('/settings', [\App\Http\Controllers\Admin\DiscordBotController::class, 'updateSettings'])->name('settings.update');
+        Route::post('/restart', [\App\Http\Controllers\Admin\DiscordBotController::class, 'restart'])->name('restart');
     });
 
     // Media Library Admin
@@ -340,4 +341,9 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::post('/upload', [\App\Http\Controllers\Admin\MediaController::class, 'upload'])->name('upload');
         Route::delete('/{media}', [\App\Http\Controllers\Admin\MediaController::class, 'destroy'])->name('destroy');
     });
+
+    // RSS Feeds Admin
+    Route::post('/rss-feeds/import-all', [\App\Http\Controllers\Admin\RssFeedController::class, 'importAll'])->name('rss-feeds.import-all');
+    Route::resource('rss-feeds', \App\Http\Controllers\Admin\RssFeedController::class)->except(['show']);
+    Route::post('/rss-feeds/{rssFeed}/import', [\App\Http\Controllers\Admin\RssFeedController::class, 'import'])->name('rss-feeds.import');
 });

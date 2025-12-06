@@ -1,0 +1,116 @@
+services:
+  # Web Application
+  app:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    container_name: lsr_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ../../:/var/www
+      - ../../storage:/var/www/storage
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false  # Set to true for development
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=secret
+      # Redis queue configuration
+      - QUEUE_CONNECTION=redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_STORE=redis
+    depends_on:
+      - db
+      - redis
+    networks:
+      - lsr_network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: lsr_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - lsr_network
+
+  # Redis for Queue and Cache
+  redis:
+    image: redis:7-alpine
+    container_name: lsr_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - lsr_network
+
+  # Queue Worker (Redis)
+  queue_redis:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    container_name: lsr_queue_redis
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ../../:/var/www
+    command: php artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+    environment:
+      - APP_ENV=production
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=secret
+      - QUEUE_CONNECTION=redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - db
+      - redis
+    networks:
+      - lsr_network
+
+  # Optional: Horizon for Redis Queue Management (Laravel Horizon)
+  # Uncomment if you want advanced queue monitoring
+  # horizon:
+  #   build:
+  #     context: ../..
+  #     dockerfile: Dockerfile
+  #   container_name: lsr_horizon
+  #   restart: unless-stopped
+  #   working_dir: /var/www
+  #   volumes:
+  #     - ../../:/var/www
+  #   command: php artisan horizon
+  #   environment:
+  #     - APP_ENV=production
+  #     - QUEUE_CONNECTION=redis
+  #     - REDIS_HOST=redis
+  #   depends_on:
+  #     - redis
+  #   networks:
+  #     - lsr_network
+
+networks:
+  lsr_network:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local
+  redis_data:
+    driver: local

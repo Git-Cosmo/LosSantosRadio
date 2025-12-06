@@ -75,10 +75,12 @@ class DiscordBotController extends Controller
             'discord_log_channel' => Setting::get('discord_log_channel'),
             'discord_welcome_channel' => Setting::get('discord_welcome_channel'),
             'discord_auto_sync_enabled' => Setting::get('discord_auto_sync_enabled', false),
+            'discord_bot_enabled' => Setting::get('discord_bot_enabled', true),
         ];
 
         return view('admin.discord.settings', [
             'settings' => $settings,
+            'botStatus' => $this->discord->isConfigured() ? $this->discord->getBotUser() : null,
         ]);
     }
 
@@ -100,11 +102,33 @@ class DiscordBotController extends Controller
         }
 
         Setting::set('discord_auto_sync_enabled', $request->boolean('discord_auto_sync_enabled'));
+        Setting::set('discord_bot_enabled', $request->boolean('discord_bot_enabled'));
 
         // Clear Discord cache to pick up new settings
         $this->discord->clearCache();
 
         return redirect()->route('admin.discord.settings')
             ->with('success', 'Discord settings updated successfully.');
+    }
+
+    /**
+     * Restart the Discord bot connection.
+     */
+    public function restart(): RedirectResponse
+    {
+        if (! $this->discord->isConfigured()) {
+            return redirect()->route('admin.discord.settings')
+                ->with('error', 'Discord bot is not configured. Please add bot token and guild ID in .env file.');
+        }
+
+        // Clear all Discord caches to force reconnection
+        $this->discord->clearCache();
+        Setting::clearCache();
+
+        // Log the restart action
+        DiscordLog::info('bot_restart', 'Bot connection restarted by admin');
+
+        return redirect()->route('admin.discord.settings')
+            ->with('success', 'Discord bot connection has been restarted successfully.');
     }
 }
