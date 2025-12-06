@@ -235,6 +235,32 @@
                 animation: none !important;
             }
         }
+
+        /* Hover effects for homepage content items */
+        .news-item:hover,
+        .event-item:hover,
+        .poll-item:hover {
+            background: var(--color-bg-tertiary);
+        }
+
+        /* Responsive grid for homepage content */
+        .homepage-content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .homepage-content-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .homepage-content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
     @endpush
 
@@ -582,7 +608,7 @@
     <!-- Additional Homepage Content -->
     @if($recentNews->isNotEmpty() || $upcomingEvents->isNotEmpty() || $activePolls->isNotEmpty())
     <div style="margin-top: 2rem;">
-        <div class="grid grid-cols-3" style="gap: 1.5rem;">
+        <div class="homepage-content-grid">
             <!-- Recent News Section -->
             @if($recentNews->isNotEmpty())
             <div class="card">
@@ -594,9 +620,9 @@
                 </div>
                 <div class="card-body" style="padding: 0;">
                     @foreach($recentNews as $newsItem)
-                    <a href="{{ route('news.show', $newsItem->slug) }}" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;" onmouseover="this.style.background='var(--color-bg-tertiary)'" onmouseout="this.style.background='transparent'">
-                        @if($newsItem->featured_image)
-                        <img src="{{ $newsItem->featured_image }}" alt="{{ $newsItem->title }}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 0.75rem;">
+                    <a href="{{ route('news.show', $newsItem->slug) }}" class="news-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
+                        @if($newsItem->getFirstMediaUrl('featured'))
+                        <img src="{{ $newsItem->getFirstMediaUrl('featured') }}" alt="{{ $newsItem->title }}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 0.75rem;">
                         @endif
                         <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($newsItem->title, 60) }}</h3>
                         <p style="color: var(--color-text-muted); font-size: 0.8125rem; margin-bottom: 0.5rem;">{{ Str::limit($newsItem->excerpt, 100) }}</p>
@@ -621,17 +647,17 @@
                 </div>
                 <div class="card-body" style="padding: 0;">
                     @foreach($upcomingEvents as $event)
-                    <a href="{{ route('events.show', $event->slug) }}" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;" onmouseover="this.style.background='var(--color-bg-tertiary)'" onmouseout="this.style.background='transparent'">
+                    <a href="{{ route('events.show', $event->slug) }}" class="event-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
                         <div style="display: flex; gap: 1rem;">
                             <div style="background: var(--color-accent); color: white; border-radius: 8px; padding: 0.5rem; text-align: center; min-width: 60px; height: 60px; display: flex; flex-direction: column; justify-content: center; flex-shrink: 0;">
-                                <div style="font-size: 1.25rem; font-weight: 700; line-height: 1;">{{ $event->start_date->format('d') }}</div>
-                                <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.9;">{{ $event->start_date->format('M') }}</div>
+                                <div style="font-size: 1.25rem; font-weight: 700; line-height: 1;">{{ $event->starts_at->format('d') }}</div>
+                                <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.9;">{{ $event->starts_at->format('M') }}</div>
                             </div>
                             <div style="flex: 1; min-width: 0;">
                                 <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($event->title, 50) }}</h3>
                                 <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">
                                     <i class="far fa-clock"></i>
-                                    <span>{{ $event->start_date->format('M j, Y g:i A') }}</span>
+                                    <span>{{ $event->starts_at->format('M j, Y g:i A') }}</span>
                                 </div>
                                 @if($event->location)
                                 <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
@@ -658,11 +684,11 @@
                 </div>
                 <div class="card-body" style="padding: 0;">
                     @foreach($activePolls as $poll)
-                    <a href="{{ route('polls.show', $poll->slug) }}" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;" onmouseover="this.style.background='var(--color-bg-tertiary)'" onmouseout="this.style.background='transparent'">
+                    <a href="{{ route('polls.show', $poll->slug) }}" class="poll-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
                         <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.75rem; font-size: 0.9375rem;">{{ Str::limit($poll->question, 70) }}</h3>
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
                             <span style="font-size: 0.75rem; color: var(--color-text-muted);">
-                                <i class="fas fa-users"></i> {{ $poll->total_votes }} votes
+                                <i class="fas fa-users"></i> {{ $poll->totalVotes() }} votes
                             </span>
                             @if($poll->ends_at)
                             <span style="font-size: 0.75rem; color: var(--color-text-muted);">
@@ -671,7 +697,7 @@
                             @endif
                         </div>
                         <div style="background: var(--color-bg-tertiary); height: 4px; border-radius: 2px; overflow: hidden;">
-                            <div style="background: var(--color-accent); height: 100%; width: {{ min(100, $poll->total_votes > 0 ? 50 + ($poll->total_votes > 10 ? 30 : ($poll->total_votes * 3)) : 20) }}%; transition: width 0.3s;"></div>
+                            <div style="background: var(--color-accent); height: 100%; width: {{ $poll->totalVotes() > 0 ? min(100, ($poll->totalVotes() / 100) * 100) : 10 }}%; transition: width 0.3s;"></div>
                         </div>
                     </a>
                     @endforeach

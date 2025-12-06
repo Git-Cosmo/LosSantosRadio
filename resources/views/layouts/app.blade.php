@@ -2593,13 +2593,8 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             z-index: 9999;
-            display: none;
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .popup-player.active {
-            display: block;
         }
 
         .popup-player.minimized {
@@ -2623,7 +2618,6 @@
             padding: 12px 16px;
             background: var(--color-bg-tertiary);
             border-bottom: 1px solid var(--color-border);
-            cursor: move;
         }
 
         .popup-player-title {
@@ -2867,12 +2861,17 @@
                     // Load saved state
                     const savedState = localStorage.getItem('popupPlayerState');
                     if (savedState) {
-                        const state = JSON.parse(savedState);
-                        this.isActive = state.isActive || false;
-                        this.isMinimized = state.isMinimized || false;
-                        if (this.isActive) {
-                            this.fetchNowPlaying();
-                            this.startUpdates();
+                        try {
+                            const state = JSON.parse(savedState);
+                            this.isActive = state.isActive || false;
+                            this.isMinimized = state.isMinimized || false;
+                            if (this.isActive) {
+                                this.fetchNowPlaying();
+                                this.startUpdates();
+                            }
+                        } catch (e) {
+                            console.error('Failed to parse popup player state:', e);
+                            localStorage.removeItem('popupPlayerState');
                         }
                     }
                 },
@@ -2915,7 +2914,11 @@
                         this.audioPlayer?.pause();
                         window.dispatchEvent(new Event('radioPlayerStopped'));
                     } else {
-                        this.audioPlayer?.play();
+                        this.audioPlayer?.play()
+                            .catch(error => {
+                                console.error('Failed to play audio:', error);
+                                this.isPlaying = false;
+                            });
                         window.dispatchEvent(new CustomEvent('radioPlayerStarted', {
                             detail: {
                                 song: this.songTitle,
