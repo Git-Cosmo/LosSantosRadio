@@ -99,13 +99,23 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Discord Bot Panel** - Monitor and manage Discord integration
 - **Settings** - Configure application settings
 - **Activity Log** - Audit trail of admin actions
+- **RSS Feeds Management** - Manage RSS feeds for automatic news import from popular gaming sites
 
 ### Discord Bot Integration
 - **User/Role Sync** - Sync Discord server roles and members to database
 - **Member Linking** - Link Discord accounts to website accounts
 - **Bot Monitoring** - View bot status and activity logs
-- **Admin Controls** - Manage bot settings from admin panel
+- **Admin Controls** - Manage bot settings, toggle on/off, and restart bot from admin panel (`/admin/discord/settings`)
 - **API Integration** - Uses Discord API v10 for all operations
+
+### RSS News Feeds
+- **Automatic Import** - Import gaming news articles automatically from RSS feeds
+- **Feed Management** - Add, edit, and delete RSS feeds from admin panel
+- **Prepopulated Feeds** - Includes popular gaming news sources (IGN, GameSpot, PC Gamer, Kotaku, Polygon, etc.)
+- **Image Extraction** - Automatically extracts images from RSS feed content
+- **Category Organization** - Organize feeds by category (Gaming News, PC Gaming, etc.)
+- **Scheduled Import** - Feeds are checked based on configured fetch intervals
+- **CLI Import** - Manual import via `php artisan rss:import` command
 
 ### Gamification
 - **XP Rewards** - Earn XP for daily logins, song requests, ratings, comments, and poll votes
@@ -176,12 +186,17 @@ php artisan migrate --seed
 php artisan db:seed --class=AchievementSeeder
 ```
 
-7. **Build frontend assets:**
+7. **Seed RSS feeds (optional):**
+```bash
+php artisan db:seed --class=RssFeedSeeder
+```
+
+8. **Build frontend assets:**
 ```bash
 npm run build
 ```
 
-8. **Start the development server:**
+9. **Start the development server:**
 ```bash
 php artisan serve
 ```
@@ -231,16 +246,79 @@ REQUEST_GUEST_MAX_PER_DAY=2
 REQUEST_USER_MIN_INTERVAL_SECONDS=60
 REQUEST_USER_MAX_PER_WINDOW=10
 REQUEST_USER_WINDOW_MINUTES=20
+
+# Laravel Scout (Search)
+SCOUT_DRIVER=collection
+SCOUT_QUEUE=false
+
+# Activity Logging
+ACTIVITY_LOGGER_ENABLED=true
+
+# Sentry Error Monitoring (optional)
+SENTRY_LARAVEL_DSN=
+SENTRY_TRACES_SAMPLE_RATE=0.1
 ```
 
-### Discord Bot Setup
+**📝 Note:** For a complete list of all available environment variables with detailed explanations and examples, see [.env.example](.env.example).
 
-1. Create a Discord application at [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a bot user and get the bot token
-3. Enable Server Members Intent and Message Content Intent
-4. Add the bot to your server with appropriate permissions
-5. Get your Guild (Server) ID by enabling Developer Mode in Discord
-6. Add `DISCORD_BOT_TOKEN` and `DISCORD_GUILD_ID` to your `.env` file
+### Discord Bot Admin Controls
+
+The Discord bot can be managed from the admin panel at `/admin/discord/settings`:
+
+- **Toggle Bot On/Off**: Enable or disable Discord bot functionality without changing environment variables
+- **Restart Bot**: Gracefully restart the bot connection to apply configuration changes
+- **View Bot Status**: See real-time bot online/offline status
+- **Configure Channels**: Set log and welcome channel IDs
+
+Bot token and guild ID are configured via environment variables only for security reasons.
+
+### RSS Feed Management
+
+Automatically import gaming news from RSS feeds:
+
+1. **Access Feed Management**: Navigate to `/admin/rss-feeds` in the admin panel
+2. **Add Feeds**: Popular gaming news feeds are pre-populated (IGN, GameSpot, PC Gamer, etc.)
+3. **Import Articles**: 
+   - Click "Import Now" on individual feeds
+   - Or use "Import All Feeds" to import from all active feeds
+4. **Automated Import**: Run `php artisan rss:import` in a cron job for automatic updates
+5. **Configure Intervals**: Set custom fetch intervals for each feed (default: 1 hour)
+
+The RSS feed system automatically:
+- Extracts images from feed content
+- Prevents duplicate articles
+- Sanitizes HTML content
+- Supports both RSS 2.0 and Atom feeds
+
+### Docker Queue Configuration
+
+The `examples/docker-queue/` directory contains production-ready Docker Compose configurations for running Laravel queues:
+
+#### Redis Queue Setup (Recommended)
+```bash
+cd examples/docker-queue
+docker-compose -f docker-compose.redis.yml up -d
+```
+
+Features:
+- Redis 7 for fast queue processing
+- MySQL 8.0 for database
+- Auto-restarting queue workers
+- Optional Laravel Horizon support
+
+#### Database Queue Setup
+```bash
+cd examples/docker-queue
+docker-compose -f docker-compose.database.yml up -d
+```
+
+Features:
+- MySQL 8.0 for both database and queue
+- Two queue workers with priority handling
+- Built-in scheduler for automated tasks
+- No additional services required
+
+See `examples/docker-queue/README.md` for complete documentation, scaling instructions, and troubleshooting.
 
 ### Request Limits
 
@@ -354,6 +432,7 @@ The application provides the following API endpoints:
 - `CheapSharkService` - Game deals fetching and sync
 - `RedditScraperService` - Reddit content fetching
 - `DiscordBotService` - Discord API integration
+- `RssFeedService` - RSS feed parsing and article import
 - `HttpClientService` - Global HTTP client with random user agent rotation
 
 ### Data Transfer Objects (DTOs)
@@ -369,7 +448,7 @@ The application provides the following API endpoints:
 - Event
 - Poll / PollOption / PollVote
 - DjProfile / DjSchedule
-- News / Comment
+- News / Comment / RssFeed
 - SongRequest / SongRating
 - XpTransaction
 - FreeGame / GameDeal / GameStore
@@ -422,15 +501,23 @@ This starts the web server, queue worker, log viewer, and Vite dev server concur
 The application includes scheduled commands that run automatically:
 
 - **Sitemap Generation** - Runs every 6 hours to generate `/sitemap.xml`
+- **RSS Feed Import** - Configure `php artisan rss:import` to run hourly for automatic news updates
 
 To run the scheduler, add this cron entry to your server:
 ```bash
 * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-You can also manually generate the sitemap:
+You can also manually generate the sitemap or import RSS feeds:
 ```bash
+# Generate sitemap
 php artisan sitemap:generate
+
+# Import RSS feeds
+php artisan rss:import
+
+# Import specific RSS feed by ID
+php artisan rss:import --feed=1
 ```
 
 ### Troubleshooting
