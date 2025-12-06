@@ -113,7 +113,7 @@ class PollSeeder extends Seeder
                 'question' => 'Would you delete all your gaming progress for...',
                 'description' => 'Tough choices require strong wills. Which sacrifice would you make?',
                 'starts_at' => now(),
-                'ends_at' => now()->addMonth(),
+                'ends_at' => now()->addMonths(1),
                 'allow_multiple' => false,
                 'is_active' => true,
                 'show_results' => true,
