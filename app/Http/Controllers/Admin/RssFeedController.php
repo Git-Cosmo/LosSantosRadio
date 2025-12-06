@@ -139,7 +139,7 @@ class RssFeedController extends Controller
         }
 
         if ($totalImported > 0) {
-            $message = "Successfully imported {$totalImported} articles from " . $feeds->count() . ' feeds.';
+            $message = "Successfully imported {$totalImported} articles from ".$feeds->count().' feeds.';
             if (! empty($errors)) {
                 $message .= ' Some feeds had errors.';
             }
