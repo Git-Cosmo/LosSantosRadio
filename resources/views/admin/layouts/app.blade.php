@@ -105,6 +105,12 @@
             align-items: center;
             justify-content: center;
             color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .sidebar-logo:hover .sidebar-logo-icon {
+            transform: rotate(15deg) scale(1.1);
+            box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
         }
 
         .nav-group {
@@ -135,11 +141,13 @@
         .nav-link:hover {
             background-color: var(--color-bg-tertiary);
             color: var(--color-text-primary);
+            transform: translateX(3px);
         }
 
         .nav-link.active {
-            background-color: var(--color-accent);
+            background: linear-gradient(135deg, var(--color-accent), #7c3aed);
             color: white;
+            box-shadow: 0 2px 10px rgba(88, 166, 255, 0.3);
         }
 
         .nav-link i {
@@ -181,6 +189,13 @@
             border: 1px solid var(--color-border);
             border-radius: 8px;
             overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: var(--color-accent);
         }
 
         .card-header {
@@ -223,6 +238,7 @@
 
         .table tbody tr:hover {
             background-color: var(--color-bg-hover);
+            transition: background-color 0.2s ease;
         }
 
         /* Buttons */
@@ -242,12 +258,15 @@
         }
 
         .btn-primary {
-            background-color: var(--color-accent);
+            background: linear-gradient(135deg, var(--color-accent), #7c3aed);
             color: white;
+            box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
         }
 
         .btn-primary:hover {
-            background-color: var(--color-accent-hover);
+            background: linear-gradient(135deg, var(--color-accent-hover), #8b5cf6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 166, 255, 0.4);
         }
 
         .btn-secondary {
@@ -258,6 +277,8 @@
 
         .btn-secondary:hover {
             background-color: var(--color-bg-hover);
+            transform: translateY(-2px);
+            border-color: var(--color-accent);
         }
 
         .btn-danger {
@@ -372,12 +393,40 @@
             border: 1px solid var(--color-border);
             border-radius: 8px;
             padding: 1.25rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--color-accent), #a855f7);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: var(--color-accent);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
         }
 
         .stat-value {
             font-size: 1.75rem;
             font-weight: 700;
-            color: var(--color-text-primary);
+            background: linear-gradient(135deg, var(--color-accent), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-label {
@@ -527,6 +576,23 @@
 
         .theme-toggle:hover {
             transform: rotate(15deg);
+        }
+
+        /* Reduced Motion Preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .card:hover,
+            .stat-card:hover,
+            .btn-primary:hover,
+            .btn-secondary:hover,
+            .nav-link:hover,
+            .theme-toggle:hover,
+            .sidebar-logo:hover .sidebar-logo-icon {
+                transform: none;
+            }
+
+            .stat-card::before {
+                transition: none;
+            }
         }
     </style>
 </head>

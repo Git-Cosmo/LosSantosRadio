@@ -123,4 +123,29 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Coming Soon Mode
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the application will display a "Coming Soon" landing page
+    | for all visitors except admin and staff users. This is useful for
+    | pre-launch teasing while the site is being prepared.
+    |
+    */
+
+    'coming_soon' => env('COMINGSOON', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Launch Date
+    |--------------------------------------------------------------------------
+    |
+    | The target launch date for the countdown timer on the coming soon page.
+    | Format should be ISO 8601 (e.g., '2024-12-10T18:00:00Z').
+    |
+    */
+
+    'launch_date' => env('LAUNCH_DATE', '2024-12-10T18:00:00Z'),
+
 ];
