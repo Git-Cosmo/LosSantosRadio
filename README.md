@@ -131,6 +131,7 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Dropdown Navigation** - Games and Videos sections have dropdown menus
 - **User Dropdown Menu** - Consolidated user actions (Messages, Settings, Profile, Admin Panel, Logout) in a compact dropdown for logged-in users
 - **Themed Error Pages** - Custom error pages (404, 500, 403, 419, 429, 503) with fun radio-themed messages and animations that match the site's visual style
+- **Coming Soon Mode** - Pre-launch landing page with countdown timer and integrated audio player
 
 ## 📋 Requirements
 
@@ -202,6 +203,9 @@ ICECAST_PORT=8000
 ICECAST_MOUNT=/stream
 ICECAST_SSL=false
 
+# Coming Soon Mode
+COMINGSOON=false
+
 # OAuth Providers
 DISCORD_CLIENT_ID=
 DISCORD_CLIENT_SECRET=
@@ -242,6 +246,18 @@ REQUEST_USER_WINDOW_MINUTES=20
 Default limits (configurable via admin panel):
 - **Guests**: 2 requests per 24 hours
 - **Users**: 1 request per minute, max 10 requests per 20-minute window
+
+### Coming Soon Mode
+
+Enable pre-launch mode by setting `COMINGSOON=true` in your `.env` file. When enabled:
+- All visitors see a stylish "Coming Soon" landing page
+- A countdown timer shows time until December 10th, 18:00 UTC
+- An integrated "Now Playing" section displays current track information
+- An audio player allows visitors to listen to the stream
+- Admin and staff users can still access the full site normally
+- API endpoints remain accessible for the audio player functionality
+
+To disable coming soon mode and launch the site, set `COMINGSOON=false` or remove the variable entirely.
 
 ## 🔐 Admin Panel
 
@@ -514,6 +530,28 @@ Comprehensive SEO best practices have been implemented across the application:
   - **419 - Session Expired**: "Your Session Hit a Break!" with timer animations
   - **429 - Too Many Requests**: "Slow Down, Speedy!" with speed lines and cooldown bar
   - **503 - Service Unavailable**: "Station Under Maintenance!" with gear animations
+- **Coming Soon Page** - A visually appealing pre-launch landing page featuring:
+  - Countdown timer to launch date
+  - Now Playing section with integrated audio player
+  - Volume control and mute functionality
+  - Feature preview cards
+  - No navbar for focused design
+  - Dark/Light mode toggle
+- **Admin Panel Restyling** - Updated admin panel UI with:
+  - Gradient effects on buttons and stat cards
+  - Hover animations on cards and navigation
+  - Improved visual consistency with main site
+  - Accent color borders on hover states
+  - Reduced motion support for accessibility
+
+### JavaScript Migration
+All manually-created JavaScript has been migrated from inline Blade templates to modular files in `resources/js`:
+- **Live Clock** (`modules/live-clock.js`) - 12/24 hour toggle clock component
+- **Search Modal** (`modules/search-modal.js`) - Global search overlay functionality
+- **Radio Player** (`modules/radio-player.js`) - Audio playback, song ratings, trending songs
+- **UI Helpers** (`modules/ui-helpers.js`) - Mobile menu, scroll to top, entrance animations, toast notifications
+
+All JavaScript is now built using `npm run build` via Vite, providing better code organization, tree-shaking, and minification.
 
 ## 🔍 SEO Configuration
 

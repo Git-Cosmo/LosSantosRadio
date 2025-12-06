@@ -123,4 +123,17 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Coming Soon Mode
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the application will display a "Coming Soon" landing page
+    | for all visitors except admin and staff users. This is useful for
+    | pre-launch teasing while the site is being prepared.
+    |
+    */
+
+    'coming_soon' => env('COMINGSOON', false),
+
 ];
