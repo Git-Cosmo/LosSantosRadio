@@ -1,9 +1,20 @@
 <x-admin.layouts.app title="News">
     <div class="admin-header">
         <h1>News Articles</h1>
-        <a href="{{ route('admin.news.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Create Article
-        </a>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{{ route('admin.rss-feeds.index') }}" class="btn btn-secondary">
+                <i class="fas fa-rss"></i> Manage RSS Feeds
+            </a>
+            <form action="{{ route('admin.rss-feeds.import-all') }}" method="POST" style="display: inline;">
+                @csrf
+                <button type="submit" class="btn btn-secondary" onclick="return confirm('Import articles from all active RSS feeds?');">
+                    <i class="fas fa-sync"></i> Sync RSS Feeds
+                </button>
+            </form>
+            <a href="{{ route('admin.news.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create Article
+            </a>
+        </div>
     </div>
 
     <div class="filters">

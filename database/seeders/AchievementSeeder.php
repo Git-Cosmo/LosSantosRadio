@@ -198,5 +198,7 @@ class AchievementSeeder extends Seeder
                 $achievement
             );
         }
+
+        $this->command->info('Achievements seeded successfully! Added '.count($achievements).' achievements.');
     }
 }

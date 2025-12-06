@@ -6,7 +6,6 @@ use App\Models\GameDeal;
 use App\Models\GameStore;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -16,21 +15,30 @@ class CheapSharkService
 
     protected int $cacheTtl = 3600; // 1 hour
 
+    protected HttpClientService $httpClient;
+
+    public function __construct(HttpClientService $httpClient)
+    {
+        $this->httpClient = $httpClient;
+    }
+
     /**
      * Sync all stores from CheapShark.
      */
     public function syncStores(): Collection
     {
         try {
-            $response = Http::timeout(30)->get("{$this->baseUrl}/stores");
+            $response = $this->httpClient->get("{$this->baseUrl}/stores");
 
-            if ($response->failed()) {
-                Log::error('CheapShark: Failed to fetch stores', ['status' => $response->status()]);
+            if (! $response || $response->getStatusCode() !== 200) {
+                $status = $response ? $response->getStatusCode() : 'no response';
+                Log::error('CheapShark: Failed to fetch stores', ['status' => $status]);
 
                 return collect();
             }
 
-            $stores = collect($response->json())->map(function ($store) {
+            $data = json_decode($response->getBody()->getContents(), true);
+            $stores = collect($data)->map(function ($store) {
                 return GameStore::updateOrCreate(
                     ['external_id' => (string) $store['storeID']],
                     [
@@ -71,15 +79,19 @@ class CheapSharkService
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($params) {
             try {
-                $response = Http::timeout(30)->get("{$this->baseUrl}/deals", $params);
+                $url = "{$this->baseUrl}/deals?".http_build_query($params);
+                $response = $this->httpClient->get($url);
 
-                if ($response->failed()) {
-                    Log::error('CheapShark: Failed to fetch deals', ['status' => $response->status()]);
+                if (! $response || $response->getStatusCode() !== 200) {
+                    $status = $response ? $response->getStatusCode() : 'no response';
+                    Log::error('CheapShark: Failed to fetch deals', ['status' => $status]);
 
                     return collect();
                 }
 
-                return collect($response->json());
+                $data = json_decode($response->getBody()->getContents(), true);
+
+                return collect($data);
             } catch (\Exception $e) {
                 Log::error('CheapShark: Error fetching deals', ['error' => $e->getMessage()]);
 
@@ -156,13 +168,14 @@ class CheapSharkService
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($dealId) {
             try {
-                $response = Http::timeout(30)->get("{$this->baseUrl}/deals", ['id' => $dealId]);
+                $url = "{$this->baseUrl}/deals?id={$dealId}";
+                $response = $this->httpClient->get($url);
 
-                if ($response->failed()) {
+                if (! $response || $response->getStatusCode() !== 200) {
                     return null;
                 }
 
-                return $response->json();
+                return json_decode($response->getBody()->getContents(), true);
             } catch (\Exception $e) {
                 Log::error('CheapShark: Error fetching deal details', ['dealId' => $dealId, 'error' => $e->getMessage()]);
 
@@ -180,16 +193,16 @@ class CheapSharkService
 
         return Cache::remember($cacheKey, $this->cacheTtl / 2, function () use ($query, $limit) {
             try {
-                $response = Http::timeout(30)->get("{$this->baseUrl}/games", [
-                    'title' => $query,
-                    'limit' => $limit,
-                ]);
+                $url = "{$this->baseUrl}/games?title=".urlencode($query)."&limit={$limit}";
+                $response = $this->httpClient->get($url);
 
-                if ($response->failed()) {
+                if (! $response || $response->getStatusCode() !== 200) {
                     return collect();
                 }
 
-                return collect($response->json());
+                $data = json_decode($response->getBody()->getContents(), true);
+
+                return collect($data);
             } catch (\Exception $e) {
                 Log::error('CheapShark: Error searching games', ['query' => $query, 'error' => $e->getMessage()]);
 

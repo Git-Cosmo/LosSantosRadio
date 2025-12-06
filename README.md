@@ -28,15 +28,18 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 ## 📦 Features
 
 ### Radio Experience
-- **Enhanced Now Playing Widget** - Modern, visually appealing display with:
-  - Large album artwork (280x280px) with hover effects and shadows
-  - Animated audio visualizer with glowing effects
-  - Gradient text styling for song titles
-  - Real-time listener count with animated updates
-  - Enhanced progress bar with gradient and glow effects
-  - Interactive rating buttons (like/dislike) with improved styling
-  - "Up Next" preview card with enhanced design
-  - Live/AutoDJ status indicator with peak listener stats
+- **Ultra-Modern Now Playing Widget** - Professional, visually stunning display with:
+  - Large album artwork (280x280px) with enhanced 3D hover effects, shadows, and glow
+  - Animated audio visualizer with glowing effects and smooth bounce animations
+  - Dynamic gradient text styling for song titles with color shifting animation
+  - Real-time listener count with pulsing animations
+  - Enhanced progress bar with gradient, shimmer effect, and smooth transitions
+  - Interactive rating buttons with ripple effects, hover animations, and active states
+  - "Up Next" preview card with enhanced design and slide-in animation
+  - Live/AutoDJ status indicator with animated glow and peak listener stats
+  - Floating background elements with smooth animations
+  - DJ/Host avatar with 360° rotation on hover
+  - Backdrop blur effects for depth and modern aesthetics
 - **Real-time Updates** - Auto-refresh of currently playing songs with smooth transitions
 - **Recently Played** - Song history with timestamps and album art
 - **Up Next** - Enhanced preview of the next song with album artwork
@@ -63,12 +66,24 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 ### Content Systems
 - **News & Blog** - Publish articles with rich content, search and filter support
 - **Events** - Create and manage community events (live shows, contests, meetups)
+  - **Pre-seeded 2026 Gaming Events** - 18 major gaming events including:
+    - E3, Gamescom, PAX East/West, Tokyo Game Show
+    - The International, League of Legends Worlds, EVO, VALORANT Champions
+    - Summer Game Fest, The Game Awards, GDQ charity marathons
+    - Nintendo Direct, PlayStation State of Play, Xbox Games Showcase
 - **Music Polls** - Let the community vote on playlists and preferences
+  - **Pre-seeded Gaming Polls** - 6 entertaining polls including:
+    - Platform preferences, favorite game genres, best gaming soundtracks
+    - GTA VI feature wishlist (with multi-select support)
+    - Fun/odd polls like "one game forever" and "delete all progress for..."
 - **DJ/Staff Profiles** - Showcase your DJ team with bios and schedules
 
 ### Games Section
 - **Free Games** - Browse and claim free game offers from various platforms
-- **Game Deals** - Find the best deals powered by CheapShark API
+- **Game Deals** - Find the best deals powered by **CheapShark API with enhanced reliability**:
+  - Rotating user agents to prevent 403 errors
+  - HttpClientService integration for consistent API access
+  - Automatic retry logic and error handling
 - **Store Filtering** - Filter deals by store (Steam, Epic, GOG, etc.)
 - **Savings Display** - See how much you save on each deal
 - **Reddit Integration** - Automatically fetch free game posts from Reddit
@@ -95,10 +110,13 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **DJ Statistics** - Track total shows and listener counts
 
 ### Admin Panel
-- **Dashboard** - Overview of stats, activity, and requests
+- **Admin Panel** - Overview of stats, activity, and requests
 - **User Management** - View, edit, and manage user accounts
 - **Song Requests** - Manage the request queue, mark played/rejected
-- **News Management** - Create and publish news articles
+- **News Management** - Create and publish news articles with **integrated RSS scraping controls**:
+  - One-click "Sync RSS Feeds" button to import from all active RSS sources
+  - Quick access to RSS feed management panel
+  - Manual and automated article import from gaming news sites
 - **Events Management** - Schedule and manage community events
 - **Polls Management** - Create and monitor music polls
 - **DJ Profile Management** - Add DJs and manage schedules
@@ -202,27 +220,73 @@ php artisan key:generate
 php artisan migrate --seed
 ```
 
-6. **Seed achievements (optional):**
+6. **Seed additional data (recommended):**
 ```bash
+# Seed achievements (unlock system for users)
 php artisan db:seed --class=AchievementSeeder
-```
 
-7. **Seed RSS feeds (optional):**
-```bash
+# Seed RSS feeds (15 high-quality gaming news sources)
 php artisan db:seed --class=RssFeedSeeder
+
+# Seed 2026 gaming events (18 major events: E3, Gamescom, TGA, etc.)
+php artisan db:seed --class=EventSeeder
+
+# Seed entertaining polls (6 gaming polls, including 2 odd ones)
+php artisan db:seed --class=PollSeeder
 ```
 
-8. **Build frontend assets:**
+7. **Build frontend assets:**
 ```bash
 npm run build
 ```
 
-9. **Start the development server:**
+8. **Start the development server:**
 ```bash
 php artisan serve
 ```
 
-## ⚙️ Configuration
+## 🆕 Recent Updates (December 2025)
+
+### Backend Fixes & Enhancements
+- ✅ **Fixed RssFeed & Achievement Seeders** - Added proper console output messages for better visibility
+- ✅ **Fixed CheapShark API 403 Errors** - Integrated HttpClientService with rotating user agents (24 different browser user agents) to prevent API blocking
+- ✅ **Enhanced CheapShark Service** - Improved error handling and response validation for stores and deals endpoints
+
+### New Seeders
+- ✅ **EventSeeder** - Pre-populated with 18 major 2026 gaming events:
+  - Gaming Expos: E3 2026, Gamescom 2026, PAX East/West, Tokyo Game Show, Summer Game Fest
+  - Esports: The International, LoL Worlds, EVO, VALORANT Champions
+  - Awards: The Game Awards 2026
+  - Charity Events: AGDQ & SGDQ 2026
+  - Press Conferences: Nintendo Direct, PlayStation State of Play, Xbox Games Showcase
+- ✅ **PollSeeder** - Pre-populated with 6 entertaining gaming polls:
+  - Platform preferences, favorite genres, best soundtracks
+  - GTA VI feature wishlist (multi-select)
+  - 2 humorous/odd polls for testing and community engagement
+
+### Admin Panel Improvements
+- ✅ **RSS Scraping Management** - Added to `/admin/news` page:
+  - "Sync RSS Feeds" button for one-click import from all active sources
+  - "Manage RSS Feeds" quick access button to feed management panel
+  - Integrated manual trigger for RSS scraping directly from news management
+
+### Frontend Enhancements
+- ✅ **Ultra-Modern Now Playing UI** - Significantly enhanced homepage player with:
+  - Advanced 3D hover effects with glow on album artwork
+  - Floating animated background elements
+  - Enhanced gradient animations with color shifting
+  - Smooth shimmer effect on progress bar
+  - Ripple effects and hover animations on rating buttons
+  - 360° rotation animation on DJ/Host avatar
+  - Pulsing animations for live indicators and "Up Next" section
+  - Backdrop blur effects for modern depth
+  - Broadcast tower icon with custom pulse animation
+
+### Documentation
+- ✅ **Updated README** - Comprehensive documentation of all new features, fixes, and improvements
+- ✅ **Installation Instructions** - Added detailed seeder commands and recommended setup steps
+
+
 
 ### Environment Variables
 
