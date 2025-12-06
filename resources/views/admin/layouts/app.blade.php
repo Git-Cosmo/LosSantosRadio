@@ -619,6 +619,9 @@
 
                 <div class="nav-group">
                     <div class="nav-group-title">Radio</div>
+                    <a href="{{ route('admin.radio.index') }}" class="nav-link {{ request()->routeIs('admin.radio.*') ? 'active' : '' }}">
+                        <i class="fas fa-broadcast-tower"></i> Radio Server
+                    </a>
                     <a href="{{ route('admin.requests.index') }}" class="nav-link {{ request()->routeIs('admin.requests.*') ? 'active' : '' }}">
                         <i class="fas fa-music"></i> Song Requests
                     </a>

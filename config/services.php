@@ -74,6 +74,47 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Shoutcast Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for Shoutcast stream server integration. Used for
+    | stream status, listener counts, and stream metadata.
+    |
+    */
+
+    'shoutcast' => [
+        'host' => env('SHOUTCAST_HOST', 'localhost'),
+        'port' => env('SHOUTCAST_PORT', 8000),
+        'admin_password' => env('SHOUTCAST_ADMIN_PASSWORD'),
+        'ssl' => env('SHOUTCAST_SSL', false),
+        'stream_id' => env('SHOUTCAST_STREAM_ID', 1),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Radio Server Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the radio server type. This determines which
+    | streaming server service is used (AzuraCast, Shoutcast, or Icecast).
+    |
+    | Supported types: "azuracast", "shoutcast", "icecast"
+    |
+    | High Performance Updates:
+    | - SSE: Server-Sent Events (recommended for AzuraCast)
+    | - Polling: Traditional polling with configurable interval
+    |
+    */
+
+    'radio' => [
+        'server_type' => env('RADIO_SERVER_TYPE', 'azuracast'),
+        'now_playing_method' => env('RADIO_NOW_PLAYING_METHOD', 'sse'), // 'sse' or 'polling'
+        'polling_interval' => env('RADIO_POLLING_INTERVAL', 15), // seconds
+        'sse_enabled' => env('RADIO_SSE_ENABLED', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Discord OAuth Configuration
     |--------------------------------------------------------------------------
     */

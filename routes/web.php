@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DjProfileController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\PollController as AdminPollController;
+use App\Http\Controllers\Admin\RadioServerController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SongRequestController as AdminSongRequestController;
 use App\Http\Controllers\Admin\UserController;
@@ -263,6 +264,14 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
     Route::post('/djs/{dj}/schedules', [DjProfileController::class, 'storeSchedule'])->name('djs.schedules.store');
     Route::delete('/djs/{dj}/schedules/{schedule}', [DjProfileController::class, 'destroySchedule'])->name('djs.schedules.destroy');
     Route::resource('djs', DjProfileController::class)->except(['show']);
+
+    // Radio Server Settings
+    Route::prefix('radio')->name('radio.')->group(function () {
+        Route::get('/', [RadioServerController::class, 'index'])->name('index');
+        Route::put('/', [RadioServerController::class, 'update'])->name('update');
+        Route::post('/test', [RadioServerController::class, 'testConnection'])->name('test');
+        Route::post('/clear-cache', [RadioServerController::class, 'clearCache'])->name('clear-cache');
+    });
 
     // Settings
     Route::resource('settings', SettingController::class)->except(['show']);

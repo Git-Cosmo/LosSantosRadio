@@ -53,14 +53,17 @@ class CheapSharkService
 
     /**
      * Fetch deals from CheapShark with optional filters.
+     *
+     * @see https://apidocs.cheapshark.com/ for API documentation
      */
     public function fetchDeals(array $options = []): Collection
     {
+        // Note: CheapShark API default sort by Savings is descending (highest first)
+        // Do NOT pass desc=1 as it inverts the sort to ascending
         $params = array_merge([
             'pageSize' => 60,
             'pageNumber' => 0,
             'sortBy' => 'Savings',
-            'desc' => 1,
             'onSale' => 1,
         ], $options);
 
@@ -208,7 +211,6 @@ class CheapSharkService
             'pageSize' => 60,
             'pageNumber' => 0,
             'sortBy' => 'Savings',
-            'desc' => 1,
             'onSale' => 1,
         ];
         Cache::forget('cheapshark.deals.'.md5(serialize($defaultParams)));
