@@ -1969,11 +1969,12 @@
                             </form>
                         </div>
                     </div>
-                @else
+                @endauth
+                @guest
                     <a href="{{ route('login') }}" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt"></i> Sign In
                     </a>
-                @endauth
+                @endguest
             </div>
         </div>
     </header>
@@ -2794,7 +2795,7 @@
             </div>
 
             <div style="padding: 16px;">
-                <img :src="artwork" :alt="songTitle" class="popup-player-artwork" @error="$event.target.src='/images/default-album.png'">
+                <img :src="artwork" :alt="songTitle" class="popup-player-artwork" @@error="$event.target.src='/images/default-album.png'">
                 
                 <div class="popup-player-info">
                     <div class="popup-player-song" x-text="songTitle"></div>
