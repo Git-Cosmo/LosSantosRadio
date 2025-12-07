@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\DjProfile;
 use App\Models\Event;
+use App\Models\FreeGame;
+use App\Models\Game;
+use App\Models\GameDeal;
 use App\Models\News;
 use App\Models\Poll;
+use App\Models\Video;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
@@ -30,6 +34,10 @@ class SitemapController extends Controller
         $urls = array_merge($urls, $this->getEventUrls());
         $urls = array_merge($urls, $this->getPollUrls());
         $urls = array_merge($urls, $this->getDjUrls());
+        $urls = array_merge($urls, $this->getGameUrls());
+        $urls = array_merge($urls, $this->getFreeGameUrls());
+        $urls = array_merge($urls, $this->getGameDealUrls());
+        $urls = array_merge($urls, $this->getVideoUrls());
 
         $content = view('sitemap.index', ['urls' => $urls])->render();
 
@@ -236,6 +244,97 @@ class SitemapController extends Controller
                     'lastmod' => $dj->updated_at->format('c'),
                     'changefreq' => 'weekly',
                     'priority' => '0.6',
+                ];
+            });
+
+        return $urls;
+    }
+
+    /**
+     * Get game URLs using cursor for memory efficiency.
+     */
+    protected function getGameUrls(): array
+    {
+        $urls = [];
+
+        Game::orderBy('updated_at', 'desc')
+            ->take(self::MAX_ITEMS_PER_TYPE)
+            ->cursor()
+            ->each(function ($game) use (&$urls) {
+                $urls[] = [
+                    'loc' => route('games.show', $game->slug),
+                    'lastmod' => $game->updated_at->format('c'),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.6',
+                ];
+            });
+
+        return $urls;
+    }
+
+    /**
+     * Get free game URLs using cursor for memory efficiency.
+     */
+    protected function getFreeGameUrls(): array
+    {
+        $urls = [];
+
+        FreeGame::where('is_active', true)
+            ->orderBy('created_at', 'desc')
+            ->take(self::MAX_ITEMS_PER_TYPE)
+            ->cursor()
+            ->each(function ($game) use (&$urls) {
+                $urls[] = [
+                    'loc' => route('games.free.show', $game),
+                    'lastmod' => $game->updated_at->format('c'),
+                    'changefreq' => 'daily',
+                    'priority' => '0.7',
+                ];
+            });
+
+        return $urls;
+    }
+
+    /**
+     * Get game deal URLs using cursor for memory efficiency.
+     */
+    protected function getGameDealUrls(): array
+    {
+        $urls = [];
+
+        GameDeal::where('is_on_sale', true)
+            ->orderBy('updated_at', 'desc')
+            ->take(self::MAX_ITEMS_PER_TYPE)
+            ->cursor()
+            ->each(function ($deal) use (&$urls) {
+                $urls[] = [
+                    'loc' => route('games.deals.show', $deal),
+                    'lastmod' => $deal->updated_at->format('c'),
+                    'changefreq' => 'daily',
+                    'priority' => '0.6',
+                ];
+            });
+
+        return $urls;
+    }
+
+    /**
+     * Get video URLs using cursor for memory efficiency.
+     */
+    protected function getVideoUrls(): array
+    {
+        $urls = [];
+
+        Video::where('is_active', true)
+            ->orderBy('posted_at', 'desc')
+            ->take(self::MAX_ITEMS_PER_TYPE)
+            ->cursor()
+            ->each(function ($video) use (&$urls) {
+                $urls[] = [
+                    'loc' => route('videos.show', $video),
+                    'lastmod' => $video->updated_at->format('c'),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.5',
                 ];
             });
 

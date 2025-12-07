@@ -165,7 +165,7 @@
                         Want to set reminders for this event?
                     </p>
                     <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
-                        <a href="{{ route('login') }}" style="color: var(--color-accent); text-decoration: none; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Log in</a> or <a href="{{ route('register') }}" style="color: var(--color-accent); text-decoration: none; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">create an account</a> to get event notifications
+                        <a href="{{ route('login') }}" style="color: var(--color-accent); text-decoration: none; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Log in with Discord, Twitch, or Steam</a> to get event notifications
                     </p>
                 </div>
                 @endguest

@@ -2586,7 +2586,7 @@
         .listen-icon-btn {
             position: fixed;
             bottom: 24px;
-            right: 24px;
+            left: 24px;
             width: 56px;
             height: 56px;
             background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
@@ -2778,6 +2778,8 @@
                 width: 48px;
                 height: 48px;
                 font-size: 20px;
+                bottom: 20px;
+                left: 20px;
             }
 
             .listen-modal {
