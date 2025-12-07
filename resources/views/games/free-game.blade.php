@@ -31,7 +31,7 @@
                         </div>
                         @if($game->description)
                             <p style="color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 1rem;">
-                                {{ $game->description }}
+                                {!! nl2br(e($game->description)) !!}
                             </p>
                         @endif
                         @if($game->expires_at)

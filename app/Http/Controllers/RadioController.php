@@ -51,6 +51,7 @@ class RadioController extends Controller
             ->get();
 
         $upcomingEvents = Event::upcoming()
+            ->withCount('likes')
             ->orderBy('starts_at', 'asc')
             ->limit(3)
             ->get();

@@ -102,6 +102,11 @@ class Event extends Model
 
     public function likesCount(): int
     {
+        // Use preloaded likes_count if available to avoid N+1 queries
+        if (array_key_exists('likes_count', $this->attributes)) {
+            return (int) $this->attributes['likes_count'];
+        }
+
         return $this->likes()->count();
     }
 

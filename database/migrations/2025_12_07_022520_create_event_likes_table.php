@@ -20,6 +20,10 @@ return new class extends Migration
 
             $table->unique(['event_id', 'user_id']);
             $table->index(['event_id', 'ip_address']);
+
+            // Add unique constraint for guest likes by IP
+            // This ensures one like per IP when user_id is null
+            $table->unique(['event_id', 'ip_address'], 'event_likes_event_ip_unique');
         });
     }
 

@@ -90,7 +90,7 @@ class SearchController extends Controller
                     'type' => 'event',
                     'title' => $item->title,
                     'url' => route('events.show', $item->slug),
-                    'description' => \Str::limit(strip_tags($item->description), 150),
+                    'description' => \Str::limit(strip_tags($item->description ?? ''), 150),
                     'date' => $item->starts_at?->format('M d, Y') ?? 'TBD',
                 ];
             });
@@ -124,7 +124,7 @@ class SearchController extends Controller
                     'type' => 'free_game',
                     'title' => $item->title,
                     'url' => route('games.free.show', $item),
-                    'description' => \Str::limit($item->description, 150),
+                    'description' => \Str::limit($item->description ?? '', 150),
                     'date' => $item->created_at->diffForHumans(),
                 ];
             });
@@ -158,7 +158,7 @@ class SearchController extends Controller
                     'type' => 'video',
                     'title' => $item->title,
                     'url' => route('videos.show', $item),
-                    'description' => \Str::limit($item->description, 150),
+                    'description' => \Str::limit($item->description ?? '', 150),
                     'date' => $item->posted_at?->diffForHumans() ?? 'Unknown',
                 ];
             });
