@@ -18,18 +18,20 @@ return new class extends Migration
         });
 
         // Generate slugs for existing DJ profiles
-        DB::table('dj_profiles')->orderBy('id')->each(function ($djProfile) {
-            $slug = Str::slug($djProfile->stage_name);
-            $originalSlug = $slug;
-            $counter = 1;
+        DB::table('dj_profiles')->orderBy('id')->chunk(100, function ($djProfiles) {
+            foreach ($djProfiles as $djProfile) {
+                $slug = Str::slug($djProfile->stage_name);
+                $originalSlug = $slug;
+                $counter = 1;
 
-            // Ensure uniqueness
-            while (DB::table('dj_profiles')->where('slug', $slug)->where('id', '!=', $djProfile->id)->exists()) {
-                $slug = $originalSlug.'-'.$counter;
-                $counter++;
+                // Ensure uniqueness
+                while (DB::table('dj_profiles')->where('slug', $slug)->where('id', '!=', $djProfile->id)->exists()) {
+                    $slug = $originalSlug.'-'.$counter;
+                    $counter++;
+                }
+
+                DB::table('dj_profiles')->where('id', $djProfile->id)->update(['slug' => $slug]);
             }
-
-            DB::table('dj_profiles')->where('id', $djProfile->id)->update(['slug' => $slug]);
         });
 
         // Make slug non-nullable after populating
