@@ -37,13 +37,13 @@ return new class extends Migration
             DB::statement('CREATE UNIQUE INDEX event_likes_event_ip_null_user_unique ON event_likes(event_id, ip_address) WHERE user_id IS NULL');
         } catch (\Illuminate\Database\QueryException $e) {
             // Check if this is the expected syntax error for unsupported filtered indexes
-            // SQLSTATE 42000 = Syntax error or access violation (MySQL/MariaDB/PostgreSQL)
-            // Error 1064 = MySQL specific syntax error code
-            $sqlState = $e->getCode();
-            $expectedErrors = ['42000', '42S22', '1064'];
+            // The error message contains "syntax error" for MySQL/MariaDB when encountering WHERE in index
+            $errorMessage = strtolower($e->getMessage());
             
-            if (in_array((string) $sqlState, $expectedErrors, true)) {
-                // Expected error for databases that don't support filtered indexes
+            if (str_contains($errorMessage, 'syntax error') || 
+                str_contains($errorMessage, 'near \'where\'') ||
+                str_contains($errorMessage, '42000')) {
+                // Expected error for databases that don't support filtered indexes (MySQL/MariaDB)
                 Log::info("Skipped filtered index creation for event_likes table - not supported on {$driver} database");
             } else {
                 // Unexpected error, re-throw to prevent silent failures
