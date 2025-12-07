@@ -35,22 +35,31 @@
                                     <div style="width: 32px; height: 32px; background: var(--color-bg-tertiary); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                         @switch($result['type'])
                                             @case('news')
-                                                <i class="fas fa-newspaper" style="color: var(--color-accent);"></i>
+                                                <i class="fas fa-newspaper" style="color: var(--color-accent);" aria-label="News article"></i>
                                                 @break
                                             @case('event')
-                                                <i class="fas fa-calendar" style="color: var(--color-accent);"></i>
+                                                <i class="fas fa-calendar" style="color: var(--color-accent);" aria-label="Event"></i>
+                                                @break
+                                            @case('poll')
+                                                <i class="fas fa-poll" style="color: var(--color-info);" aria-label="Poll"></i>
+                                                @break
+                                            @case('game')
+                                                <i class="fas fa-gamepad" style="color: var(--color-accent);" aria-label="Game"></i>
                                                 @break
                                             @case('free_game')
-                                                <i class="fas fa-gift" style="color: var(--color-success);"></i>
+                                                <i class="fas fa-gift" style="color: var(--color-success);" aria-label="Free game"></i>
                                                 @break
                                             @case('deal')
-                                                <i class="fas fa-tags" style="color: var(--color-warning);"></i>
+                                                <i class="fas fa-tags" style="color: var(--color-warning);" aria-label="Game deal"></i>
                                                 @break
                                             @case('video')
-                                                <i class="fas fa-video" style="color: var(--color-danger);"></i>
+                                                <i class="fas fa-video" style="color: var(--color-danger);" aria-label="Video"></i>
+                                                @break
+                                            @case('dj')
+                                                <i class="fas fa-microphone" style="color: var(--color-accent);" aria-label="DJ profile"></i>
                                                 @break
                                             @default
-                                                <i class="fas fa-file" style="color: var(--color-text-muted);"></i>
+                                                <i class="fas fa-file" style="color: var(--color-text-muted);" aria-label="Content"></i>
                                         @endswitch
                                     </div>
                                     <div style="flex: 1; min-width: 0;">

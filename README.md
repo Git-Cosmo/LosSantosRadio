@@ -231,9 +231,14 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
   - Level achievements (5, 10, 15, 20)
   - Community achievements (first comment, first vote)
 
-### Social Features
-- **Social Login** - Sign in with Discord, Twitch, Steam, or Battle.net
+### Social Features & Authentication
+- **OAuth Social Login** - Secure authentication via OAuth providers (no traditional registration):
+  - Discord
+  - Twitch  
+  - Steam
+  - Battle.net
 - **Multi-Provider Linking** - Connect multiple social accounts to one profile
+- **Profile Management** - Unlink accounts from linked accounts page
 - **Discord Integration** - Community Discord server links
 
 ### UI/UX
@@ -246,6 +251,30 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **User Dropdown Menu** - Consolidated user actions (Messages, Settings, Profile, Admin Panel, Logout) in a compact dropdown for logged-in users
 - **Themed Error Pages** - Custom error pages (404, 500, 403, 419, 429, 503) with fun radio-themed messages and animations that match the site's visual style
 - **Coming Soon Mode** - Pre-launch landing page with countdown timer and integrated audio player
+- **Listen Button** - Relocated to bottom-left corner for better UX:
+  - Styled to match logo accent color
+  - Positioned to not conflict with scroll-to-top button
+  - Opens modal with multiple listening options
+  - Responsive mobile positioning
+
+### SEO & Discoverability
+- **Comprehensive Meta Tags** - Title, description, keywords optimized for search engines
+- **Open Graph Tags** - Enhanced social media sharing with custom images
+- **Twitter Cards** - Rich previews when shared on Twitter
+- **JSON-LD Structured Data** - Schema.org markup for RadioStation and WebSite
+- **XML Sitemap** - Auto-generated sitemap including:
+  - Static pages and navigation routes
+  - News articles (up to 1000)
+  - Events (up to 1000)
+  - Polls (up to 500)
+  - DJ profiles
+  - Games and game information
+  - Free game offers
+  - Game deals
+  - Videos (YLYL and clips)
+- **Robots.txt** - Dynamic generation with proper allow/disallow rules
+- **Canonical URLs** - Prevent duplicate content issues
+- **Search Engine Friendly** - Clean URLs and proper HTML semantics
 
 ## 📋 Requirements
 
