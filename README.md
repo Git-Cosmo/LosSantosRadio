@@ -29,13 +29,14 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 
 ### Radio Experience
 - **Ultra-Modern Now Playing Widget** - Professional, visually stunning display with:
-  - Large album artwork (280x280px) with enhanced 3D hover effects, shadows, and glow
+  - Large album artwork (300x300px) with enhanced 3D hover effects, shadows, and ambient glow
   - Animated audio visualizer with glowing effects and smooth bounce animations
-  - Dynamic gradient text styling for song titles with color shifting animation
+  - Dynamic gradient text styling for song titles with multi-color shifting animation
+  - Play indicator icon with pulsing gradient background
+  - Artist display with icon and enhanced typography
   - Real-time listener count with pulsing animations
   - Enhanced progress bar with gradient, shimmer effect, and smooth transitions
   - Interactive rating buttons with ripple effects, hover animations, and active states
-  - "Up Next" preview card with enhanced design and slide-in animation
   - Live/AutoDJ status indicator with animated glow and peak listener stats
   - Floating background elements with smooth animations
   - DJ/Host avatar with 360° rotation on hover
@@ -48,8 +49,8 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
   - Automatically syncs with main player state
   - Remembers state across page refreshes
 - **Real-time Updates** - Auto-refresh of currently playing songs with smooth transitions
-- **Recently Played** - Song history with timestamps and album art
-- **Up Next** - Enhanced preview of the next song with album artwork
+- **Recently Played** - Song history with timestamps and album art displayed in sidebar
+- **Up Next in Sidebar** - Enhanced preview of the next song with album artwork, relocated to sidebar for better space utilization and accessibility
 - **Song Requests** - Browse the song library with a media grid layout and request tracks via modal
   - **Enhanced Error Handling** - User-friendly messages for failed requests
   - Graceful handling of unavailable songs (404 errors)
@@ -59,11 +60,20 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
   - **Fixed API Endpoint** - Resolved 405 Method Not Allowed errors
   - Proper CSRF token handling for secure submissions
 - **Trending Songs** - Top-rated tracks displayed in real-time
-- **Enhanced Homepage** - Rich content display with:
-  - Latest news articles with featured images
-  - Upcoming community events with date highlights
-  - Active polls for community engagement
-  - Three-column responsive layout for better content discovery
+- **Enhanced Homepage** - Rich, dynamic content display with:
+  - Latest news articles with featured images and excerpts
+  - Upcoming community events with date highlights and location
+  - Active polls for community engagement with vote counts
+  - **Hot Game Deals** - Top gaming deals with 50%+ savings from CheapShark API:
+    - Deal percentage badges with pricing
+    - Metacritic scores for quality reference
+    - Direct links to purchase
+  - **Free Games** - Active free game offers from multiple platforms:
+    - Epic Games, Steam, and other platform listings
+    - Expiration timers for time-limited offers
+    - Platform badges and icons
+  - Five-column responsive grid layout for optimal content discovery
+  - Hover effects and smooth transitions on all content cards
 
 ### Schedule System
 - **Playlist Schedule** - Automatically displays schedules from AzuraCast playlists

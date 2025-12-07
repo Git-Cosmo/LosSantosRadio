@@ -316,7 +316,7 @@
                     @if($nowPlaying)
                         <div class="now-playing" id="now-playing" style="display: flex; gap: 2rem; align-items: flex-start;">
                             <div class="now-playing-album-container" style="position: relative; flex-shrink: 0;">
-                                <div style="width: 280px; height: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1); position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <div style="width: 300px; height: 300px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 60px rgba(88, 166, 255, 0.2); position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                     <img src="{{ $nowPlaying->currentSong->art ?? '/images/default-album.png' }}"
                                          alt="Album art for {{ $nowPlaying->currentSong->title }} by {{ $nowPlaying->currentSong->artist }}"
                                          class="now-playing-art"
@@ -334,8 +334,20 @@
                                 </div>
                             </div>
                             <div class="now-playing-info" style="flex: 1; min-width: 0;">
-                                <h3 class="now-playing-title" id="song-title" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; color: var(--color-text); background: linear-gradient(135deg, var(--color-text), var(--color-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ $nowPlaying->currentSong->title }}</h3>
-                                <p class="now-playing-artist" id="song-artist" style="font-size: 1.25rem; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 1rem;">{{ $nowPlaying->currentSong->artist }}</p>
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 50%; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.4);">
+                                        <i class="fas fa-play" style="color: white; font-size: 0.875rem; margin-left: 2px;"></i>
+                                    </span>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); font-weight: 600; margin-bottom: 0.25rem;">Now Playing</p>
+                                        <div style="width: 100%; height: 2px; background: linear-gradient(90deg, var(--color-accent), transparent); border-radius: 1px;"></div>
+                                    </div>
+                                </div>
+                                <h3 class="now-playing-title" id="song-title" style="font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; color: var(--color-text); background: linear-gradient(135deg, #ffffff, var(--color-accent), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200% auto;">{{ $nowPlaying->currentSong->title }}</h3>
+                                <p class="now-playing-artist" id="song-artist" style="font-size: 1.375rem; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-user-music" style="font-size: 1rem; color: var(--color-accent);"></i>
+                                    {{ $nowPlaying->currentSong->artist }}
+                                </p>
                                 @if($nowPlaying->currentSong->album)
                                     <p style="color: var(--color-text-muted); font-size: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
                                         <i class="fas fa-compact-disc" style="margin-right: 0.25rem; color: var(--color-accent);" aria-hidden="true"></i>
