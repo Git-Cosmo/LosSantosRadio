@@ -149,6 +149,22 @@ class SearchController extends Controller
 
         $results = array_merge($results, $deals->toArray());
 
+        // Search Games using Scout
+        $games = \App\Models\Game::search($query)
+            ->take($limit)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'type' => 'game',
+                    'title' => $item->title,
+                    'url' => route('games.show', $item->slug),
+                    'description' => \Str::limit(strip_tags($item->description ?? ''), 150),
+                    'date' => $item->release_date?->format('M d, Y') ?? 'TBD',
+                ];
+            });
+
+        $results = array_merge($results, $games->toArray());
+
         // Search Videos using Scout
         $videos = Video::search($query)
             ->where('is_active', true)
