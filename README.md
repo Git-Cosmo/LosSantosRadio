@@ -16,7 +16,12 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Frontend**: Tailwind CSS, Alpine.js, Blade Templates
 - **Radio Integration**: AzuraCast API
 - **Streaming**: Icecast
-- **Caching**: Redis (optional) / File cache
+- **Caching**: Redis (optional) / File cache with intelligent TTL management
+  - AzuraCast data: 30 seconds (configurable, real-time radio updates)
+  - CheapShark deals: 1 hour (gaming deals)
+  - Reddit content: 30 minutes (free games and videos)
+  - IGDB game data: 12 hours (game metadata)
+  - Discord bot data: 5 minutes (bot status and guild info)
 - **Database**: SQLite / MySQL / PostgreSQL
 - **Real-time**: Event broadcasting (optional WebSocket support)
 - **HTTP Client**: Guzzle with random user agent rotation
@@ -96,7 +101,21 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 
 ### Content Systems
 - **News & Blog** - Publish articles with rich content, search and filter support
-- **Events** - Create and manage community events (live shows, contests, meetups) with interactive features:
+- **Events** - Create and manage community events (live shows, contests, meetups) with enhanced interactive features:
+  - **Redesigned Events Pages** - Modern, visually appealing layout with:
+    - Gradient hero section with event statistics
+    - Featured events showcase with hover effects and images
+    - Live event indicators with animated badges
+    - Enhanced date badges and category icons
+    - Interactive event cards with smooth transitions
+    - Improved sidebar with category cards and Discord integration
+  - **Enhanced Event Details Page** - Professional event display featuring:
+    - Full-width hero images with overlay badges
+    - Color-coded information cards for start time, end time, and location
+    - Interactive like and reminder buttons with real-time updates
+    - Status indicators for live, upcoming, and past events
+    - Enhanced typography and better content layout
+    - Organizer profile section with call-to-action
   - **Event Likes System** - Users can like events with real-time count updates
   - **Event Reminders** - Authenticated users can subscribe to email reminders for upcoming events
   - **Pre-seeded 2026 Gaming Events** - 18 major gaming events including:
@@ -175,13 +194,16 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **User/Role Sync** - Sync Discord server roles and members to database
 - **Member Linking** - Link Discord accounts to website accounts
 - **Bot Monitoring** - View bot status and activity logs
-- **Admin Controls** - Manage bot settings from admin panel at `/admin/discord/settings`
-  - Toggle bot on/off
-  - Restart bot connection
-  - Monitor bot status in real-time
+- **Admin Controls** - Comprehensive bot management from admin panel at `/admin/discord/settings`:
+  - **Start/Stop Controls** - Dedicated buttons to start and stop the Discord bot with one click
+  - **Real-time Status** - Visual indicators showing bot Running/Stopped state
+  - Restart bot connection for quick recovery
   - Configure channel IDs for logging and welcome messages
-  - Enable/disable auto-sync
+  - Enable/disable auto-sync for roles and members
+  - Bot state persists across settings form submissions
 - **API Integration** - Uses Discord API v10 for all operations
+- **Cache Management** - Smart caching (5 minutes TTL) with automatic cache clearing on configuration changes
+- **Separation of Concerns** - Bot lifecycle (start/stop) managed separately from general settings for clearer UX
 
 ### RSS News Feeds
 - **Automatic Import** - Import gaming news articles automatically from RSS feeds

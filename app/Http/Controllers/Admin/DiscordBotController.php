@@ -75,12 +75,12 @@ class DiscordBotController extends Controller
             'discord_log_channel' => Setting::get('discord_log_channel'),
             'discord_welcome_channel' => Setting::get('discord_welcome_channel'),
             'discord_auto_sync_enabled' => Setting::get('discord_auto_sync_enabled', false),
-            'discord_bot_enabled' => Setting::get('discord_bot_enabled', true),
         ];
 
         return view('admin.discord.settings', [
             'settings' => $settings,
             'botStatus' => $this->discord->isConfigured() ? $this->discord->getBotUser() : null,
+            'botEnabled' => $this->discord->isRunning(),
         ]);
     }
 
@@ -92,6 +92,7 @@ class DiscordBotController extends Controller
     {
         // Only allow non-sensitive settings to be updated via the admin panel
         // Bot token and guild ID must be set via environment variables
+        // Bot enabled/disabled state is controlled via start/stop buttons, not the settings form
         $validated = $request->validate([
             'discord_log_channel' => 'nullable|string|max:25',
             'discord_welcome_channel' => 'nullable|string|max:25',
@@ -102,7 +103,6 @@ class DiscordBotController extends Controller
         }
 
         Setting::set('discord_auto_sync_enabled', $request->boolean('discord_auto_sync_enabled'));
-        Setting::set('discord_bot_enabled', $request->boolean('discord_bot_enabled'));
 
         // Clear Discord cache to pick up new settings
         $this->discord->clearCache();
@@ -130,5 +130,38 @@ class DiscordBotController extends Controller
 
         return redirect()->route('admin.discord.settings')
             ->with('success', 'Discord bot connection has been restarted successfully.');
+    }
+
+    /**
+     * Start the Discord bot.
+     */
+    public function start(): RedirectResponse
+    {
+        if (! $this->discord->isConfigured()) {
+            return redirect()->route('admin.discord.settings')
+                ->with('error', 'Discord bot is not configured. Please add bot token and guild ID in .env file.');
+        }
+
+        if ($this->discord->start()) {
+            return redirect()->route('admin.discord.settings')
+                ->with('success', 'Discord bot has been started successfully.');
+        }
+
+        return redirect()->route('admin.discord.settings')
+            ->with('error', 'Failed to start Discord bot.');
+    }
+
+    /**
+     * Stop the Discord bot.
+     */
+    public function stop(): RedirectResponse
+    {
+        if ($this->discord->stop()) {
+            return redirect()->route('admin.discord.settings')
+                ->with('success', 'Discord bot has been stopped successfully.');
+        }
+
+        return redirect()->route('admin.discord.settings')
+            ->with('error', 'Failed to stop Discord bot.');
     }
 }

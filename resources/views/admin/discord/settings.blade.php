@@ -8,16 +8,40 @@
             <h2 class="card-title">Bot Configuration</h2>
             @if($botStatus)
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span class="badge badge-live pulse-animation" style="background: #43b581;">
-                        <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
-                        Bot Online
-                    </span>
-                    <form action="{{ route('admin.discord.restart') }}" method="POST" style="margin: 0;">
-                        @csrf
-                        <button type="submit" class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" onclick="return confirm('Are you sure you want to restart the bot connection?')">
-                            <i class="fas fa-sync-alt"></i> Restart Bot
-                        </button>
-                    </form>
+                    @if($botEnabled)
+                        <span class="badge badge-live pulse-animation" style="background: #43b581;">
+                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                            Bot Running
+                        </span>
+                    @else
+                        <span class="badge" style="background: #f04747; color: white;">
+                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                            Bot Stopped
+                        </span>
+                    @endif
+                    <div style="display: flex; gap: 0.25rem;">
+                        @if($botEnabled)
+                            <form action="{{ route('admin.discord.stop') }}" method="POST" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="btn btn-danger" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" onclick="return confirm('Are you sure you want to stop the bot?')">
+                                    <i class="fas fa-stop"></i> Stop Bot
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('admin.discord.start') }}" method="POST" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="btn btn-success" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" onclick="return confirm('Are you sure you want to start the bot?')">
+                                    <i class="fas fa-play"></i> Start Bot
+                                </button>
+                            </form>
+                        @endif
+                        <form action="{{ route('admin.discord.restart') }}" method="POST" style="margin: 0;">
+                            @csrf
+                            <button type="submit" class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" onclick="return confirm('Are you sure you want to restart the bot connection?')">
+                                <i class="fas fa-sync-alt"></i> Restart
+                            </button>
+                        </form>
+                    </div>
                 </div>
             @else
                 <span class="badge" style="background: #f04747; color: white;">
@@ -33,16 +57,8 @@
                 <div class="alert" style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); margin-bottom: 1.5rem;">
                     <p style="color: var(--color-text-secondary); font-size: 0.875rem;">
                         <i class="fas fa-shield-alt" style="color: var(--color-accent);"></i>
-                        <strong>Important:</strong> The Discord bot token and guild ID must be configured via environment variables only. For security reasons, they cannot be set or overridden from this form.
+                        <strong>Important:</strong> The Discord bot token and guild ID must be configured via environment variables only. For security reasons, they cannot be set or overridden from this form. Use the Start/Stop buttons above to control the bot.
                     </p>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-check">
-                        <input type="checkbox" name="discord_bot_enabled" value="1" class="form-check-input" @checked(old('discord_bot_enabled', $settings['discord_bot_enabled'] ?? true))>
-                        <span class="form-check-label" style="font-weight: 600;">Enable Discord Bot</span>
-                    </label>
-                    <small style="color: var(--color-text-muted); display: block; margin-top: 0.25rem;">Toggle the Discord bot functionality on or off. When disabled, all Discord integration features will be paused.</small>
                 </div>
 
                 <div class="form-group">

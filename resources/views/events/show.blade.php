@@ -1,130 +1,233 @@
 <x-layouts.app>
     <x-slot name="title">{{ $event->title }}</x-slot>
 
-    <div style="max-width: 800px; margin: 0 auto;">
-        <a href="{{ route('events.index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--color-text-secondary); margin-bottom: 1.5rem;">
-            <i class="fas fa-arrow-left"></i> Back to Events
+    <div style="max-width: 900px; margin: 0 auto; padding: 0 1rem;">
+        <!-- Enhanced Back Button -->
+        <a href="{{ route('events.index') }}" class="event-back-button">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Events</span>
         </a>
 
-        <div class="card">
+        <div class="card" style="border: none; box-shadow: 0 4px 24px rgba(0,0,0,0.1); overflow: hidden;">
+            <!-- Enhanced Header Image -->
             @if($event->image)
-                <img src="{{ $event->image }}" alt="{{ $event->title }}" style="width: 100%; height: 300px; object-fit: cover;">
+                <div style="position: relative; width: 100%; height: 400px; background: url('{{ e($event->image) }}') center/cover;">
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.8) 100%);"></div>
+                    <!-- Floating Badges on Image -->
+                    <div style="position: absolute; top: 1.5rem; left: 1.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <span class="badge badge-{{ $event->event_type === 'live_show' ? 'primary' : ($event->event_type === 'contest' ? 'warning' : 'gray') }}" style="padding: 0.5rem 1rem; font-size: 0.875rem; backdrop-filter: blur(10px); font-weight: 600;">
+                            <i class="fas fa-{{ $event->event_type === 'live_show' ? 'microphone' : ($event->event_type === 'contest' ? 'trophy' : 'calendar') }}" style="margin-right: 0.5rem;"></i>
+                            {{ ucfirst(str_replace('_', ' ', $event->event_type)) }}
+                        </span>
+                        @if($event->isOngoing())
+                            <span class="badge badge-live pulse-animation" style="padding: 0.5rem 1rem; font-size: 0.875rem; backdrop-filter: blur(10px); font-weight: 700;">
+                                <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 0.5rem;"></i>
+                                LIVE NOW
+                            </span>
+                        @elseif($event->isUpcoming())
+                            <span class="badge badge-success" style="padding: 0.5rem 1rem; font-size: 0.875rem; backdrop-filter: blur(10px); font-weight: 600;">
+                                <i class="fas fa-calendar-check" style="margin-right: 0.5rem;"></i>
+                                Upcoming
+                            </span>
+                        @else
+                            <span class="badge badge-gray" style="padding: 0.5rem 1rem; font-size: 0.875rem; backdrop-filter: blur(10px);">
+                                <i class="fas fa-history" style="margin-right: 0.5rem;"></i>
+                                Past Event
+                            </span>
+                        @endif
+                    </div>
+                    <!-- Title on Image -->
+                    <div style="position: absolute; bottom: 2rem; left: 2rem; right: 2rem;">
+                        <h1 style="font-size: 2.5rem; font-weight: 700; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5); margin: 0; line-height: 1.2;">{{ $event->title }}</h1>
+                    </div>
+                </div>
             @else
-                <div style="width: 100%; height: 200px; background: linear-gradient(135deg, var(--color-accent), #a855f7); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-calendar-star" style="font-size: 4rem; color: white; opacity: 0.5;"></i>
+                <div style="position: relative; width: 100%; height: 300px; background: linear-gradient(135deg, var(--color-accent) 0%, #a855f7 50%, #ec4899 100%);">
+                    <!-- Animated Background Pattern -->
+                    <div style="position: absolute; inset: 0; opacity: 0.1; background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px);"></div>
+                    <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-calendar-star" style="font-size: 6rem; color: rgba(255,255,255,0.2);"></i>
+                    </div>
+                    <!-- Floating Badges -->
+                    <div style="position: absolute; top: 1.5rem; left: 1.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <span class="badge" style="padding: 0.5rem 1rem; font-size: 0.875rem; background: rgba(255,255,255,0.25); backdrop-filter: blur(10px); color: white; font-weight: 600;">
+                            <i class="fas fa-{{ $event->event_type === 'live_show' ? 'microphone' : ($event->event_type === 'contest' ? 'trophy' : 'calendar') }}" style="margin-right: 0.5rem;"></i>
+                            {{ ucfirst(str_replace('_', ' ', $event->event_type)) }}
+                        </span>
+                        @if($event->isOngoing())
+                            <span class="badge pulse-animation" style="padding: 0.5rem 1rem; font-size: 0.875rem; background: rgba(255,255,255,0.25); backdrop-filter: blur(10px); color: white; font-weight: 700;">
+                                <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 0.5rem;"></i>
+                                LIVE NOW
+                            </span>
+                        @elseif($event->isUpcoming())
+                            <span class="badge" style="padding: 0.5rem 1rem; font-size: 0.875rem; background: rgba(255,255,255,0.25); backdrop-filter: blur(10px); color: white; font-weight: 600;">
+                                <i class="fas fa-calendar-check" style="margin-right: 0.5rem;"></i>
+                                Upcoming
+                            </span>
+                        @endif
+                    </div>
+                    <!-- Title -->
+                    <div style="position: absolute; bottom: 2rem; left: 2rem; right: 2rem;">
+                        <h1 style="font-size: 2.5rem; font-weight: 700; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.3); margin: 0; line-height: 1.2;">{{ $event->title }}</h1>
+                    </div>
                 </div>
             @endif
 
-            <div class="card-body">
-                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                    <span class="badge badge-{{ $event->event_type === 'live_show' ? 'primary' : ($event->event_type === 'contest' ? 'warning' : 'gray') }}">
-                        {{ ucfirst(str_replace('_', ' ', $event->event_type)) }}
-                    </span>
-                    @if($event->isOngoing())
-                        <span class="badge badge-live">LIVE NOW</span>
-                    @elseif($event->isUpcoming())
-                        <span class="badge badge-success">Upcoming</span>
-                    @else
-                        <span class="badge badge-gray">Past Event</span>
-                    @endif
-                </div>
-
-                <h1 style="font-size: 1.75rem; margin-bottom: 1rem;">{{ $event->title }}</h1>
-
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; background: var(--color-bg-tertiary); border-radius: 8px;">
-                    <div>
-                        <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">
-                            <i class="fas fa-clock"></i> Start Time
-                        </p>
-                        <p style="font-weight: 500;">{{ $event->starts_at->format('l, F j, Y') }}</p>
-                        <p style="color: var(--color-accent);">{{ $event->starts_at->format('g:i A T') }}</p>
+            <div class="card-body" style="padding: 2rem;">
+                <!-- Enhanced Event Details Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <!-- Start Time Card -->
+                    <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(88, 166, 255, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%); border-radius: 12px; border-left: 4px solid var(--color-accent);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <div style="width: 40px; height: 40px; background: var(--color-accent); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-clock" style="color: white; font-size: 1.125rem;"></i>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Start Time</span>
+                        </div>
+                        <div style="font-size: 1.125rem; font-weight: 600; color: var(--color-text); margin-bottom: 0.25rem;">{{ $event->starts_at->format('l, F j, Y') }}</div>
+                        <div style="font-size: 1rem; color: var(--color-accent); font-weight: 500;">{{ $event->starts_at->format('g:i A T') }}</div>
+                        <div style="font-size: 0.875rem; color: var(--color-text-secondary); margin-top: 0.5rem;">
+                            <i class="fas fa-hourglass-start" style="margin-right: 0.25rem;"></i>
+                            {{ $event->starts_at->diffForHumans() }}
+                        </div>
                     </div>
+
                     @if($event->ends_at)
-                        <div>
-                            <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">
-                                <i class="fas fa-flag-checkered"></i> End Time
-                            </p>
-                            <p style="font-weight: 500;">{{ $event->ends_at->format('l, F j, Y') }}</p>
-                            <p style="color: var(--color-text-secondary);">{{ $event->ends_at->format('g:i A T') }}</p>
+                    <!-- End Time Card -->
+                    <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border-radius: 12px; border-left: 4px solid var(--color-success);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <div style="width: 40px; height: 40px; background: var(--color-success); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-flag-checkered" style="color: white; font-size: 1.125rem;"></i>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">End Time</span>
                         </div>
+                        <div style="font-size: 1.125rem; font-weight: 600; color: var(--color-text); margin-bottom: 0.25rem;">{{ $event->ends_at->format('l, F j, Y') }}</div>
+                        <div style="font-size: 1rem; color: var(--color-success); font-weight: 500;">{{ $event->ends_at->format('g:i A T') }}</div>
+                        <div style="font-size: 0.875rem; color: var(--color-text-secondary); margin-top: 0.5rem;">
+                            <i class="fas fa-stopwatch" style="margin-right: 0.25rem;"></i>
+                            Duration: {{ $event->starts_at->diffInHours($event->ends_at) }}h
+                        </div>
+                    </div>
                     @endif
+
                     @if($event->location)
-                        <div style="grid-column: span 2;">
-                            <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">
-                                <i class="fas fa-map-marker-alt"></i> Location
-                            </p>
-                            <p style="font-weight: 500;">{{ $event->location }}</p>
+                    <!-- Location Card -->
+                    <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%); border-radius: 12px; border-left: 4px solid #fbbf24;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <div style="width: 40px; height: 40px; background: #fbbf24; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-map-marker-alt" style="color: white; font-size: 1.125rem;"></i>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Location</span>
                         </div>
+                        <div style="font-size: 1.125rem; font-weight: 600; color: var(--color-text); line-height: 1.4;">{{ $event->location }}</div>
+                    </div>
                     @endif
                 </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <h2 style="font-size: 1.125rem; margin-bottom: 0.75rem;">About This Event</h2>
-                    <div style="color: var(--color-text-secondary); line-height: 1.7;">
+                <!-- About Section with Better Typography -->
+                <div style="margin-bottom: 2rem;">
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; color: var(--color-text);">
+                        <i class="fas fa-info-circle" style="color: var(--color-accent);"></i>
+                        About This Event
+                    </h2>
+                    <div style="color: var(--color-text-secondary); line-height: 1.8; font-size: 1rem; padding: 1.5rem; background: var(--color-bg-secondary); border-radius: 12px; border-left: 4px solid var(--color-accent);">
                         {!! nl2br(e($event->description)) !!}
                     </div>
                 </div>
 
-                <!-- Event Actions: Like and Reminder -->
-                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <!-- Enhanced Event Actions -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
                     <!-- Like Button -->
-                    <button id="event-like-btn" data-event-id="{{ $event->id }}" style="flex: 1; min-width: 200px; padding: 0.875rem 1.5rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600;">
-                        <i class="far fa-heart" id="like-icon" style="color: var(--color-text-muted);"></i>
-                        <span id="like-text">Like</span>
-                        <span id="like-count" style="padding: 0.25rem 0.625rem; background: var(--color-bg); border-radius: 12px; font-size: 0.875rem;">0</span>
+                    <button id="event-like-btn" data-event-id="{{ $event->id }}" class="event-like-btn">
+                        <i class="far fa-heart" id="like-icon" style="color: var(--color-text-muted); font-size: 1.25rem; transition: all 0.3s ease;"></i>
+                        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                            <span id="like-text" style="font-size: 0.875rem; color: var(--color-text);">Like Event</span>
+                            <span id="like-count" style="font-size: 1.25rem; font-weight: 700; color: var(--color-accent);">0</span>
+                        </div>
                     </button>
 
                     @auth
                     <!-- Reminder Button -->
-                    <button id="event-reminder-btn" data-event-id="{{ $event->id }}" style="flex: 1; min-width: 200px; padding: 0.875rem 1.5rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600;">
-                        <i class="far fa-bell" id="reminder-icon" style="color: var(--color-text-muted);"></i>
-                        <span id="reminder-text">Set Reminder</span>
+                    <button id="event-reminder-btn" data-event-id="{{ $event->id }}" class="event-reminder-btn">
+                        <i class="far fa-bell" id="reminder-icon" style="color: var(--color-text-muted); font-size: 1.25rem; transition: all 0.3s ease;"></i>
+                        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                            <span id="reminder-text" style="font-size: 0.875rem; color: var(--color-text);">Set Reminder</span>
+                            <span style="font-size: 0.75rem; color: var(--color-text-muted);">Get notified</span>
+                        </div>
                     </button>
                     @endauth
                 </div>
 
                 @guest
-                <div style="padding: 1rem; background: var(--color-bg-tertiary); border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
-                    <p style="color: var(--color-text-muted); font-size: 0.875rem;">
-                        <a href="{{ route('login') }}" style="color: var(--color-accent); text-decoration: none; font-weight: 600;">Log in</a> to set reminders for this event
+                <div style="padding: 1.5rem; background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%); border-radius: 12px; margin-bottom: 2rem; text-align: center; border: 2px dashed var(--color-border);">
+                    <i class="fas fa-user-circle" style="font-size: 2.5rem; color: var(--color-text-muted); margin-bottom: 1rem; display: block;"></i>
+                    <p style="color: var(--color-text); font-size: 1rem; margin-bottom: 0.5rem; font-weight: 600;">
+                        Want to set reminders for this event?
+                    </p>
+                    <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
+                        <a href="{{ route('login') }}" style="color: var(--color-accent); text-decoration: none; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Log in</a> or <a href="{{ route('register') }}" style="color: var(--color-accent); text-decoration: none; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">create an account</a> to get event notifications
                     </p>
                 </div>
                 @endguest
 
                 @if($event->isUpcoming())
-                    <div style="padding: 1rem; background: rgba(88, 166, 255, 0.1); border: 1px solid var(--color-accent); border-radius: 8px; text-align: center;">
-                        <p style="color: var(--color-accent); font-weight: 500; margin-bottom: 0.5rem;">
-                            <i class="fas fa-bell"></i> Event starts {{ $event->starts_at->diffForHumans() }}
-                        </p>
-                        <p style="font-size: 0.875rem; color: var(--color-text-muted);">
-                            Don't miss it! Join our Discord to get reminders.
-                        </p>
+                    <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(88, 166, 255, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%); border: 2px solid var(--color-accent); border-radius: 12px; text-align: center; position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); animation: shimmer 2s infinite;"></div>
+                        <div style="position: relative; z-index: 1;">
+                            <div style="width: 60px; height: 60px; margin: 0 auto 1rem; background: var(--color-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-bell" style="font-size: 1.5rem; color: white;"></i>
+                            </div>
+                            <p style="color: var(--color-accent); font-weight: 600; font-size: 1.125rem; margin-bottom: 0.5rem;">
+                                Event starts {{ $event->starts_at->diffForHumans() }}
+                            </p>
+                            <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
+                                Don't miss it! Join our Discord community to get instant reminders and updates.
+                            </p>
+                        </div>
                     </div>
                 @elseif($event->isOngoing())
-                    <div style="padding: 1rem; background: rgba(63, 185, 80, 0.1); border: 1px solid var(--color-success); border-radius: 8px; text-align: center;">
-                        <p style="color: var(--color-success); font-weight: 500; margin-bottom: 0.5rem;">
-                            <i class="fas fa-play-circle"></i> This event is happening now!
-                        </p>
-                        @if($event->ends_at)
-                            <p style="font-size: 0.875rem; color: var(--color-text-muted);">
-                                Ends {{ $event->ends_at->diffForHumans() }}
+                    <div style="padding: 1.5rem; background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%); border: 2px solid var(--color-success); border-radius: 12px; text-align: center; position: relative; overflow: hidden;">
+                        <div class="pulse-animation" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, transparent 70%);"></div>
+                        <div style="position: relative; z-index: 1;">
+                            <div class="pulse-animation" style="width: 60px; height: 60px; margin: 0 auto 1rem; background: var(--color-success); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-play-circle" style="font-size: 1.5rem; color: white;"></i>
+                            </div>
+                            <p style="color: var(--color-success); font-weight: 700; font-size: 1.25rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">
+                                <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 0.5rem;"></i>
+                                This event is happening now!
                             </p>
-                        @endif
+                            @if($event->ends_at)
+                                <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
+                                    <i class="fas fa-clock" style="margin-right: 0.25rem;"></i>
+                                    Ends {{ $event->ends_at->diffForHumans() }}
+                                </p>
+                            @endif
+                        </div>
                     </div>
                 @endif
             </div>
         </div>
 
         @if($event->creator)
-            <div class="card" style="margin-top: 1.5rem;">
-                <div class="card-body">
-                    <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.5rem;">Posted by</p>
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <img src="{{ $event->creator->avatar_url }}" alt="{{ $event->creator->name }}" style="width: 40px; height: 40px; border-radius: 50%;">
-                        <div>
-                            <p style="font-weight: 500;">{{ $event->creator->name }}</p>
-                            <p style="font-size: 0.75rem; color: var(--color-text-muted);">{{ $event->created_at->format('M j, Y') }}</p>
+            <div class="card" style="margin-top: 1.5rem; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                <div class="card-body" style="padding: 1.5rem;">
+                    <p style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                        <i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i>
+                        Event Organizer
+                    </p>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <img src="{{ $event->creator->avatar_url }}" alt="{{ $event->creator->name }}" style="width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--color-accent); box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);">
+                        <div style="flex: 1;">
+                            <p style="font-weight: 600; font-size: 1.125rem; margin-bottom: 0.25rem; color: var(--color-text);">{{ $event->creator->name }}</p>
+                            <p style="font-size: 0.875rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-calendar-plus" style="color: var(--color-accent);"></i>
+                                Posted {{ $event->created_at->format('M j, Y') }}
+                            </p>
                         </div>
+                        <a href="{{ route('profile.show', $event->creator->username) }}" class="event-creator-link">
+                            View Profile
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
             </div>

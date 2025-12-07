@@ -145,6 +145,8 @@ class RssFeedSeeder extends Seeder
             );
         }
 
-        $this->command->info('RSS feeds seeded successfully! Added '.count($feeds).' gaming news sources.');
+        if ($this->command) {
+            $this->command->info('RSS feeds seeded successfully! Added '.count($feeds).' gaming news sources.');
+        }
     }
 }
