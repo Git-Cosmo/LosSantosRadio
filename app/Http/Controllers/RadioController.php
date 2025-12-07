@@ -65,7 +65,7 @@ class RadioController extends Controller
             $topGameDeals = GameDeal::onSale()
                 ->minSavings(50)
                 ->orderBy('savings_percent', 'desc')
-                ->limit(6)
+                ->limit(3)
                 ->get();
         } catch (\Exception $e) {
             $topGameDeals = collect();
@@ -74,7 +74,7 @@ class RadioController extends Controller
         try {
             $freeGames = FreeGame::active()
                 ->orderBy('created_at', 'desc')
-                ->limit(4)
+                ->limit(3)
                 ->get();
         } catch (\Exception $e) {
             $freeGames = collect();

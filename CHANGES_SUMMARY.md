@@ -139,9 +139,9 @@ RadioController::index()
 │   ├── Events (3 upcoming)
 │   └── Polls (2 active)
 └── Fetch NEW content with error handling
-    ├── Try: Game Deals (6 top, 50%+ savings)
+    ├── Try: Game Deals (3 top, 50%+ savings)
     │   └── Catch: Return empty collection
-    └── Try: Free Games (4 latest active)
+    └── Try: Free Games (3 latest active)
         └── Catch: Return empty collection
 ```
 

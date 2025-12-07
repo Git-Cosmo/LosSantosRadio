@@ -46,7 +46,7 @@ This document details the comprehensive homepage redesign implemented for Los Sa
 **Purpose**: Display hot gaming deals to engage the gaming community.
 
 **Features**:
-- Shows top 6 game deals with 50%+ savings
+- Shows top 3 game deals with 50%+ savings
 - Displays discount percentage in prominent red badge
 - Shows original and sale prices side by side
 - Includes Metacritic score for quality reference
@@ -65,7 +65,7 @@ This document details the comprehensive homepage redesign implemented for Los Sa
 GameDeal::onSale()
     ->minSavings(50)
     ->orderBy('savings_percent', 'desc')
-    ->limit(6)
+    ->limit(3)
     ->get();
 ```
 
@@ -73,7 +73,7 @@ GameDeal::onSale()
 **Purpose**: Highlight free game offers from various platforms.
 
 **Features**:
-- Shows top 4 active free games
+- Shows top 3 active free games
 - Prominent "FREE" badge in green gradient
 - Platform indicators (Epic Games, Steam, etc.) with appropriate icons
 - Expiration countdown for time-limited offers
@@ -91,7 +91,7 @@ GameDeal::onSale()
 ```php
 FreeGame::active()
     ->orderBy('created_at', 'desc')
-    ->limit(4)
+    ->limit(3)
     ->get();
 ```
 
@@ -106,7 +106,7 @@ try {
     $topGameDeals = GameDeal::onSale()
         ->minSavings(50)
         ->orderBy('savings_percent', 'desc')
-        ->limit(6)
+        ->limit(3)
         ->get();
 } catch (\Exception $e) {
     $topGameDeals = collect();

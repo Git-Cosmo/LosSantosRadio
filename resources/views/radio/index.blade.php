@@ -336,7 +336,7 @@
                             <div class="now-playing-info" style="flex: 1; min-width: 0;">
                                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                                     <span style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 50%; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.4);">
-                                        <i class="fas fa-play" style="color: white; font-size: 0.875rem; margin-left: 2px;"></i>
+                                        <i class="fas fa-play" aria-hidden="true" style="color: white; font-size: 0.875rem; margin-left: 2px;"></i>
                                     </span>
                                     <div style="flex: 1; min-width: 0;">
                                         <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); font-weight: 600; margin-bottom: 0.25rem;">Now Playing</p>
@@ -345,7 +345,7 @@
                                 </div>
                                 <h3 class="now-playing-title" id="song-title" style="font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; color: var(--color-text); background: linear-gradient(135deg, #ffffff, var(--color-accent), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200% auto;">{{ $nowPlaying->currentSong->title }}</h3>
                                 <p class="now-playing-artist" id="song-artist" style="font-size: 1.375rem; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="fas fa-user-music" style="font-size: 1rem; color: var(--color-accent);"></i>
+                                    <i class="fas fa-user-music" style="font-size: 1rem; color: var(--color-accent);" aria-hidden="true"></i>
                                     {{ $nowPlaying->currentSong->artist }}
                                 </p>
                                 @if($nowPlaying->currentSong->album)
@@ -504,7 +504,7 @@
             <div class="card" style="margin-bottom: 1.5rem;">
                 <div class="card-header">
                     <h2 class="card-title">
-                        <i class="fas fa-forward" style="color: var(--color-accent);"></i>
+                        <i class="fas fa-forward" style="color: var(--color-accent);" aria-hidden="true"></i>
                         Up Next
                     </h2>
                 </div>
@@ -519,7 +519,7 @@
                             <p style="font-size: 0.875rem; color: var(--color-text-secondary);">{{ $nowPlaying->nextSong->artist }}</p>
                             @if($nowPlaying->nextSong->album)
                                 <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem;">
-                                    <i class="fas fa-compact-disc" style="font-size: 0.625rem;"></i>
+                                    <i class="fas fa-compact-disc" style="font-size: 0.625rem;" aria-hidden="true"></i>
                                     {{ $nowPlaying->nextSong->album }}
                                 </p>
                             @endif
@@ -749,12 +749,12 @@
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span><i class="fas fa-tags" style="color: #f59e0b;"></i> Hot Game Deals</span>
+                        <span><i class="fas fa-tags" style="color: #f59e0b;" aria-hidden="true"></i> Hot Game Deals</span>
                         <a href="{{ route('games.deals') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
                     </h2>
                 </div>
                 <div class="card-body" style="padding: 0;">
-                    @foreach($topGameDeals->take(3) as $deal)
+                    @foreach($topGameDeals as $deal)
                     <a href="{{ $deal->deal_url }}" target="_blank" rel="noopener noreferrer" class="deal-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
                         <div style="display: flex; gap: 1rem; align-items: center;">
                             @if($deal->thumb)
@@ -773,7 +773,7 @@
                                 </div>
                                 @if($deal->metacritic_score)
                                 <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
-                                    <i class="fas fa-star" style="color: #f59e0b;"></i>
+                                    <i class="fas fa-star" style="color: #f59e0b;" aria-hidden="true"></i>
                                     <span>Metacritic: {{ $deal->metacritic_score }}</span>
                                 </div>
                                 @endif
@@ -790,12 +790,12 @@
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span><i class="fas fa-gift" style="color: #22c55e;"></i> Free Games</span>
+                        <span><i class="fas fa-gift" style="color: #22c55e;" aria-hidden="true"></i> Free Games</span>
                         <a href="{{ route('games.free') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
                     </h2>
                 </div>
                 <div class="card-body" style="padding: 0;">
-                    @foreach($freeGames->take(3) as $game)
+                    @foreach($freeGames as $game)
                     <a href="{{ $game->url }}" target="_blank" rel="noopener noreferrer" class="game-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
                         <div style="display: flex; gap: 1rem; align-items: center;">
                             @if($game->image_url)
@@ -809,18 +809,18 @@
                                     </span>
                                     <span style="font-size: 0.75rem; color: var(--color-text-muted); padding: 0.25rem 0.5rem; background: var(--color-bg-tertiary); border-radius: 12px;">
                                         @if($game->store === 'Epic Games')
-                                            <i class="fas fa-gamepad"></i>
+                                            <i class="fas fa-gamepad" aria-hidden="true"></i>
                                         @elseif($game->store === 'Steam')
-                                            <i class="fab fa-steam"></i>
+                                            <i class="fab fa-steam" aria-hidden="true"></i>
                                         @else
-                                            <i class="fas fa-shopping-cart"></i>
+                                            <i class="fas fa-shopping-cart" aria-hidden="true"></i>
                                         @endif
                                         {{ $game->store }}
                                     </span>
                                 </div>
                                 @if($game->expires_at)
                                 <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
-                                    <i class="far fa-clock"></i>
+                                    <i class="far fa-clock" aria-hidden="true"></i>
                                     <span>Ends {{ $game->expires_at->diffForHumans() }}</span>
                                 </div>
                                 @endif
