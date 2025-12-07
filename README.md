@@ -28,8 +28,9 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 ## 📦 Features
 
 ### Radio Experience
-- **Ultra-Modern Now Playing Widget** - Professional, visually stunning display with:
-  - Large album artwork (300x300px) with enhanced 3D hover effects, shadows, and ambient glow
+- **Redesigned Now Playing Widget** - Professional, balanced display with:
+  - Compact album artwork (180x180px) with enhanced 3D hover effects, shadows, and ambient glow
+  - Optimized sizing for better visual balance and space utilization
   - Animated audio visualizer with glowing effects and smooth bounce animations
   - Dynamic gradient text styling for song titles with multi-color shifting animation
   - Play indicator icon with pulsing gradient background
@@ -62,17 +63,20 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Trending Songs** - Top-rated tracks displayed in real-time
 - **Enhanced Homepage** - Rich, dynamic content display with:
   - Latest news articles with featured images and excerpts
-  - Upcoming community events with date highlights and location
+  - Upcoming community events with date highlights, location, and like counts
   - Active polls for community engagement with vote counts
   - **Hot Game Deals** - Top gaming deals with 50%+ savings from CheapShark API:
+    - Clickable deal cards linking to detailed deal pages
     - Deal percentage badges with pricing
     - Metacritic scores for quality reference
-    - Direct links to purchase
+    - Full deal information including store details
   - **Free Games** - Active free game offers from multiple platforms:
+    - Clickable game cards linking to detailed game pages
     - Epic Games, Steam, and other platform listings
     - Expiration timers for time-limited offers
     - Platform badges and icons
-  - Five-column responsive grid layout for optimal content discovery
+    - Comprehensive game information and external claim links
+  - Responsive grid layout for optimal content discovery
   - Hover effects and smooth transitions on all content cards
 
 ### Schedule System
@@ -92,7 +96,9 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 
 ### Content Systems
 - **News & Blog** - Publish articles with rich content, search and filter support
-- **Events** - Create and manage community events (live shows, contests, meetups)
+- **Events** - Create and manage community events (live shows, contests, meetups) with interactive features:
+  - **Event Likes System** - Users can like events with real-time count updates
+  - **Event Reminders** - Authenticated users can subscribe to email reminders for upcoming events
   - **Pre-seeded 2026 Gaming Events** - 18 major gaming events including:
     - E3, Gamescom, PAX East/West, Tokyo Game Show
     - The International, League of Legends Worlds, EVO, VALORANT Champions
@@ -107,7 +113,11 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 
 ### Games Section
 - **Free Games** - Browse and claim free game offers from various platforms
+  - **Individual Game Pages** - Detailed pages for each free game with full descriptions, expiration dates, and claim links
+  - **Related Games** - Discover similar free games from the same platform
 - **Game Deals** - Find the best deals powered by **CheapShark API with enhanced reliability**:
+  - **Individual Deal Pages** - Comprehensive deal information with Metacritic scores and store details
+  - **Related Deals** - Explore more deals from the same store
   - Rotating user agents to prevent 403 errors
   - HttpClientService integration for consistent API access
   - Automatic retry logic and error handling
@@ -123,12 +133,18 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Reddit Integration** - Automatically fetch videos from r/funnyvideos and r/LivestreamFail
 
 ### Search System
-- **Global Search** - Search across news, events, games, videos, and deals
+- **Global Search** - Search across news, events, polls, games, videos, and deals
+- **Laravel Scout Integration** - All content types use Scout's Searchable trait for enhanced search relevance:
+  - News articles indexed by title and content
+  - Events indexed by title, description, location, and type
+  - Polls indexed by question and description
+  - Free games indexed by title, description, platform, and store
+  - Game deals indexed by title with pricing and scoring data
+  - Videos indexed by title, description, category, platform, and author
 - **Search API** - JSON API endpoint for search functionality
 - **Category Icons** - Visual distinction between result types
 - **Search Modal** - Click search icon in navbar to open modern search overlay
 - **Real-time Results** - Instant search suggestions as you type
-- **Laravel Scout Integration** - Searchable models with collection driver
 
 ### DJ/Presenter System
 - **DJ Profiles** - Featured DJ pages with social links and genres
@@ -273,6 +289,28 @@ php artisan serve
 ```
 
 ## 🆕 Recent Updates (December 2025)
+
+### Homepage Improvements & Feature Additions (December 7, 2025)
+- ✅ **Redesigned Now Playing Widget** - Optimized album art size (180x180px) for better balance and visual appeal
+- ✅ **Event Engagement Features**:
+  - Event likes system with real-time count updates
+  - Event reminder subscription for authenticated users
+  - Like counts displayed on homepage event cards
+  - Interactive like and reminder buttons on event detail pages
+- ✅ **Enhanced Game Pages**:
+  - Individual detail pages for free games with comprehensive information
+  - Individual detail pages for game deals with store details and Metacritic scores
+  - Related games/deals suggestions on detail pages
+  - Homepage game cards now link to detail pages for better user experience
+- ✅ **Laravel Scout Integration**:
+  - All content types (News, Events, Polls, Videos, Free Games, Game Deals) now use Scout's Searchable trait
+  - Enhanced search relevance with proper indexing
+  - Faster search performance across all content types
+  - Each model includes toSearchableArray() method for optimized search data
+- ✅ **Database Enhancements**:
+  - Created event_likes table for tracking event likes
+  - Created event_reminders table for managing event notification subscriptions
+  - Proper foreign key constraints and indexes for optimal performance
 
 ### Backend Fixes & Enhancements
 - ✅ **Fixed RssFeed & Achievement Seeders** - Added proper console output messages for better visibility
