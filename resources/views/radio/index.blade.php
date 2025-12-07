@@ -314,9 +314,9 @@
                 </div>
                 <div class="card-body" style="position: relative; z-index: 1;">
                     @if($nowPlaying)
-                        <div class="now-playing" id="now-playing" style="display: flex; gap: 2rem; align-items: flex-start;">
+                        <div class="now-playing" id="now-playing" style="display: flex; gap: 1.5rem; align-items: center;">
                             <div class="now-playing-album-container" style="position: relative; flex-shrink: 0;">
-                                <div style="width: 300px; height: 300px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 60px rgba(88, 166, 255, 0.2); position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <div style="width: 180px; height: 180px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 40px rgba(88, 166, 255, 0.15); position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                     <img src="{{ $nowPlaying->currentSong->art ?? '/images/default-album.png' }}"
                                          alt="Album art for {{ $nowPlaying->currentSong->title }} by {{ $nowPlaying->currentSong->artist }}"
                                          class="now-playing-art"
@@ -324,32 +324,32 @@
                                          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2230%22>🎵</text></svg>'">
                                     
                                     <!-- Animated Visualizer Overlay -->
-                                    <div class="now-playing-equalizer" style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 4px; height: 30px; background: rgba(0,0,0,0.3); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 20px;" aria-hidden="true">
-                                        <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate; height: 12px; box-shadow: 0 0 10px var(--color-accent);"></div>
-                                        <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate 0.1s; height: 22px; box-shadow: 0 0 10px var(--color-accent);"></div>
-                                        <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate 0.2s; height: 16px; box-shadow: 0 0 10px var(--color-accent);"></div>
-                                        <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate 0.3s; height: 26px; box-shadow: 0 0 10px var(--color-accent);"></div>
-                                        <div class="eq-bar" style="width: 4px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate 0.4s; height: 14px; box-shadow: 0 0 10px var(--color-accent);"></div>
+                                    <div class="now-playing-equalizer" style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 3px; height: 24px; background: rgba(0,0,0,0.3); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); padding: 6px 12px; border-radius: 16px;" aria-hidden="true">
+                                        <div class="eq-bar" style="width: 3px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate; height: 10px; box-shadow: 0 0 8px var(--color-accent);"></div>
+                                        <div class="eq-bar" style="width: 3px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate 0.1s; height: 18px; box-shadow: 0 0 8px var(--color-accent);"></div>
+                                        <div class="eq-bar" style="width: 3px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate 0.2s; height: 14px; box-shadow: 0 0 8px var(--color-accent);"></div>
+                                        <div class="eq-bar" style="width: 3px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate 0.3s; height: 20px; box-shadow: 0 0 8px var(--color-accent);"></div>
+                                        <div class="eq-bar" style="width: 3px; background: var(--color-accent); border-radius: 2px; animation: eqBounce 0.6s ease-in-out infinite alternate 0.4s; height: 12px; box-shadow: 0 0 8px var(--color-accent);"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="now-playing-info" style="flex: 1; min-width: 0;">
                                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 50%; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.4);">
-                                        <i class="fas fa-play" aria-hidden="true" style="color: white; font-size: 0.875rem; margin-left: 2px;"></i>
+                                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 50%; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.4);">
+                                        <i class="fas fa-play" aria-hidden="true" style="color: white; font-size: 0.75rem; margin-left: 2px;"></i>
                                     </span>
                                     <div style="flex: 1; min-width: 0;">
                                         <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); font-weight: 600; margin-bottom: 0.25rem;">Now Playing</p>
                                         <div style="width: 100%; height: 2px; background: linear-gradient(90deg, var(--color-accent), transparent); border-radius: 1px;"></div>
                                     </div>
                                 </div>
-                                <h3 class="now-playing-title" id="song-title" style="font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; color: var(--color-text); background: linear-gradient(135deg, #ffffff, var(--color-accent), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200% auto;">{{ $nowPlaying->currentSong->title }}</h3>
-                                <p class="now-playing-artist" id="song-artist" style="font-size: 1.375rem; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="fas fa-user-music" style="font-size: 1rem; color: var(--color-accent);" aria-hidden="true"></i>
+                                <h3 class="now-playing-title" id="song-title" style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; color: var(--color-text); background: linear-gradient(135deg, #ffffff, var(--color-accent), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200% auto;">{{ $nowPlaying->currentSong->title }}</h3>
+                                <p class="now-playing-artist" id="song-artist" style="font-size: 1.125rem; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-user-music" style="font-size: 0.875rem; color: var(--color-accent);" aria-hidden="true"></i>
                                     {{ $nowPlaying->currentSong->artist }}
                                 </p>
                                 @if($nowPlaying->currentSong->album)
-                                    <p style="color: var(--color-text-muted); font-size: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <p style="color: var(--color-text-muted); font-size: 0.9375rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                                         <i class="fas fa-compact-disc" style="margin-right: 0.25rem; color: var(--color-accent);" aria-hidden="true"></i>
                                         <span style="font-weight: 500;">{{ $nowPlaying->currentSong->album }}</span>
                                     </p>
@@ -362,25 +362,25 @@
                                      data-song-artist="{{ $nowPlaying->currentSong->artist }}"
                                      role="group"
                                      aria-label="Rate this song"
-                                     style="margin-bottom: 1.5rem;">
-                                    <div style="display: flex; gap: 1rem; align-items: center;">
-                                        <button class="rating-btn upvote" data-rating="1" title="Like this song" aria-label="Like this song" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
-                                            <i class="fas fa-thumbs-up" aria-hidden="true" style="color: #43b581; font-size: 1.125rem;"></i>
-                                            <span id="upvote-count" style="font-size: 1rem;">0</span>
+                                     style="margin-bottom: 1rem;">
+                                    <div style="display: flex; gap: 0.75rem; align-items: center;">
+                                        <button class="rating-btn upvote" data-rating="1" title="Like this song" aria-label="Like this song" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
+                                            <i class="fas fa-thumbs-up" aria-hidden="true" style="color: #43b581; font-size: 1rem;"></i>
+                                            <span id="upvote-count" style="font-size: 0.9375rem;">0</span>
                                         </button>
-                                        <button class="rating-btn downvote" data-rating="-1" title="Dislike this song" aria-label="Dislike this song" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
-                                            <i class="fas fa-thumbs-down" aria-hidden="true" style="color: #f04747; font-size: 1.125rem;"></i>
-                                            <span id="downvote-count" style="font-size: 1rem;">0</span>
+                                        <button class="rating-btn downvote" data-rating="-1" title="Dislike this song" aria-label="Dislike this song" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
+                                            <i class="fas fa-thumbs-down" aria-hidden="true" style="color: #f04747; font-size: 1rem;"></i>
+                                            <span id="downvote-count" style="font-size: 0.9375rem;">0</span>
                                         </button>
                                     </div>
                                 </div>
 
                                 <!-- Enhanced Progress Bar -->
-                                <div style="margin-bottom: 1rem;">
-                                    <div class="progress-bar" role="progressbar" aria-label="Song progress" aria-valuenow="{{ $nowPlaying->elapsed }}" aria-valuemin="0" aria-valuemax="{{ $nowPlaying->duration }}" style="height: 8px; background: var(--color-bg-tertiary); border-radius: 10px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);">
-                                        <div class="progress-fill" id="progress-fill" style="width: {{ $nowPlaying->progressPercentage() }}%; height: 100%; background: linear-gradient(90deg, var(--color-accent), #a855f7); border-radius: 10px; transition: width 0.3s ease; box-shadow: 0 0 10px var(--color-accent);"></div>
+                                <div style="margin-bottom: 0.75rem;">
+                                    <div class="progress-bar" role="progressbar" aria-label="Song progress" aria-valuenow="{{ $nowPlaying->elapsed }}" aria-valuemin="0" aria-valuemax="{{ $nowPlaying->duration }}" style="height: 6px; background: var(--color-bg-tertiary); border-radius: 8px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);">
+                                        <div class="progress-fill" id="progress-fill" style="width: {{ $nowPlaying->progressPercentage() }}%; height: 100%; background: linear-gradient(90deg, var(--color-accent), #a855f7); border-radius: 8px; transition: width 0.3s ease; box-shadow: 0 0 8px var(--color-accent);"></div>
                                     </div>
-                                    <div class="time-info" style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted); font-weight: 500;">
+                                    <div class="time-info" style="display: flex; justify-content: space-between; margin-top: 0.375rem; font-size: 0.8125rem; color: var(--color-text-muted); font-weight: 500;">
                                         <span id="elapsed-time">{{ gmdate('i:s', $nowPlaying->elapsed) }}</span>
                                         <span id="total-time">{{ gmdate('i:s', $nowPlaying->duration) }}</span>
                                     </div>
@@ -391,30 +391,30 @@
                         </div>
 
                         <!-- Enhanced Audio Player Controls -->
-                        <div style="margin-top: 2rem; display: flex; align-items: center; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border);">
-                            <button id="play-btn" class="btn btn-primary" style="flex: 1; padding: 1rem 2rem; font-size: 1.125rem; font-weight: 600; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3); transition: all 0.3s ease;">
-                                <i class="fas fa-play" style="font-size: 1.25rem;"></i> 
+                        <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 0.75rem; padding-top: 1.25rem; border-top: 1px solid var(--color-border);">
+                            <button id="play-btn" class="btn btn-primary" style="flex: 1; padding: 0.875rem 1.5rem; font-size: 1rem; font-weight: 600; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 0.625rem; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3); transition: all 0.3s ease;">
+                                <i class="fas fa-play" style="font-size: 1.125rem;"></i> 
                                 <span>Listen Live</span>
                             </button>
-                            <a href="{{ route('requests.index') }}" class="btn btn-secondary" style="flex: 1; padding: 1rem 2rem; font-size: 1.125rem; font-weight: 600; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; transition: all 0.3s ease;">
+                            <a href="{{ route('requests.index') }}" class="btn btn-secondary" style="flex: 1; padding: 0.875rem 1.5rem; font-size: 1rem; font-weight: 600; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 0.625rem; transition: all 0.3s ease;">
                                 <i class="fas fa-music" style="font-size: 1.125rem;"></i> 
                                 <span>Request a Song</span>
                             </a>
                         </div>
 
                         <!-- Enhanced DJ/Host Info -->
-                        <div style="margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, var(--color-bg-tertiary), rgba(88, 166, 255, 0.05)); border-radius: 12px; display: flex; align-items: center; gap: 1.5rem; border: 1px solid var(--color-border); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);">
-                            <div class="dj-avatar" style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.4), 0 0 20px rgba(88, 166, 255, 0.2);">
-                                <i class="fas fa-{{ $nowPlaying->isLive ? 'microphone' : 'robot' }}" style="color: white; font-size: 1.5rem;"></i>
+                        <div style="margin-top: 1.25rem; padding: 1.25rem; background: linear-gradient(135deg, var(--color-bg-tertiary), rgba(88, 166, 255, 0.05)); border-radius: 10px; display: flex; align-items: center; gap: 1.25rem; border: 1px solid var(--color-border); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);">
+                            <div class="dj-avatar" style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.4), 0 0 20px rgba(88, 166, 255, 0.2);">
+                                <i class="fas fa-{{ $nowPlaying->isLive ? 'microphone' : 'robot' }}" style="color: white; font-size: 1.25rem;"></i>
                             </div>
                             <div style="flex: 1;">
-                                <p style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.25rem;">{{ $nowPlaying->isLive ? 'Live DJ' : 'AutoDJ' }}</p>
-                                <p style="color: var(--color-text-muted); font-size: 0.9375rem;">{{ $nowPlaying->isLive ? 'Broadcasting live right now!' : 'Playing your favorite tracks 24/7' }}</p>
+                                <p style="font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem;">{{ $nowPlaying->isLive ? 'Live DJ' : 'AutoDJ' }}</p>
+                                <p style="color: var(--color-text-muted); font-size: 0.875rem;">{{ $nowPlaying->isLive ? 'Broadcasting live right now!' : 'Playing your favorite tracks 24/7' }}</p>
                             </div>
                             @if(isset($streamStatus))
-                                <div style="text-align: right; padding: 0.75rem 1.25rem; background: var(--color-bg); border-radius: 8px;">
-                                    <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em;">Peak Today</p>
-                                    <p style="font-weight: 700; color: var(--color-accent); font-size: 1.5rem;">{{ $streamStatus['peak_listeners'] ?? 0 }}</p>
+                                <div style="text-align: right; padding: 0.625rem 1rem; background: var(--color-bg); border-radius: 8px;">
+                                    <p style="font-size: 0.6875rem; color: var(--color-text-muted); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em;">Peak Today</p>
+                                    <p style="font-weight: 700; color: var(--color-accent); font-size: 1.25rem;">{{ $streamStatus['peak_listeners'] ?? 0 }}</p>
                                 </div>
                             @endif
                         </div>

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
@@ -50,6 +51,16 @@ class Event extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function likes(): HasMany
+    {
+        return $this->hasMany(EventLike::class);
+    }
+
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(EventReminder::class);
+    }
+
     public function scopePublished($query)
     {
         return $query->where('is_published', true);
@@ -87,6 +98,33 @@ class Event extends Model
     public function isPast(): bool
     {
         return $this->ends_at !== null && $this->ends_at < now();
+    }
+
+    public function likesCount(): int
+    {
+        return $this->likes()->count();
+    }
+
+    public function hasUserLiked(?User $user = null, ?string $ipAddress = null): bool
+    {
+        if ($user) {
+            return $this->likes()->where('user_id', $user->id)->exists();
+        }
+
+        if ($ipAddress) {
+            return $this->likes()->where('ip_address', $ipAddress)->exists();
+        }
+
+        return false;
+    }
+
+    public function hasUserSubscribed(?User $user = null): bool
+    {
+        if ($user) {
+            return $this->reminders()->where('user_id', $user->id)->exists();
+        }
+
+        return false;
     }
 
     /**
