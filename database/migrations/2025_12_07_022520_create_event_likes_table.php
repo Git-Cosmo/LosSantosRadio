@@ -33,21 +33,20 @@ return new class extends Migration
         // For MySQL/MariaDB/SQL Server, uniqueness must be enforced at application level
         $driver = DB::connection()->getDriverName();
         
-        try {
-            DB::statement('CREATE UNIQUE INDEX event_likes_event_ip_null_user_unique ON event_likes(event_id, ip_address) WHERE user_id IS NULL');
-        } catch (\Illuminate\Database\QueryException $e) {
-            // Check if this is the expected syntax error for unsupported filtered indexes
-            // The error message contains "syntax error" for MySQL/MariaDB when encountering WHERE in index
-            $errorMessage = strtolower($e->getMessage());
-            
-            if (str_contains($errorMessage, 'syntax error') || 
-                str_contains($errorMessage, 'near \'where\'') ||
-                str_contains($errorMessage, '42000')) {
-                // Expected error for databases that don't support filtered indexes (MySQL/MariaDB)
-                Log::info("Skipped filtered index creation for event_likes table - not supported on {$driver} database");
-            } else {
-                // Unexpected error, re-throw to prevent silent failures
-                throw $e;
+        // Only attempt to create filtered index on databases that support it
+        if (in_array($driver, ['pgsql', 'sqlite', 'sqlite3'])) {
+            try {
+                DB::statement('CREATE UNIQUE INDEX event_likes_event_ip_null_user_unique ON event_likes(event_id, ip_address) WHERE user_id IS NULL');
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Fallback: catch any syntax errors in case database version doesn't support filtered indexes
+                $errorMessage = strtolower($e->getMessage());
+                
+                if (str_contains($errorMessage, 'syntax error') || str_contains($errorMessage, 'near \'where\'')) {
+                    Log::info("Skipped filtered index creation for event_likes table - not supported on this {$driver} version");
+                } else {
+                    // Unexpected error, re-throw to prevent silent failures
+                    throw $e;
+                }
             }
         }
     }
