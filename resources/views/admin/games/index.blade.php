@@ -145,8 +145,15 @@
             })
             .then(response => response.json())
             .then(data => {
+                // HTML escape helper
+                const escapeHtml = (text) => {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                };
+                
                 if (data.error) {
-                    resultsDiv.innerHTML = `<p style="color: var(--color-danger);">${data.error}</p>`;
+                    resultsDiv.innerHTML = `<p style="color: var(--color-danger);">${escapeHtml(data.error)}</p>`;
                     return;
                 }
 
@@ -159,13 +166,6 @@
                 data.results.forEach(game => {
                     const coverUrl = game.cover?.url ? 'https:' + game.cover.url.replace('t_thumb', 't_cover_small') : '';
                     const rating = game.rating ? Math.round(game.rating) : null;
-                    
-                    // HTML escape helper
-                    const escapeHtml = (text) => {
-                        const div = document.createElement('div');
-                        div.textContent = text;
-                        return div.innerHTML;
-                    };
                     
                     html += `
                         <div style="display: flex; gap: 1rem; padding: 0.75rem; background: var(--color-bg); border-radius: 0.5rem; align-items: start;">
@@ -187,7 +187,12 @@
                 resultsDiv.innerHTML = html;
             })
             .catch(error => {
-                resultsDiv.innerHTML = `<p style="color: var(--color-danger);">Error: ${error.message}</p>`;
+                const escapeHtml = (text) => {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                };
+                resultsDiv.innerHTML = `<p style="color: var(--color-danger);">Error: ${escapeHtml(error.message)}</p>`;
             });
         }
     </script>

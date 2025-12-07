@@ -23,55 +23,66 @@
     
     <!-- Schema.org VideoGame Markup -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "VideoGame",
-        "name": "{{ $game->title }}",
-        @if($game->description)
-        "description": {{ json_encode(strip_tags($game->description)) }},
-        @endif
-        @if($game->cover_image)
-        "image": "{{ $game->cover_image }}",
-        @endif
-        @if($game->release_date)
-        "datePublished": "{{ $game->release_date->format('Y-m-d') }}",
-        @endif
-        @if($game->rating)
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": {{ json_encode((float) $game->rating) }},
-            @if($game->rating_count)
-            "ratingCount": {{ json_encode((int) $game->rating_count) }},
-            @endif
-            "bestRating": 100,
-            "worstRating": 0
-        },
-        @endif
-        @if($game->genres)
-        "genre": {{ json_encode(array_map(fn($g) => is_array($g) ? $g['name'] : $g, $game->genres)) }},
-        @endif
-        @if($game->platforms)
-        "gamePlatform": {{ json_encode(array_map(fn($p) => is_array($p) ? $p['name'] : $p, $game->platforms)) }},
-        @endif
-        @if($game->deals->count() > 0)
-        "offers": [
-            @foreach($game->deals as $deal)
-            {
-                "@type": "Offer",
-                "price": "{{ $deal->sale_price }}",
-                "priceCurrency": "USD",
-                "availability": "https://schema.org/InStock",
-                "url": "{{ $deal->deal_url }}",
-                "seller": {
-                    "@type": "Organization",
-                    "name": "{{ $deal->store->name ?? 'Unknown' }}"
-                }
-            }{{ !$loop->last ? ',' : '' }}
-            @endforeach
-        ],
-        @endif
-        "url": "{{ route('games.show', $game) }}"
-    }
+    @php
+        $gameData = [
+            '@context' => 'https://schema.org',
+            '@type' => 'VideoGame',
+            'name' => $game->title,
+            'url' => route('games.show', $game),
+        ];
+        
+        if ($game->description) {
+            $gameData['description'] = strip_tags($game->description);
+        }
+        
+        if ($game->cover_image) {
+            $gameData['image'] = $game->cover_image;
+        }
+        
+        if ($game->release_date) {
+            $gameData['datePublished'] = $game->release_date->format('Y-m-d');
+        }
+        
+        if ($game->rating) {
+            $ratingData = [
+                '@type' => 'AggregateRating',
+                'ratingValue' => (float) $game->rating,
+                'bestRating' => 100,
+                'worstRating' => 0,
+            ];
+            if ($game->rating_count) {
+                $ratingData['ratingCount'] = (int) $game->rating_count;
+            }
+            $gameData['aggregateRating'] = $ratingData;
+        }
+        
+        if ($game->genres) {
+            $gameData['genre'] = array_map(fn($g) => is_array($g) ? $g['name'] : $g, $game->genres);
+        }
+        
+        if ($game->platforms) {
+            $gameData['gamePlatform'] = array_map(fn($p) => is_array($p) ? $p['name'] : $p, $game->platforms);
+        }
+        
+        if ($game->deals->count() > 0) {
+            $offers = [];
+            foreach ($game->deals as $deal) {
+                $offers[] = [
+                    '@type' => 'Offer',
+                    'price' => (string) $deal->sale_price,
+                    'priceCurrency' => 'USD',
+                    'availability' => 'https://schema.org/InStock',
+                    'url' => $deal->deal_url,
+                    'seller' => [
+                        '@type' => 'Organization',
+                        'name' => $deal->store->name ?? 'Unknown',
+                    ],
+                ];
+            }
+            $gameData['offers'] = $offers;
+        }
+    @endphp
+    {!! json_encode($gameData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
     </script>
     @endpush
 

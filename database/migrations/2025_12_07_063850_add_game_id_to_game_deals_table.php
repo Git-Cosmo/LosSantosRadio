@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('game_deals', function (Blueprint $table) {
             $table->foreignId('game_id')->nullable()->after('store_id')->constrained('games')->nullOnDelete();
-            $table->index('game_id');
         });
     }
 
@@ -24,7 +23,6 @@ return new class extends Migration
     {
         Schema::table('game_deals', function (Blueprint $table) {
             $table->dropForeign(['game_id']);
-            $table->dropIndex(['game_id']);
             $table->dropColumn('game_id');
         });
     }

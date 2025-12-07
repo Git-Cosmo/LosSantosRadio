@@ -163,16 +163,19 @@ class GamesController extends Controller
             $query->where('is_on_sale', true)->with('store')->orderBy('savings_percent', 'desc');
         }]);
 
-        $relatedGames = Game::where('id', '!=', $game->id)
-            ->where(function ($q) use ($game) {
-                if ($game->genres) {
+        // Get related games based on shared genres
+        if (empty($game->genres)) {
+            $relatedGames = collect();
+        } else {
+            $relatedGames = Game::where('id', '!=', $game->id)
+                ->where(function ($q) use ($game) {
                     foreach ($game->genres as $genre) {
                         $q->orWhereJsonContains('genres', $genre);
                     }
-                }
-            })
-            ->limit(4)
-            ->get();
+                })
+                ->limit(4)
+                ->get();
+        }
 
         return view('games.show', [
             'game' => $game,

@@ -31,8 +31,6 @@ return new class extends Migration
             $table->string('igdb_url')->nullable();
             $table->timestamps();
 
-            $table->index('igdb_id');
-            $table->index('slug');
             $table->index('release_date');
         });
     }

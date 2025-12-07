@@ -207,7 +207,7 @@ class GamesController extends Controller
         }
 
         $validated = $request->validate([
-            'igdb_id' => 'required|integer',
+            'igdb_id' => 'required|integer|min:1',
         ]);
 
         // Check if game already exists

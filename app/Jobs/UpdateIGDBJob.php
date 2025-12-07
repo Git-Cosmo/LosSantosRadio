@@ -21,6 +21,12 @@ class UpdateIGDBJob implements ShouldQueue
      * The number of seconds to wait before retrying the job.
      */
     public int $backoff = 120;
+    
+    /**
+     * Rate limit delay in microseconds between IGDB API requests.
+     * 250ms (250000 microseconds) is used to avoid hitting IGDB rate limits.
+     */
+    private const RATE_LIMIT_DELAY_MICROSECONDS = 250000;
 
     /**
      * Create a new job instance.
@@ -102,8 +108,8 @@ class UpdateIGDBJob implements ShouldQueue
                 $this->updateGameFromIGDB($game, $igdbData, $igdb);
                 $updated++;
 
-                // Rate limiting: 250ms delay between IGDB API requests to avoid hitting rate limits
-                usleep(250000);
+                // Rate limiting to avoid hitting IGDB API limits
+                usleep(self::RATE_LIMIT_DELAY_MICROSECONDS);
             }
         }
 

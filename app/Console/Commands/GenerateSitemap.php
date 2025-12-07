@@ -281,7 +281,7 @@ class GenerateSitemap extends Command
             ->cursor()
             ->each(function ($deal) use ($sitemap) {
                 $sitemap->add(
-                    Url::create(route('games.deals.show', $deal->deal_id))
+                    Url::create(route('games.deals.show', $deal))
                         ->setLastModificationDate($deal->updated_at)
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
                         ->setPriority(0.5)

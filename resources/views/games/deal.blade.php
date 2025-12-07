@@ -22,43 +22,52 @@
     
     <!-- Schema.org Offer Markup -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Offer",
-        "name": "{{ $deal->title }}",
-        "price": "{{ $deal->sale_price }}",
-        "priceCurrency": "USD",
-        "availability": "https://schema.org/InStock",
-        "url": "{{ $deal->deal_url }}",
-        "priceValidUntil": "{{ now()->addDays(7)->format('Y-m-d') }}",
-        @if($deal->thumb)
-        "image": "{{ $deal->thumb }}",
-        @endif
-        "seller": {
-            "@type": "Organization",
-            "name": "{{ $deal->store->name ?? 'Unknown' }}"
-        },
-        "itemOffered": {
-            "@type": "VideoGame",
-            "name": "{{ $deal->title }}",
-            @if($deal->game)
-            @if($deal->game->description)
-            "description": {{ json_encode(Str::limit(strip_tags($deal->game->description), 200)) }},
-            @endif
-            @if($deal->game->cover_image)
-            "image": "{{ $deal->game->cover_image }}",
-            @endif
-            @endif
-            @if($deal->metacritic_score)
-            "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": {{ $deal->metacritic_score }},
-                "bestRating": 100
-            },
-            @endif
-            "url": "{{ route('games.deals.show', $deal) }}"
+    @php
+        $offerData = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Offer',
+            'name' => $deal->title,
+            'price' => (string) $deal->sale_price,
+            'priceCurrency' => 'USD',
+            'availability' => 'https://schema.org/InStock',
+            'url' => $deal->deal_url,
+            'priceValidUntil' => now()->addDays(7)->format('Y-m-d'),
+            'seller' => [
+                '@type' => 'Organization',
+                'name' => $deal->store->name ?? 'Unknown',
+            ],
+        ];
+        
+        if ($deal->thumb) {
+            $offerData['image'] = $deal->thumb;
         }
-    }
+        
+        $videoGameData = [
+            '@type' => 'VideoGame',
+            'name' => $deal->title,
+            'url' => route('games.deals.show', $deal),
+        ];
+        
+        if ($deal->game) {
+            if ($deal->game->description) {
+                $videoGameData['description'] = Str::limit(strip_tags($deal->game->description), 200);
+            }
+            if ($deal->game->cover_image) {
+                $videoGameData['image'] = $deal->game->cover_image;
+            }
+        }
+        
+        if ($deal->metacritic_score) {
+            $videoGameData['aggregateRating'] = [
+                '@type' => 'AggregateRating',
+                'ratingValue' => (float) $deal->metacritic_score,
+                'bestRating' => 100,
+            ];
+        }
+        
+        $offerData['itemOffered'] = $videoGameData;
+    @endphp
+    {!! json_encode($offerData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
     </script>
     @endpush
     

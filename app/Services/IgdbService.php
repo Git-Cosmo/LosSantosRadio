@@ -124,6 +124,9 @@ class IgdbService
         if (empty($query)) {
             return collect();
         }
+        
+        // Validate and bound the limit
+        $limit = max(1, min($limit, 500));
 
         $cacheKey = 'igdb.search.'.md5($query).".{$limit}";
 
@@ -180,6 +183,14 @@ class IgdbService
      */
     public function getGamesByIds(array $igdbIds): Collection
     {
+        if (empty($igdbIds)) {
+            return collect();
+        }
+        
+        // Validate that all IDs are integers
+        $igdbIds = array_filter($igdbIds, fn($id) => is_int($id) || (is_numeric($id) && (int)$id == $id));
+        $igdbIds = array_map('intval', $igdbIds);
+        
         if (empty($igdbIds)) {
             return collect();
         }
