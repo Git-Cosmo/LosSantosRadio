@@ -51,9 +51,9 @@
             <div class="card-body" style="padding: 1.5rem;">
                 <div class="grid grid-cols-3" style="gap: 1.5rem;">
                     @foreach($featuredEvents as $event)
-                        <div style="position: relative; border-radius: 12px; overflow: hidden; background: var(--color-bg-secondary); border: 2px solid transparent; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--color-accent)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.15)'" onmouseout="this.style.borderColor='transparent'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div class="event-featured-card">
                             @if($event->image)
-                                <div style="width: 100%; height: 180px; background: url('{{ $event->image }}') center/cover; position: relative;">
+                                <div style="width: 100%; height: 180px; background: url('{{ e($event->image) }}') center/cover; position: relative;">
                                     <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);"></div>
                                     <span class="badge badge-warning" style="position: absolute; top: 0.75rem; right: 0.75rem; backdrop-filter: blur(10px); font-weight: 600;">
                                         <i class="fas fa-star" style="font-size: 0.75rem;"></i>
@@ -175,7 +175,7 @@
                     @if($upcomingEvents->count() > 0)
                         <div style="display: flex; flex-direction: column; gap: 1rem;">
                         @foreach($upcomingEvents as $event)
-                            <div style="display: flex; align-items: stretch; gap: 1rem; padding: 1rem; background: var(--color-bg-secondary); border: 2px solid transparent; border-radius: 12px; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--color-accent)'; this.style.transform='translateX(4px)'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.borderColor='transparent'; this.style.transform='translateX(0)'; this.style.boxShadow='none'" onclick="window.location.href='{{ route('events.show', $event->slug) }}'">
+                            <a href="{{ route('events.show', $event->slug) }}" style="display: flex; align-items: stretch; gap: 1rem; padding: 1rem; background: var(--color-bg-secondary); border: 2px solid transparent; border-radius: 12px; transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: inherit;" onmouseover="this.style.borderColor='var(--color-accent)'; this.style.transform='translateX(4px)'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.borderColor='transparent'; this.style.transform='translateX(0)'; this.style.boxShadow='none'">
                                 <!-- Date Badge -->
                                 <div style="flex-shrink: 0; width: 70px; height: 70px; background: linear-gradient(135deg, var(--color-accent) 0%, #8b5cf6 100%); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);">
                                     <div style="font-size: 1.5rem; font-weight: 700; color: white; line-height: 1;">{{ $event->starts_at->format('j') }}</div>
@@ -213,7 +213,7 @@
                                 <div style="flex-shrink: 0; display: flex; align-items: center;">
                                     <i class="fas fa-chevron-right" style="color: var(--color-text-muted); font-size: 1.25rem;"></i>
                                 </div>
-                            </div>
+                            </a>
                         @endforeach
                         </div>
                     @else
@@ -242,7 +242,7 @@
                 </div>
                 <div class="card-body" style="padding: 1.25rem;">
                     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.875rem; background: linear-gradient(135deg, rgba(88, 166, 255, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%); border-radius: 8px; border-left: 3px solid var(--color-accent); transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(4px)'; this.style.boxShadow='0 4px 12px rgba(88, 166, 255, 0.2)'" onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'">
+                        <div class="event-category-card" style="background: linear-gradient(135deg, rgba(88, 166, 255, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%); border-left: 3px solid var(--color-accent);">
                             <div style="width: 36px; height: 36px; background: var(--color-accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fas fa-microphone" style="color: white; font-size: 0.875rem;"></i>
                             </div>
@@ -252,7 +252,7 @@
                             </div>
                         </div>
                         
-                        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.875rem; background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%); border-radius: 8px; border-left: 3px solid #fbbf24; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(4px)'; this.style.boxShadow='0 4px 12px rgba(251, 191, 36, 0.2)'" onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'">
+                        <div class="event-category-card" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%); border-left: 3px solid #fbbf24;">
                             <div style="width: 36px; height: 36px; background: #fbbf24; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fas fa-trophy" style="color: white; font-size: 0.875rem;"></i>
                             </div>
@@ -262,7 +262,7 @@
                             </div>
                         </div>
                         
-                        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.875rem; background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border-radius: 8px; border-left: 3px solid var(--color-success); transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(4px)'; this.style.boxShadow='0 4px 12px rgba(34, 197, 94, 0.2)'" onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'">
+                        <div class="event-category-card" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border-left: 3px solid var(--color-success);">
                             <div style="width: 36px; height: 36px; background: var(--color-success); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fas fa-users" style="color: white; font-size: 0.875rem;"></i>
                             </div>
@@ -272,7 +272,7 @@
                             </div>
                         </div>
                         
-                        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.875rem; background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(147, 51, 234, 0.05) 100%); border-radius: 8px; border-left: 3px solid #a855f7; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(4px)'; this.style.boxShadow='0 4px 12px rgba(168, 85, 247, 0.2)'" onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'">
+                        <div class="event-category-card" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(147, 51, 234, 0.05) 100%); border-left: 3px solid #a855f7;">
                             <div style="width: 36px; height: 36px; background: #a855f7; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fas fa-star" style="color: white; font-size: 0.875rem;"></i>
                             </div>

@@ -195,15 +195,15 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Member Linking** - Link Discord accounts to website accounts
 - **Bot Monitoring** - View bot status and activity logs
 - **Admin Controls** - Comprehensive bot management from admin panel at `/admin/discord/settings`:
-  - **Start/Stop Controls** - Start and stop the Discord bot with one click
-  - Toggle bot enabled/disabled state
+  - **Start/Stop Controls** - Dedicated buttons to start and stop the Discord bot with one click
+  - **Real-time Status** - Visual indicators showing bot Running/Stopped state
   - Restart bot connection for quick recovery
-  - Monitor bot status in real-time (Running/Stopped indicators)
   - Configure channel IDs for logging and welcome messages
   - Enable/disable auto-sync for roles and members
-  - Visual status badges showing bot connectivity
+  - Bot state persists across settings form submissions
 - **API Integration** - Uses Discord API v10 for all operations
 - **Cache Management** - Smart caching (5 minutes TTL) with automatic cache clearing on configuration changes
+- **Separation of Concerns** - Bot lifecycle (start/stop) managed separately from general settings for clearer UX
 
 ### RSS News Feeds
 - **Automatic Import** - Import gaming news articles automatically from RSS feeds

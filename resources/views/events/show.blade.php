@@ -3,7 +3,7 @@
 
     <div style="max-width: 900px; margin: 0 auto; padding: 0 1rem;">
         <!-- Enhanced Back Button -->
-        <a href="{{ route('events.index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: var(--color-bg-secondary); border-radius: 8px; color: var(--color-text-secondary); margin-bottom: 1.5rem; transition: all 0.3s ease; text-decoration: none; font-weight: 500;" onmouseover="this.style.background='var(--color-bg-tertiary)'; this.style.transform='translateX(-4px)'" onmouseout="this.style.background='var(--color-bg-secondary)'; this.style.transform='translateX(0)'">
+        <a href="{{ route('events.index') }}" class="event-back-button">
             <i class="fas fa-arrow-left"></i>
             <span>Back to Events</span>
         </a>
@@ -11,7 +11,7 @@
         <div class="card" style="border: none; box-shadow: 0 4px 24px rgba(0,0,0,0.1); overflow: hidden;">
             <!-- Enhanced Header Image -->
             @if($event->image)
-                <div style="position: relative; width: 100%; height: 400px; background: url('{{ $event->image }}') center/cover;">
+                <div style="position: relative; width: 100%; height: 400px; background: url('{{ e($event->image) }}') center/cover;">
                     <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.8) 100%);"></div>
                     <!-- Floating Badges on Image -->
                     <div style="position: absolute; top: 1.5rem; left: 1.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
@@ -138,7 +138,7 @@
                 <!-- Enhanced Event Actions -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
                     <!-- Like Button -->
-                    <button id="event-like-btn" data-event-id="{{ $event->id }}" style="padding: 1.25rem 1.5rem; background: var(--color-bg-secondary); border: 2px solid var(--color-border); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600; font-size: 1rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    <button id="event-like-btn" data-event-id="{{ $event->id }}" class="event-like-btn">
                         <i class="far fa-heart" id="like-icon" style="color: var(--color-text-muted); font-size: 1.25rem; transition: all 0.3s ease;"></i>
                         <div style="display: flex; flex-direction: column; align-items: flex-start;">
                             <span id="like-text" style="font-size: 0.875rem; color: var(--color-text);">Like Event</span>
@@ -148,7 +148,7 @@
 
                     @auth
                     <!-- Reminder Button -->
-                    <button id="event-reminder-btn" data-event-id="{{ $event->id }}" style="padding: 1.25rem 1.5rem; background: var(--color-bg-secondary); border: 2px solid var(--color-border); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600; font-size: 1rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    <button id="event-reminder-btn" data-event-id="{{ $event->id }}" class="event-reminder-btn">
                         <i class="far fa-bell" id="reminder-icon" style="color: var(--color-text-muted); font-size: 1.25rem; transition: all 0.3s ease;"></i>
                         <div style="display: flex; flex-direction: column; align-items: flex-start;">
                             <span id="reminder-text" style="font-size: 0.875rem; color: var(--color-text);">Set Reminder</span>
@@ -224,7 +224,7 @@
                                 Posted {{ $event->created_at->format('M j, Y') }}
                             </p>
                         </div>
-                        <a href="{{ route('profile.show', $event->creator->username) }}" style="padding: 0.625rem 1.25rem; background: var(--color-accent); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.875rem; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(88, 166, 255, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <a href="{{ route('profile.show', $event->creator->username) }}" class="event-creator-link">
                             View Profile
                             <i class="fas fa-arrow-right"></i>
                         </a>
