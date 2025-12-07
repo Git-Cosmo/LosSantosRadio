@@ -25,6 +25,23 @@ class GamesController extends Controller
     }
 
     /**
+     * Show a specific free game.
+     */
+    public function showFreeGame(FreeGame $game): View
+    {
+        $relatedGames = FreeGame::active()
+            ->where('id', '!=', $game->id)
+            ->where('store', $game->store)
+            ->limit(4)
+            ->get();
+
+        return view('games.free-game', [
+            'game' => $game,
+            'relatedGames' => $relatedGames,
+        ]);
+    }
+
+    /**
      * Display game deals.
      */
     public function deals(Request $request): View

@@ -699,11 +699,15 @@
                                     <span>{{ $event->starts_at->format('M j, Y g:i A') }}</span>
                                 </div>
                                 @if($event->location)
-                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">
                                     <i class="fas fa-map-marker-alt"></i>
                                     <span>{{ Str::limit($event->location, 30) }}</span>
                                 </div>
                                 @endif
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
+                                    <i class="fas fa-heart" style="color: #ef4444;"></i>
+                                    <span>{{ $event->likesCount() }} {{ Str::plural('like', $event->likesCount()) }}</span>
+                                </div>
                             </div>
                         </div>
                     </a>
@@ -755,7 +759,7 @@
                 </div>
                 <div class="card-body" style="padding: 0;">
                     @foreach($topGameDeals as $deal)
-                    <a href="{{ $deal->deal_url }}" target="_blank" rel="noopener noreferrer" class="deal-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
+                    <a href="{{ route('games.deals.show', $deal) }}" class="deal-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
                         <div style="display: flex; gap: 1rem; align-items: center;">
                             @if($deal->thumb)
                             <img src="{{ $deal->thumb }}" alt="{{ $deal->title }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--color-bg); flex-shrink: 0;">
@@ -796,7 +800,7 @@
                 </div>
                 <div class="card-body" style="padding: 0;">
                     @foreach($freeGames as $game)
-                    <a href="{{ $game->url }}" target="_blank" rel="noopener noreferrer" class="game-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
+                    <a href="{{ route('games.free.show', $game) }}" class="game-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
                         <div style="display: flex; gap: 1rem; align-items: center;">
                             @if($game->image_url)
                             <img src="{{ $game->image_url }}" alt="{{ $game->title }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--color-bg); flex-shrink: 0;">

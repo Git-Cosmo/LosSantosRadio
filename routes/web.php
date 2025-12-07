@@ -93,6 +93,7 @@ Route::prefix('polls')->name('polls.')->group(function () {
 // Games pages
 Route::prefix('games')->name('games.')->group(function () {
     Route::get('/free', [\App\Http\Controllers\GamesController::class, 'free'])->name('free');
+    Route::get('/free/{game}', [\App\Http\Controllers\GamesController::class, 'showFreeGame'])->name('free.show');
     Route::get('/deals', [\App\Http\Controllers\GamesController::class, 'deals'])->name('deals');
     Route::get('/deals/{deal}', [\App\Http\Controllers\GamesController::class, 'showDeal'])->name('deals.show');
 });
