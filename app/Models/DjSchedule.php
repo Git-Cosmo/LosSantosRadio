@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DjSchedule extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'dj_profile_id',
         'day_of_week',

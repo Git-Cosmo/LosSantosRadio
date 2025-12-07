@@ -75,7 +75,7 @@ class DjProfile extends Model
 
     public function scopeFeatured($query)
     {
-        return $this->where('is_featured', true);
+        return $query->where('is_featured', true);
     }
 
     public function getAvatarUrlAttribute(): string
