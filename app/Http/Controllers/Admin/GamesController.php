@@ -16,7 +16,8 @@ class GamesController extends Controller
 {
     public function __construct(
         protected CheapSharkService $cheapShark,
-        protected RedditScraperService $redditScraper
+        protected RedditScraperService $redditScraper,
+        protected \App\Services\IgdbService $igdb
     ) {}
 
     /**
@@ -28,8 +29,10 @@ class GamesController extends Controller
             'freeGamesCount' => FreeGame::active()->count(),
             'dealsCount' => GameDeal::onSale()->count(),
             'storesCount' => GameStore::active()->count(),
+            'gamesCount' => \App\Models\Game::count(),
             'recentGames' => FreeGame::latest()->take(5)->get(),
             'recentDeals' => GameDeal::onSale()->latest()->take(5)->get(),
+            'igdbConfigured' => $this->igdb->isConfigured(),
         ]);
     }
 
@@ -172,5 +175,80 @@ class GamesController extends Controller
 
         return redirect()->route('admin.games.free')
             ->with('success', "Synced {$count} free games from Reddit.");
+    }
+
+    /**
+     * Search and import game from IGDB.
+     */
+    public function searchIgdb(Request $request): \Illuminate\Http\JsonResponse
+    {
+        if (! $this->igdb->isConfigured()) {
+            return response()->json([
+                'error' => 'IGDB API is not configured. Please set IGDB_CLIENT_ID and IGDB_CLIENT_SECRET in .env',
+            ], 400);
+        }
+
+        $validated = $request->validate([
+            'query' => 'required|string|max:100',
+        ]);
+
+        $results = $this->igdb->searchGames($validated['query'], 10);
+
+        return response()->json(['results' => $results]);
+    }
+
+    /**
+     * Import game from IGDB.
+     */
+    public function importFromIgdb(Request $request): RedirectResponse
+    {
+        if (! $this->igdb->isConfigured()) {
+            return redirect()->back()->with('error', 'IGDB API is not configured.');
+        }
+
+        $validated = $request->validate([
+            'igdb_id' => 'required|integer|min:1',
+        ]);
+
+        // Check if game already exists
+        $existing = \App\Models\Game::where('igdb_id', $validated['igdb_id'])->first();
+        if ($existing) {
+            return redirect()->route('admin.games.index')
+                ->with('info', "Game '{$existing->title}' already exists.");
+        }
+
+        $igdbData = $this->igdb->getGameById($validated['igdb_id']);
+
+        if (! $igdbData) {
+            return redirect()->back()->with('error', 'Failed to fetch game data from IGDB.');
+        }
+
+        // Create game
+        $game = \App\Models\Game::create([
+            'igdb_id' => $igdbData['id'],
+            'title' => $igdbData['name'],
+            'description' => $igdbData['summary'] ?? null,
+            'storyline' => $igdbData['storyline'] ?? null,
+            'cover_image' => isset($igdbData['cover']['url'])
+                ? $this->igdb->formatCoverUrl($igdbData['cover']['url'], 'cover_big')
+                : null,
+            'screenshots' => isset($igdbData['screenshots'])
+                ? array_map(fn ($s) => $this->igdb->formatCoverUrl($s['url'], 'screenshot_med'), $igdbData['screenshots'])
+                : null,
+            'genres' => $igdbData['genres'] ?? null,
+            'platforms' => $igdbData['platforms'] ?? null,
+            'websites' => $igdbData['websites'] ?? null,
+            'rating' => $igdbData['rating'] ?? null,
+            'rating_count' => $igdbData['rating_count'] ?? null,
+            'aggregated_rating' => $igdbData['aggregated_rating'] ?? null,
+            'aggregated_rating_count' => $igdbData['aggregated_rating_count'] ?? null,
+            'release_date' => isset($igdbData['first_release_date'])
+                ? \Carbon\Carbon::createFromTimestamp($igdbData['first_release_date'])
+                : null,
+            'igdb_url' => $igdbData['url'] ?? null,
+        ]);
+
+        return redirect()->route('admin.games.index')
+            ->with('success', "Game '{$game->title}' imported from IGDB.");
     }
 }

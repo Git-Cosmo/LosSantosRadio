@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\GamesApiController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\NowPlayingController;
 use App\Http\Controllers\Api\SearchController;
@@ -37,6 +38,23 @@ Route::prefix('search')->name('api.search.')->group(function () {
     Route::get('/instant', [SearchController::class, 'instant'])->name('instant');
 });
 
+// Games API endpoints
+Route::prefix('games')->name('api.games.')->group(function () {
+    Route::get('/', [GamesApiController::class, 'index'])->name('index');
+    Route::get('/search', [GamesApiController::class, 'search'])->name('search');
+    Route::get('/{game:slug}', [GamesApiController::class, 'show'])->name('show');
+});
+
+// Deals API endpoints
+Route::prefix('deals')->name('api.deals.')->group(function () {
+    Route::get('/', [GamesApiController::class, 'deals'])->name('index');
+});
+
+// Free Games API endpoints
+Route::prefix('free-games')->name('api.free-games.')->group(function () {
+    Route::get('/', [GamesApiController::class, 'freeGames'])->name('index');
+});
+
 // Media API (for admin media management)
 // Uses web middleware for session-based authentication with admin middleware check
 Route::middleware(['web', 'auth'])->prefix('media')->name('api.media.')->group(function () {
@@ -44,3 +62,4 @@ Route::middleware(['web', 'auth'])->prefix('media')->name('api.media.')->group(f
     Route::post('/', [MediaController::class, 'upload'])->name('upload');
     Route::delete('/{media}', [MediaController::class, 'destroy'])->name('destroy');
 });
+

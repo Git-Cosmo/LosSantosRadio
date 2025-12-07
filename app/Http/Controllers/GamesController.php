@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FreeGame;
+use App\Models\Game;
 use App\Models\GameDeal;
 use App\Models\GameStore;
 use Illuminate\Http\Request;
@@ -10,6 +11,60 @@ use Illuminate\View\View;
 
 class GamesController extends Controller
 {
+    /**
+     * Display games landing page.
+     */
+    public function index(Request $request): View
+    {
+        $validated = $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'genre' => ['nullable', 'string', 'max:50'],
+            'platform' => ['nullable', 'string', 'max:50'],
+            'with_deals' => ['nullable', 'boolean'],
+        ]);
+
+        $query = Game::query();
+
+        // Search
+        if (! empty($validated['search'])) {
+            $search = $validated['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by games with deals
+        if (! empty($validated['with_deals'])) {
+            $query->withDeals();
+        }
+
+        $games = $query->orderBy('release_date', 'desc')
+            ->with(['deals' => function ($q) {
+                $q->where('is_on_sale', true)->orderBy('savings_percent', 'desc');
+            }])
+            ->paginate(24);
+
+        $topDeals = GameDeal::with('store')
+            ->onSale()
+            ->minSavings(50)
+            ->orderBy('savings_percent', 'desc')
+            ->limit(6)
+            ->get();
+
+        $freeGames = FreeGame::active()
+            ->orderBy('created_at', 'desc')
+            ->limit(6)
+            ->get();
+
+        return view('games.index', [
+            'games' => $games,
+            'topDeals' => $topDeals,
+            'freeGames' => $freeGames,
+            'filters' => $validated,
+        ]);
+    }
+
     /**
      * Display free games.
      */
@@ -84,7 +139,7 @@ class GamesController extends Controller
      */
     public function showDeal(GameDeal $deal): View
     {
-        $deal->load('store');
+        $deal->load(['store', 'game']);
 
         $relatedDeals = GameDeal::with('store')
             ->onSale()
@@ -98,4 +153,34 @@ class GamesController extends Controller
             'relatedDeals' => $relatedDeals,
         ]);
     }
+
+    /**
+     * Show a specific game.
+     */
+    public function show(Game $game): View
+    {
+        $game->load(['deals' => function ($query) {
+            $query->where('is_on_sale', true)->with('store')->orderBy('savings_percent', 'desc');
+        }]);
+
+        // Get related games based on shared genres
+        if (empty($game->genres)) {
+            $relatedGames = collect();
+        } else {
+            $relatedGames = Game::where('id', '!=', $game->id)
+                ->where(function ($q) use ($game) {
+                    foreach ($game->genres as $genre) {
+                        $q->orWhereJsonContains('genres', $genre);
+                    }
+                })
+                ->limit(4)
+                ->get();
+        }
+
+        return view('games.show', [
+            'game' => $game,
+            'relatedGames' => $relatedGames,
+        ]);
+    }
 }
+

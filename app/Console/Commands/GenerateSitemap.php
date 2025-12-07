@@ -62,6 +62,15 @@ class GenerateSitemap extends Command
         // Add polls
         $this->addPolls($sitemap);
 
+        // Add games
+        $this->addGames($sitemap);
+
+        // Add free games
+        $this->addFreeGames($sitemap);
+
+        // Add deals
+        $this->addDeals($sitemap);
+
         // Write sitemap
         $sitemap->writeToFile(public_path('sitemap.xml'));
 
@@ -146,6 +155,13 @@ class GenerateSitemap extends Command
         );
 
         $sitemap->add(
+            Url::create(route('games.index'))
+                ->setLastModificationDate(now())
+                ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                ->setPriority(0.7)
+        );
+
+        $sitemap->add(
             Url::create(route('videos.ylyl'))
                 ->setLastModificationDate(now())
                 ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
@@ -212,6 +228,62 @@ class GenerateSitemap extends Command
                     Url::create(route('polls.show', $poll->slug))
                         ->setLastModificationDate($poll->updated_at)
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                        ->setPriority(0.5)
+                );
+            });
+    }
+
+    /**
+     * Add games to the sitemap.
+     */
+    protected function addGames(Sitemap $sitemap): void
+    {
+        \App\Models\Game::orderBy('updated_at', 'desc')
+            ->take($this->maxItemsPerType)
+            ->cursor()
+            ->each(function ($game) use ($sitemap) {
+                $sitemap->add(
+                    Url::create(route('games.show', $game->slug))
+                        ->setLastModificationDate($game->updated_at)
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                        ->setPriority(0.6)
+                );
+            });
+    }
+
+    /**
+     * Add free games to the sitemap.
+     */
+    protected function addFreeGames(Sitemap $sitemap): void
+    {
+        \App\Models\FreeGame::where('is_active', true)
+            ->orderBy('created_at', 'desc')
+            ->take($this->maxItemsPerType)
+            ->cursor()
+            ->each(function ($game) use ($sitemap) {
+                $sitemap->add(
+                    Url::create(route('games.free.show', $game->slug))
+                        ->setLastModificationDate($game->updated_at)
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                        ->setPriority(0.6)
+                );
+            });
+    }
+
+    /**
+     * Add game deals to the sitemap.
+     */
+    protected function addDeals(Sitemap $sitemap): void
+    {
+        \App\Models\GameDeal::where('is_on_sale', true)
+            ->orderBy('updated_at', 'desc')
+            ->take($this->maxItemsPerType)
+            ->cursor()
+            ->each(function ($deal) use ($sitemap) {
+                $sitemap->add(
+                    Url::create(route('games.deals.show', $deal))
+                        ->setLastModificationDate($deal->updated_at)
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
                         ->setPriority(0.5)
                 );
             });

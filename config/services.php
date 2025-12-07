@@ -181,4 +181,20 @@ return [
         'user_window_minutes' => env('REQUEST_USER_WINDOW_MINUTES', 20),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | IGDB API Configuration
+    |--------------------------------------------------------------------------
+    |
+    | IGDB (Internet Game Database) API credentials for fetching game metadata.
+    | Uses Twitch OAuth for authentication. Get credentials from:
+    | https://dev.twitch.tv/console/apps
+    |
+    */
+
+    'igdb' => [
+        'client_id' => env('IGDB_CLIENT_ID'),
+        'client_secret' => env('IGDB_CLIENT_SECRET'),
+    ],
+
 ];
