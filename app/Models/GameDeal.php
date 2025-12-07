@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 class GameDeal extends Model
 {
+    use Searchable;
+
     protected $fillable = [
         'deal_id',
         'title',
@@ -77,5 +80,29 @@ class GameDeal extends Model
     public function getRouteKeyName(): string
     {
         return 'deal_id';
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'sale_price' => $this->sale_price,
+            'savings_percent' => $this->savings_percent,
+            'metacritic_score' => $this->metacritic_score,
+        ];
+    }
+
+    /**
+     * Determine if the model should be searchable.
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return $this->is_on_sale;
     }
 }

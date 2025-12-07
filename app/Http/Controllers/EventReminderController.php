@@ -20,7 +20,7 @@ class EventReminderController extends Controller
 
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'message' => 'You must be logged in to subscribe to reminders.',
@@ -60,7 +60,7 @@ class EventReminderController extends Controller
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'message' => 'You must be logged in to manage reminders.',
@@ -71,7 +71,7 @@ class EventReminderController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        if (!$reminder) {
+        if (! $reminder) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not subscribed to reminders for this event.',
@@ -94,7 +94,7 @@ class EventReminderController extends Controller
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => true,
                 'subscribed' => false,

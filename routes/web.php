@@ -71,11 +71,11 @@ Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leade
 Route::prefix('events')->name('events.')->group(function () {
     Route::get('/', [EventsController::class, 'index'])->name('index');
     Route::get('/{slug}', [EventsController::class, 'show'])->name('show');
-    
+
     // Event likes
     Route::post('/{event}/like', [\App\Http\Controllers\EventLikeController::class, 'toggle'])->name('like.toggle');
     Route::get('/{event}/like/status', [\App\Http\Controllers\EventLikeController::class, 'status'])->name('like.status');
-    
+
     // Event reminders
     Route::post('/{event}/reminder', [\App\Http\Controllers\EventReminderController::class, 'subscribe'])->name('reminder.subscribe');
     Route::delete('/{event}/reminder', [\App\Http\Controllers\EventReminderController::class, 'unsubscribe'])->name('reminder.unsubscribe');
