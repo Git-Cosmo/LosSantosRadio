@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -35,9 +36,16 @@ return new class extends Migration
         try {
             DB::statement('CREATE UNIQUE INDEX event_likes_event_ip_null_user_unique ON event_likes(event_id, ip_address) WHERE user_id IS NULL');
         } catch (\Illuminate\Database\QueryException $e) {
-            // Silently skip if database doesn't support filtered/partial indexes (MySQL/MariaDB/SQL Server)
-            // This is expected for MySQL/MariaDB which don't support WHERE clauses in indexes
-            \Log::info("Skipped filtered index creation for event_likes table - not supported on {$driver} database");
+            // Check if this is the expected syntax error for unsupported filtered indexes
+            // MySQL error 1064 = syntax error, MariaDB may have similar codes
+            $sqlState = $e->getCode();
+            if (in_array($sqlState, ['42000', '42S22', 1064])) {
+                // Expected error for databases that don't support filtered indexes
+                Log::info("Skipped filtered index creation for event_likes table - not supported on {$driver} database");
+            } else {
+                // Unexpected error, re-throw to prevent silent failures
+                throw $e;
+            }
         }
     }
 
