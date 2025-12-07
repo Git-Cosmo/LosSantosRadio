@@ -43,17 +43,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Drop the filtered index if it exists (for PostgreSQL and SQLite)
-        $driver = DB::connection()->getDriverName();
-        
-        if (in_array($driver, ['pgsql', 'sqlite'])) {
-            try {
-                DB::statement('DROP INDEX IF EXISTS event_likes_event_ip_null_user_unique');
-            } catch (\Exception $e) {
-                // Index may not exist, continue
-            }
-        }
-        
+        // Schema::dropIfExists will automatically drop all indexes and constraints
         Schema::dropIfExists('event_likes');
     }
 };
