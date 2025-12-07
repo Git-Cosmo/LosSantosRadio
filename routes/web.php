@@ -71,6 +71,25 @@ Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leade
 Route::prefix('events')->name('events.')->group(function () {
     Route::get('/', [EventsController::class, 'index'])->name('index');
     Route::get('/{slug}', [EventsController::class, 'show'])->name('show');
+
+    // Event likes
+    Route::post('/{event}/like', [\App\Http\Controllers\EventLikeController::class, 'toggle'])
+        ->name('like.toggle')
+        ->middleware('throttle:60,1');
+    Route::get('/{event}/like/status', [\App\Http\Controllers\EventLikeController::class, 'status'])
+        ->name('like.status')
+        ->middleware('throttle:60,1');
+
+    // Event reminders
+    Route::post('/{event}/reminder', [\App\Http\Controllers\EventReminderController::class, 'subscribe'])
+        ->name('reminder.subscribe')
+        ->middleware(['auth', 'throttle:60,1']);
+    Route::delete('/{event}/reminder', [\App\Http\Controllers\EventReminderController::class, 'unsubscribe'])
+        ->name('reminder.unsubscribe')
+        ->middleware(['auth', 'throttle:60,1']);
+    Route::get('/{event}/reminder/status', [\App\Http\Controllers\EventReminderController::class, 'status'])
+        ->name('reminder.status')
+        ->middleware(['auth', 'throttle:60,1']);
 });
 
 // Polls pages
@@ -84,6 +103,7 @@ Route::prefix('polls')->name('polls.')->group(function () {
 // Games pages
 Route::prefix('games')->name('games.')->group(function () {
     Route::get('/free', [\App\Http\Controllers\GamesController::class, 'free'])->name('free');
+    Route::get('/free/{game}', [\App\Http\Controllers\GamesController::class, 'showFreeGame'])->name('free.show');
     Route::get('/deals', [\App\Http\Controllers\GamesController::class, 'deals'])->name('deals');
     Route::get('/deals/{deal}', [\App\Http\Controllers\GamesController::class, 'showDeal'])->name('deals.show');
 });

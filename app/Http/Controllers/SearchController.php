@@ -57,20 +57,16 @@ class SearchController extends Controller
 
     /**
      * Perform a search across multiple models.
-     * Note: This uses basic LIKE queries. For better performance at scale,
-     * consider implementing Laravel Scout with Meilisearch or database full-text search.
-     * Laravel's parameter binding in Eloquent automatically prevents SQL injection.
+     * Uses Laravel Scout for better search performance and relevance.
      */
     protected function performSearch(string $query, int $limit = 20): array
     {
         $results = [];
 
-        // Search News
-        $news = News::where('title', 'like', "%{$query}%")
-            ->orWhere('content', 'like', "%{$query}%")
-            ->published()
-            ->orderBy('created_at', 'desc')
-            ->limit($limit)
+        // Search News using Scout
+        $news = News::search($query)
+            ->where('is_published', true)
+            ->take($limit)
             ->get()
             ->map(function ($item) {
                 return [
@@ -84,49 +80,61 @@ class SearchController extends Controller
 
         $results = array_merge($results, $news->toArray());
 
-        // Search Events
-        $events = Event::where('title', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
-            ->published()
-            ->orderBy('start_date', 'desc')
-            ->limit($limit)
+        // Search Events using Scout
+        $events = Event::search($query)
+            ->where('is_published', true)
+            ->take($limit)
             ->get()
             ->map(function ($item) {
                 return [
                     'type' => 'event',
                     'title' => $item->title,
                     'url' => route('events.show', $item->slug),
-                    'description' => \Str::limit(strip_tags($item->description), 150),
-                    'date' => $item->start_date?->format('M d, Y') ?? 'TBD',
+                    'description' => \Str::limit(strip_tags($item->description ?? ''), 150),
+                    'date' => $item->starts_at?->format('M d, Y') ?? 'TBD',
                 ];
             });
 
         $results = array_merge($results, $events->toArray());
 
-        // Search Free Games
-        $games = FreeGame::where('title', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
-            ->active()
-            ->orderBy('created_at', 'desc')
-            ->limit($limit)
+        // Search Polls using Scout
+        $polls = \App\Models\Poll::search($query)
+            ->where('is_active', true)
+            ->take($limit)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'type' => 'poll',
+                    'title' => $item->question,
+                    'url' => route('polls.show', $item->slug),
+                    'description' => \Str::limit(strip_tags($item->description ?? ''), 150),
+                    'date' => $item->created_at->diffForHumans(),
+                ];
+            });
+
+        $results = array_merge($results, $polls->toArray());
+
+        // Search Free Games using Scout
+        $games = FreeGame::search($query)
+            ->where('is_active', true)
+            ->take($limit)
             ->get()
             ->map(function ($item) {
                 return [
                     'type' => 'free_game',
                     'title' => $item->title,
-                    'url' => route('games.free'),
-                    'description' => \Str::limit($item->description, 150),
+                    'url' => route('games.free.show', $item),
+                    'description' => \Str::limit($item->description ?? '', 150),
                     'date' => $item->created_at->diffForHumans(),
                 ];
             });
 
         $results = array_merge($results, $games->toArray());
 
-        // Search Game Deals
-        $deals = GameDeal::where('title', 'like', "%{$query}%")
-            ->onSale()
-            ->orderBy('savings_percent', 'desc')
-            ->limit($limit)
+        // Search Game Deals using Scout
+        $deals = GameDeal::search($query)
+            ->where('is_on_sale', true)
+            ->take($limit)
             ->get()
             ->map(function ($item) {
                 return [
@@ -140,26 +148,24 @@ class SearchController extends Controller
 
         $results = array_merge($results, $deals->toArray());
 
-        // Search Videos
-        $videos = Video::where('title', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
-            ->active()
-            ->orderBy('posted_at', 'desc')
-            ->limit($limit)
+        // Search Videos using Scout
+        $videos = Video::search($query)
+            ->where('is_active', true)
+            ->take($limit)
             ->get()
             ->map(function ($item) {
                 return [
                     'type' => 'video',
                     'title' => $item->title,
                     'url' => route('videos.show', $item),
-                    'description' => \Str::limit($item->description, 150),
+                    'description' => \Str::limit($item->description ?? '', 150),
                     'date' => $item->posted_at?->diffForHumans() ?? 'Unknown',
                 ];
             });
 
         $results = array_merge($results, $videos->toArray());
 
-        // Sort by relevance (for now, just return as is)
+        // Return limited results
         return array_slice($results, 0, $limit * 2);
     }
 }
