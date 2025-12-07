@@ -20,6 +20,7 @@ class GameDeal extends Model
         'metacritic_score',
         'thumb',
         'store_id',
+        'game_id',
         'external_game_id',
         'is_on_sale',
         'deal_rating',
@@ -40,6 +41,14 @@ class GameDeal extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(GameStore::class, 'store_id');
+    }
+
+    /**
+     * Get the game for this deal.
+     */
+    public function game(): BelongsTo
+    {
+        return $this->belongsTo(Game::class, 'game_id');
     }
 
     /**
