@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DjProfile;
 use App\Models\Event;
 use App\Models\FreeGame;
 use App\Models\GameDeal;
@@ -164,6 +165,27 @@ class SearchController extends Controller
             });
 
         $results = array_merge($results, $videos->toArray());
+
+        // Search DJ Profiles
+        $djs = DjProfile::where('is_active', true)
+            ->where(function ($q) use ($query) {
+                $q->where('stage_name', 'like', "%{$query}%")
+                    ->orWhere('bio', 'like', "%{$query}%")
+                    ->orWhere('genres', 'like', "%{$query}%");
+            })
+            ->take($limit)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'type' => 'dj',
+                    'title' => $item->stage_name,
+                    'url' => route('djs.show', $item),
+                    'description' => \Str::limit($item->bio ?? '', 150),
+                    'date' => $item->updated_at->diffForHumans(),
+                ];
+            });
+
+        $results = array_merge($results, $djs->toArray());
 
         // Return limited results
         return array_slice($results, 0, $limit * 2);
