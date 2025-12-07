@@ -34,7 +34,7 @@ return new class extends Migration
         $driver = DB::connection()->getDriverName();
         
         // Only attempt to create filtered index on databases that support it
-        if (in_array($driver, ['pgsql', 'sqlite', 'sqlite3'])) {
+        if (in_array($driver, ['pgsql', 'sqlite'])) {
             try {
                 DB::statement('CREATE UNIQUE INDEX event_likes_event_ip_null_user_unique ON event_likes(event_id, ip_address) WHERE user_id IS NULL');
             } catch (\Illuminate\Database\QueryException $e) {
