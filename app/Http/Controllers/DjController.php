@@ -26,12 +26,12 @@ class DjController extends Controller
         ]);
     }
 
-    public function show(DjProfile $djProfile): View
+    public function show(DjProfile $dj): View
     {
-        $djProfile->load(['user', 'schedules']);
+        $dj->load(['user', 'schedules']);
 
         return view('djs.show', [
-            'dj' => $djProfile,
+            'dj' => $dj,
         ]);
     }
 

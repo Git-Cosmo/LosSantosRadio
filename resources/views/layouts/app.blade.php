@@ -2769,6 +2769,10 @@
             background: var(--color-accent-hover);
         }
 
+        .listen-option-icon {
+            color: var(--color-accent);
+        }
+
         @media (max-width: 640px) {
             .listen-icon-btn {
                 width: 48px;
@@ -2792,35 +2796,44 @@
     </style>
 
     <!-- Listen Button -->
-    <button class="listen-icon-btn" onclick="toggleListenModal()" title="How to Listen">
-        <i class="fas fa-headphones"></i>
+    <button class="listen-icon-btn" 
+            onclick="toggleListenModal()" 
+            aria-label="How to Listen"
+            aria-expanded="false"
+            aria-controls="listenModal">
+        <i class="fas fa-headphones" aria-hidden="true"></i>
     </button>
 
     <!-- Listen Modal -->
-    <div id="listenModal" class="listen-modal-backdrop" onclick="if(event.target === this) toggleListenModal()">
+    <div id="listenModal" 
+         class="listen-modal-backdrop" 
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="listenModalTitle"
+         onclick="if(event.target === this) toggleListenModal()">
         <div class="listen-modal">
             <div class="listen-modal-header">
-                <h2 class="listen-modal-title">
-                    <i class="fas fa-broadcast-tower"></i>
+                <h2 class="listen-modal-title" id="listenModalTitle">
+                    <i class="fas fa-broadcast-tower" aria-hidden="true"></i>
                     How to Listen
                 </h2>
-                <button class="listen-modal-close" onclick="toggleListenModal()">
-                    <i class="fas fa-times"></i>
+                <button class="listen-modal-close" onclick="toggleListenModal()" aria-label="Close modal">
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
             </div>
 
             <div class="listen-modal-body">
                 <div class="listen-option">
                     <div class="listen-option-title">
-                        <i class="fas fa-window-maximize" style="color: var(--color-accent);"></i>
+                        <i class="fas fa-window-maximize listen-option-icon" aria-hidden="true"></i>
                         Open in Popup Window
                     </div>
                     <div class="listen-option-desc">
                         Listen in a separate popup window that stays on top while you browse.
                     </div>
                     <div class="listen-option-action">
-                        <button class="listen-btn" onclick="window.open('https://radio.lossantosradio.com/public/los_santos_radio', 'radioPlayer', 'width=400,height=600,resizable=yes')">
-                            <i class="fas fa-external-link-alt"></i>
+                        <button class="listen-btn" onclick="window.open('{{ config('services.radio.public_player_url', 'https://radio.lossantosradio.com/public/los_santos_radio') }}', 'radioPlayer', 'width=400,height=600,resizable=yes')">
+                            <i class="fas fa-external-link-alt" aria-hidden="true"></i>
                             Open Popup Player
                         </button>
                     </div>
@@ -2828,23 +2841,23 @@
 
                 <div class="listen-option">
                     <div class="listen-option-title">
-                        <i class="fab fa-chromecast" style="color: var(--color-accent);"></i>
+                        <i class="fab fa-chromecast listen-option-icon" aria-hidden="true"></i>
                         Use VLC or Media Player
                     </div>
                     <div class="listen-option-desc">
                         Copy the stream URL and open it in VLC, Windows Media Player, or any media player that supports streaming.
                     </div>
                     <div class="stream-url-box">
-                        <code id="streamUrl">https://radio.lossantosradio.com/listen/los_santos_radio/radio.mp3</code>
-                        <button class="copy-btn" onclick="copyStreamUrl(event)">
-                            <i class="fas fa-copy"></i> Copy
+                        <code id="streamUrl">{{ config('services.radio.stream_url', 'https://radio.lossantosradio.com/listen/los_santos_radio/radio.mp3') }}</code>
+                        <button class="copy-btn" onclick="copyStreamUrl(event)" aria-label="Copy stream URL">
+                            <i class="fas fa-copy" aria-hidden="true"></i> Copy
                         </button>
                     </div>
                 </div>
 
                 <div class="listen-option">
                     <div class="listen-option-title">
-                        <i class="fas fa-mobile-alt" style="color: var(--color-accent);"></i>
+                        <i class="fas fa-mobile-alt listen-option-icon" aria-hidden="true"></i>
                         Listen on Mobile
                     </div>
                     <div class="listen-option-desc">
@@ -2854,7 +2867,7 @@
 
                 <div class="listen-option">
                     <div class="listen-option-title">
-                        <i class="fas fa-home" style="color: var(--color-accent);"></i>
+                        <i class="fas fa-home listen-option-icon" aria-hidden="true"></i>
                         Smart Speakers
                     </div>
                     <div class="listen-option-desc">
@@ -2868,7 +2881,26 @@
     <script>
         function toggleListenModal() {
             const modal = document.getElementById('listenModal');
-            modal.classList.toggle('show');
+            const button = document.querySelector('.listen-icon-btn');
+            const isShowing = modal.classList.toggle('show');
+            
+            // Update aria-expanded for accessibility
+            if (button) {
+                button.setAttribute('aria-expanded', isShowing);
+            }
+
+            // Handle Escape key to close modal
+            if (isShowing) {
+                document.addEventListener('keydown', handleEscapeKey);
+            } else {
+                document.removeEventListener('keydown', handleEscapeKey);
+            }
+        }
+
+        function handleEscapeKey(event) {
+            if (event.key === 'Escape') {
+                toggleListenModal();
+            }
         }
 
         function copyStreamUrl(event) {
@@ -2878,7 +2910,7 @@
             
             navigator.clipboard.writeText(url).then(() => {
                 const originalHTML = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copied!';
                 btn.style.background = '#10b981';
                 
                 setTimeout(() => {
@@ -2887,18 +2919,13 @@
                 }, 2000);
             }).catch(err => {
                 console.error('Failed to copy:', err);
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = url;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                
+                // Show error feedback instead of deprecated fallback
                 const originalHTML = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i> Copy failed';
+                btn.style.background = '#ef4444';
                 setTimeout(() => {
                     btn.innerHTML = originalHTML;
+                    btn.style.background = '';
                 }, 2000);
             });
         }

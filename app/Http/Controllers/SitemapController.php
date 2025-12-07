@@ -232,7 +232,7 @@ class SitemapController extends Controller
             ->cursor()
             ->each(function ($dj) use (&$urls) {
                 $urls[] = [
-                    'loc' => route('djs.show', $dj->id),
+                    'loc' => route('djs.show', $dj),
                     'lastmod' => $dj->updated_at->format('c'),
                     'changefreq' => 'weekly',
                     'priority' => '0.6',

@@ -112,6 +112,8 @@ return [
         'polling_interval' => env('RADIO_POLLING_INTERVAL', 15), // seconds
         'sse_enabled' => env('RADIO_SSE_ENABLED', true),
         'sse_max_runtime' => env('RADIO_SSE_MAX_RUNTIME', 28), // seconds, max time for SSE proxy connections
+        'stream_url' => env('RADIO_STREAM_URL', 'https://radio.lossantosradio.com/listen/los_santos_radio/radio.mp3'),
+        'public_player_url' => env('RADIO_PUBLIC_PLAYER_URL', 'https://radio.lossantosradio.com/public/los_santos_radio'),
     ],
 
     /*

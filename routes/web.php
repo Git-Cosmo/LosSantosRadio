@@ -120,7 +120,7 @@ Route::prefix('videos')->name('videos.')->group(function () {
 Route::prefix('djs')->name('djs.')->group(function () {
     Route::get('/', [DjController::class, 'index'])->name('index');
     Route::get('/schedule', [DjController::class, 'schedule'])->name('schedule');
-    Route::get('/{djProfile}', [DjController::class, 'show'])->name('show');
+    Route::get('/{dj:slug}', [DjController::class, 'show'])->name('show');
 });
 
 // DJ On-Air API endpoint

@@ -1,0 +1,37 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DjProfile>
+ */
+class DjProfileFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        $stageName = fake()->firstName().' '.fake()->randomElement(['DJ', 'MC', 'The DJ']);
+
+        return [
+            'user_id' => User::factory(),
+            'stage_name' => $stageName,
+            'slug' => Str::slug($stageName),
+            'bio' => fake()->paragraphs(2, true),
+            'genres' => fake()->randomElements(['House', 'Techno', 'Hip Hop', 'Rock', 'Pop', 'EDM', 'Trance', 'Dubstep'], fake()->numberBetween(1, 3)),
+            'show_name' => fake()->optional()->words(3, true),
+            'show_description' => fake()->optional()->sentence(),
+            'is_active' => true,
+            'is_featured' => fake()->boolean(20),
+            'total_shows' => fake()->numberBetween(0, 100),
+            'total_listeners' => fake()->numberBetween(0, 5000),
+        ];
+    }
+}
