@@ -368,6 +368,8 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::get('/settings', [\App\Http\Controllers\Admin\DiscordBotController::class, 'settings'])->name('settings');
         Route::post('/settings', [\App\Http\Controllers\Admin\DiscordBotController::class, 'updateSettings'])->name('settings.update');
         Route::post('/restart', [\App\Http\Controllers\Admin\DiscordBotController::class, 'restart'])->name('restart');
+        Route::post('/start', [\App\Http\Controllers\Admin\DiscordBotController::class, 'start'])->name('start');
+        Route::post('/stop', [\App\Http\Controllers\Admin\DiscordBotController::class, 'stop'])->name('stop');
     });
 
     // Media Library Admin

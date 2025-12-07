@@ -131,4 +131,37 @@ class DiscordBotController extends Controller
         return redirect()->route('admin.discord.settings')
             ->with('success', 'Discord bot connection has been restarted successfully.');
     }
+
+    /**
+     * Start the Discord bot.
+     */
+    public function start(): RedirectResponse
+    {
+        if (! $this->discord->isConfigured()) {
+            return redirect()->route('admin.discord.settings')
+                ->with('error', 'Discord bot is not configured. Please add bot token and guild ID in .env file.');
+        }
+
+        if ($this->discord->start()) {
+            return redirect()->route('admin.discord.settings')
+                ->with('success', 'Discord bot has been started successfully.');
+        }
+
+        return redirect()->route('admin.discord.settings')
+            ->with('error', 'Failed to start Discord bot.');
+    }
+
+    /**
+     * Stop the Discord bot.
+     */
+    public function stop(): RedirectResponse
+    {
+        if ($this->discord->stop()) {
+            return redirect()->route('admin.discord.settings')
+                ->with('success', 'Discord bot has been stopped successfully.');
+        }
+
+        return redirect()->route('admin.discord.settings')
+            ->with('error', 'Failed to stop Discord bot.');
+    }
 }

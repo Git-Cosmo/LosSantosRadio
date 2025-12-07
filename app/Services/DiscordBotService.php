@@ -353,4 +353,50 @@ class DiscordBotService
         Cache::forget('discord.guild');
         Cache::forget('discord.guild.roles');
     }
+
+    /**
+     * Start the Discord bot (enable it).
+     */
+    public function start(): bool
+    {
+        if (! $this->isConfigured()) {
+            return false;
+        }
+
+        // Set the bot as enabled
+        \App\Models\Setting::set('discord_bot_enabled', true);
+
+        // Clear cache to ensure fresh connection
+        $this->clearCache();
+
+        // Log the start action
+        DiscordLog::info('bot_start', 'Discord bot started by admin');
+
+        return true;
+    }
+
+    /**
+     * Stop the Discord bot (disable it).
+     */
+    public function stop(): bool
+    {
+        // Set the bot as disabled
+        \App\Models\Setting::set('discord_bot_enabled', false);
+
+        // Clear cache
+        $this->clearCache();
+
+        // Log the stop action
+        DiscordLog::info('bot_stop', 'Discord bot stopped by admin');
+
+        return true;
+    }
+
+    /**
+     * Check if the bot is currently running (enabled).
+     */
+    public function isRunning(): bool
+    {
+        return \App\Models\Setting::get('discord_bot_enabled', true);
+    }
 }

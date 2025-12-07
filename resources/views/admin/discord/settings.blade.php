@@ -8,16 +8,40 @@
             <h2 class="card-title">Bot Configuration</h2>
             @if($botStatus)
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span class="badge badge-live pulse-animation" style="background: #43b581;">
-                        <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
-                        Bot Online
-                    </span>
-                    <form action="{{ route('admin.discord.restart') }}" method="POST" style="margin: 0;">
-                        @csrf
-                        <button type="submit" class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" onclick="return confirm('Are you sure you want to restart the bot connection?')">
-                            <i class="fas fa-sync-alt"></i> Restart Bot
-                        </button>
-                    </form>
+                    @if(\App\Models\Setting::get('discord_bot_enabled', true))
+                        <span class="badge badge-live pulse-animation" style="background: #43b581;">
+                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                            Bot Running
+                        </span>
+                    @else
+                        <span class="badge" style="background: #f04747; color: white;">
+                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                            Bot Stopped
+                        </span>
+                    @endif
+                    <div style="display: flex; gap: 0.25rem;">
+                        @if(\App\Models\Setting::get('discord_bot_enabled', true))
+                            <form action="{{ route('admin.discord.stop') }}" method="POST" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="btn btn-danger" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" onclick="return confirm('Are you sure you want to stop the bot?')">
+                                    <i class="fas fa-stop"></i> Stop Bot
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('admin.discord.start') }}" method="POST" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="btn btn-success" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" onclick="return confirm('Are you sure you want to start the bot?')">
+                                    <i class="fas fa-play"></i> Start Bot
+                                </button>
+                            </form>
+                        @endif
+                        <form action="{{ route('admin.discord.restart') }}" method="POST" style="margin: 0;">
+                            @csrf
+                            <button type="submit" class="btn btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;" onclick="return confirm('Are you sure you want to restart the bot connection?')">
+                                <i class="fas fa-sync-alt"></i> Restart
+                            </button>
+                        </form>
+                    </div>
                 </div>
             @else
                 <span class="badge" style="background: #f04747; color: white;">
