@@ -30,13 +30,14 @@ return new class extends Migration
         // This prevents duplicate guest likes from same IP without blocking authenticated users
         // Only supported in PostgreSQL and SQLite 3.8.0+
         // For MySQL/MariaDB/SQL Server, uniqueness must be enforced at application level
+        $driver = DB::connection()->getDriverName();
+        
         try {
             DB::statement('CREATE UNIQUE INDEX event_likes_event_ip_null_user_unique ON event_likes(event_id, ip_address) WHERE user_id IS NULL');
         } catch (\Illuminate\Database\QueryException $e) {
             // Silently skip if database doesn't support filtered/partial indexes (MySQL/MariaDB/SQL Server)
             // This is expected for MySQL/MariaDB which don't support WHERE clauses in indexes
-        } catch (\PDOException $e) {
-            // Fallback for direct PDO exceptions
+            \Log::info("Skipped filtered index creation for event_likes table - not supported on {$driver} database");
         }
     }
 
