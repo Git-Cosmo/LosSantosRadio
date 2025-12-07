@@ -285,7 +285,7 @@ class SitemapController extends Controller
             ->cursor()
             ->each(function ($game) use (&$urls) {
                 $urls[] = [
-                    'loc' => route('games.free.show', $game),
+                    'loc' => route('games.free.show', $game->slug),
                     'lastmod' => $game->updated_at->format('c'),
                     'changefreq' => 'daily',
                     'priority' => '0.7',
@@ -308,7 +308,7 @@ class SitemapController extends Controller
             ->cursor()
             ->each(function ($deal) use (&$urls) {
                 $urls[] = [
-                    'loc' => route('games.deals.show', $deal),
+                    'loc' => route('games.deals.show', $deal->deal_id),
                     'lastmod' => $deal->updated_at->format('c'),
                     'changefreq' => 'daily',
                     'priority' => '0.6',
@@ -331,7 +331,7 @@ class SitemapController extends Controller
             ->cursor()
             ->each(function ($video) use (&$urls) {
                 $urls[] = [
-                    'loc' => route('videos.show', $video),
+                    'loc' => route('videos.show', $video->slug),
                     'lastmod' => $video->updated_at->format('c'),
                     'changefreq' => 'weekly',
                     'priority' => '0.5',
