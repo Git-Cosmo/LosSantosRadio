@@ -103,10 +103,12 @@ Route::prefix('polls')->name('polls.')->group(function () {
 
 // Games pages
 Route::prefix('games')->name('games.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\GamesController::class, 'index'])->name('index');
     Route::get('/free', [\App\Http\Controllers\GamesController::class, 'free'])->name('free');
     Route::get('/free/{game}', [\App\Http\Controllers\GamesController::class, 'showFreeGame'])->name('free.show');
     Route::get('/deals', [\App\Http\Controllers\GamesController::class, 'deals'])->name('deals');
     Route::get('/deals/{deal}', [\App\Http\Controllers\GamesController::class, 'showDeal'])->name('deals.show');
+    Route::get('/{game:slug}', [\App\Http\Controllers\GamesController::class, 'show'])->name('show');
 });
 
 // Videos pages
@@ -341,6 +343,8 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::get('/stores', [\App\Http\Controllers\Admin\GamesController::class, 'stores'])->name('stores');
         Route::post('/sync-deals', [\App\Http\Controllers\Admin\GamesController::class, 'syncDeals'])->name('sync-deals');
         Route::post('/sync-free', [\App\Http\Controllers\Admin\GamesController::class, 'syncFreeGames'])->name('sync-free');
+        Route::post('/igdb/search', [\App\Http\Controllers\Admin\GamesController::class, 'searchIgdb'])->name('igdb.search');
+        Route::post('/igdb/import', [\App\Http\Controllers\Admin\GamesController::class, 'importFromIgdb'])->name('igdb.import');
     });
 
     // Videos Admin
