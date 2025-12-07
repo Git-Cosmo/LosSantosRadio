@@ -102,8 +102,8 @@ class UpdateIGDBJob implements ShouldQueue
                 $this->updateGameFromIGDB($game, $igdbData, $igdb);
                 $updated++;
 
-                // Rate limiting: sleep between requests
-                usleep(250000); // 250ms delay
+                // Rate limiting: 250ms delay between IGDB API requests to avoid hitting rate limits
+                usleep(250000);
             }
         }
 

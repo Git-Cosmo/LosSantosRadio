@@ -1,4 +1,67 @@
 <x-layouts.app :title="$deal->title">
+    @push('head')
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Get {{ $deal->title }} for ${{ $deal->sale_price }} ({{ $deal->savings_percent }}% off) at {{ $deal->store->name ?? 'this store' }}">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="{{ $deal->title }} - {{ $deal->savings_percent }}% Off">
+    <meta property="og:description" content="Save {{ $deal->savings_percent }}% on {{ $deal->title }}. Now ${{ $deal->sale_price }} (was ${{ $deal->normal_price }})">
+    <meta property="og:type" content="product">
+    @if($deal->thumb)
+    <meta property="og:image" content="{{ $deal->thumb }}">
+    @endif
+    <meta property="og:url" content="{{ route('games.deals.show', $deal) }}">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $deal->title }} - {{ $deal->savings_percent }}% Off">
+    <meta name="twitter:description" content="Save {{ $deal->savings_percent }}% on {{ $deal->title }}. Now ${{ $deal->sale_price }}">
+    @if($deal->thumb)
+    <meta name="twitter:image" content="{{ $deal->thumb }}">
+    @endif
+    
+    <!-- Schema.org Offer Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Offer",
+        "name": "{{ $deal->title }}",
+        "price": "{{ $deal->sale_price }}",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": "{{ $deal->deal_url }}",
+        "priceValidUntil": "{{ now()->addDays(7)->format('Y-m-d') }}",
+        @if($deal->thumb)
+        "image": "{{ $deal->thumb }}",
+        @endif
+        "seller": {
+            "@type": "Organization",
+            "name": "{{ $deal->store->name ?? 'Unknown' }}"
+        },
+        "itemOffered": {
+            "@type": "VideoGame",
+            "name": "{{ $deal->title }}",
+            @if($deal->game)
+            @if($deal->game->description)
+            "description": {{ json_encode(Str::limit(strip_tags($deal->game->description), 200)) }},
+            @endif
+            @if($deal->game->cover_image)
+            "image": "{{ $deal->game->cover_image }}",
+            @endif
+            @endif
+            @if($deal->metacritic_score)
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": {{ $deal->metacritic_score }},
+                "bestRating": 100
+            },
+            @endif
+            "url": "{{ route('games.deals.show', $deal) }}"
+        }
+    }
+    </script>
+    @endpush
+    
     <div style="max-width: 800px; margin: 0 auto;">
         <div class="card">
             <div class="card-body">

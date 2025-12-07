@@ -159,12 +159,20 @@
                 data.results.forEach(game => {
                     const coverUrl = game.cover?.url ? 'https:' + game.cover.url.replace('t_thumb', 't_cover_small') : '';
                     const rating = game.rating ? Math.round(game.rating) : null;
+                    
+                    // HTML escape helper
+                    const escapeHtml = (text) => {
+                        const div = document.createElement('div');
+                        div.textContent = text;
+                        return div.innerHTML;
+                    };
+                    
                     html += `
                         <div style="display: flex; gap: 1rem; padding: 0.75rem; background: var(--color-bg); border-radius: 0.5rem; align-items: start;">
-                            ${coverUrl ? `<img src="${coverUrl}" alt="${game.name}" style="width: 60px; height: 80px; object-fit: cover; border-radius: 0.25rem;">` : ''}
+                            ${coverUrl ? `<img src="${escapeHtml(coverUrl)}" alt="${escapeHtml(game.name)}" style="width: 60px; height: 80px; object-fit: cover; border-radius: 0.25rem;">` : ''}
                             <div style="flex: 1;">
-                                <h4 style="margin: 0 0 0.5rem 0; color: var(--color-text);">${game.name}</h4>
-                                ${game.summary ? `<p style="font-size: 0.875rem; color: var(--color-text-muted); margin: 0 0 0.5rem 0;">${game.summary.substring(0, 100)}...</p>` : ''}
+                                <h4 style="margin: 0 0 0.5rem 0; color: var(--color-text);">${escapeHtml(game.name)}</h4>
+                                ${game.summary ? `<p style="font-size: 0.875rem; color: var(--color-text-muted); margin: 0 0 0.5rem 0;">${escapeHtml(game.summary.substring(0, 100))}...</p>` : ''}
                                 ${rating ? `<span style="color: var(--color-warning);">⭐ ${rating}</span>` : ''}
                             </div>
                             <form action="{{ route('admin.games.igdb.import') }}" method="POST">

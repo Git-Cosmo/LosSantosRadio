@@ -117,6 +117,14 @@ class IgdbService
      */
     public function searchGames(string $query, int $limit = 10): Collection
     {
+        // Sanitize query - remove quotes and semicolons to prevent injection
+        $query = str_replace(['"', ';', "\n", "\r"], '', $query);
+        $query = trim($query);
+        
+        if (empty($query)) {
+            return collect();
+        }
+
         $cacheKey = 'igdb.search.'.md5($query).".{$limit}";
 
         return Cache::remember($cacheKey, $this->cacheTtl / 4, function () use ($query, $limit) {
@@ -148,6 +156,14 @@ class IgdbService
      */
     public function getGameBySlug(string $slug): ?array
     {
+        // Sanitize slug - remove quotes and semicolons to prevent injection
+        $slug = str_replace(['"', ';', "\n", "\r"], '', $slug);
+        $slug = trim($slug);
+        
+        if (empty($slug)) {
+            return null;
+        }
+
         $cacheKey = "igdb.game.slug.{$slug}";
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($slug) {

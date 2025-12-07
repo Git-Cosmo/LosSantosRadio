@@ -1,4 +1,80 @@
 <x-layouts.app :title="$game->title">
+    @push('head')
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{{ Str::limit(strip_tags($game->description ?? ''), 160) }}">
+    <meta name="keywords" content="{{ implode(', ', array_map(fn($g) => is_array($g) ? $g['name'] : $g, $game->genres ?? [])) }}">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="{{ $game->title }}">
+    <meta property="og:description" content="{{ Str::limit(strip_tags($game->description ?? ''), 200) }}">
+    <meta property="og:type" content="game">
+    @if($game->cover_image)
+    <meta property="og:image" content="{{ $game->cover_image }}">
+    @endif
+    <meta property="og:url" content="{{ route('games.show', $game) }}">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $game->title }}">
+    <meta name="twitter:description" content="{{ Str::limit(strip_tags($game->description ?? ''), 200) }}">
+    @if($game->cover_image)
+    <meta name="twitter:image" content="{{ $game->cover_image }}">
+    @endif
+    
+    <!-- Schema.org VideoGame Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "{{ $game->title }}",
+        @if($game->description)
+        "description": {{ json_encode(strip_tags($game->description)) }},
+        @endif
+        @if($game->cover_image)
+        "image": "{{ $game->cover_image }}",
+        @endif
+        @if($game->release_date)
+        "datePublished": "{{ $game->release_date->format('Y-m-d') }}",
+        @endif
+        @if($game->rating)
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": {{ json_encode((float) $game->rating) }},
+            @if($game->rating_count)
+            "ratingCount": {{ json_encode((int) $game->rating_count) }},
+            @endif
+            "bestRating": 100,
+            "worstRating": 0
+        },
+        @endif
+        @if($game->genres)
+        "genre": {{ json_encode(array_map(fn($g) => is_array($g) ? $g['name'] : $g, $game->genres)) }},
+        @endif
+        @if($game->platforms)
+        "gamePlatform": {{ json_encode(array_map(fn($p) => is_array($p) ? $p['name'] : $p, $game->platforms)) }},
+        @endif
+        @if($game->deals->count() > 0)
+        "offers": [
+            @foreach($game->deals as $deal)
+            {
+                "@type": "Offer",
+                "price": "{{ $deal->sale_price }}",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "url": "{{ $deal->deal_url }}",
+                "seller": {
+                    "@type": "Organization",
+                    "name": "{{ $deal->store->name ?? 'Unknown' }}"
+                }
+            }{{ !$loop->last ? ',' : '' }}
+            @endforeach
+        ],
+        @endif
+        "url": "{{ route('games.show', $game) }}"
+    }
+    </script>
+    @endpush
+
     <div class="min-h-screen bg-gradient-to-b from-gray-900 via-purple-900 to-gray-900 py-12">
         <div class="container mx-auto px-4">
             <!-- Breadcrumb -->

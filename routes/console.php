@@ -18,6 +18,7 @@ Artisan::command('inspire', function () {
 Schedule::command('sitemap:generate')->everySixHours();
 
 // Update game deals from CheapShark every 4 hours
+// Parameters: minSavings=50 (only deals with 50%+ off), maxDeals=100 (up to 100 deals per sync)
 Schedule::job(new UpdateDealsJob(50, 100))->everyFourHours()->withoutOverlapping();
 
 // Sync free games from Reddit every 6 hours
