@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\AzuraCastException;
 use App\Models\Event;
+use App\Models\FreeGame;
+use App\Models\GameDeal;
 use App\Models\News;
 use App\Models\Poll;
 use App\Services\AzuraCastService;
@@ -37,6 +39,8 @@ class RadioController extends Controller
                 'recentNews' => collect(),
                 'upcomingEvents' => collect(),
                 'activePolls' => collect(),
+                'topGameDeals' => collect(),
+                'freeGames' => collect(),
             ]);
         }
 
@@ -56,6 +60,26 @@ class RadioController extends Controller
             ->limit(2)
             ->get();
 
+        // Fetch game deals and free games for enhanced homepage
+        try {
+            $topGameDeals = GameDeal::onSale()
+                ->minSavings(50)
+                ->orderBy('savings_percent', 'desc')
+                ->limit(3)
+                ->get();
+        } catch (\Exception $e) {
+            $topGameDeals = collect();
+        }
+
+        try {
+            $freeGames = FreeGame::active()
+                ->orderBy('created_at', 'desc')
+                ->limit(3)
+                ->get();
+        } catch (\Exception $e) {
+            $freeGames = collect();
+        }
+
         return view('radio.index', [
             'nowPlaying' => $nowPlaying,
             'history' => $history,
@@ -65,6 +89,8 @@ class RadioController extends Controller
             'recentNews' => $recentNews,
             'upcomingEvents' => $upcomingEvents,
             'activePolls' => $activePolls,
+            'topGameDeals' => $topGameDeals,
+            'freeGames' => $freeGames,
         ]);
     }
 

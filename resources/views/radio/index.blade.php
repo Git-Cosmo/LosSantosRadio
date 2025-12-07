@@ -239,8 +239,21 @@
         /* Hover effects for homepage content items */
         .news-item:hover,
         .event-item:hover,
-        .poll-item:hover {
+        .poll-item:hover,
+        .deal-item:hover,
+        .game-item:hover {
             background: var(--color-bg-tertiary);
+        }
+
+        /* Game deal card styling */
+        .deal-item, .game-item {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .deal-item:hover, .game-item:hover {
+            transform: translateX(4px);
+            box-shadow: -4px 0 12px rgba(88, 166, 255, 0.2);
         }
 
         /* Responsive grid for homepage content */
@@ -303,7 +316,7 @@
                     @if($nowPlaying)
                         <div class="now-playing" id="now-playing" style="display: flex; gap: 2rem; align-items: flex-start;">
                             <div class="now-playing-album-container" style="position: relative; flex-shrink: 0;">
-                                <div style="width: 280px; height: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1); position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <div style="width: 300px; height: 300px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 60px rgba(88, 166, 255, 0.2); position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                     <img src="{{ $nowPlaying->currentSong->art ?? '/images/default-album.png' }}"
                                          alt="Album art for {{ $nowPlaying->currentSong->title }} by {{ $nowPlaying->currentSong->artist }}"
                                          class="now-playing-art"
@@ -321,8 +334,20 @@
                                 </div>
                             </div>
                             <div class="now-playing-info" style="flex: 1; min-width: 0;">
-                                <h3 class="now-playing-title" id="song-title" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; color: var(--color-text); background: linear-gradient(135deg, var(--color-text), var(--color-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ $nowPlaying->currentSong->title }}</h3>
-                                <p class="now-playing-artist" id="song-artist" style="font-size: 1.25rem; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 1rem;">{{ $nowPlaying->currentSong->artist }}</p>
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-accent), #a855f7); border-radius: 50%; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.4);">
+                                        <i class="fas fa-play" aria-hidden="true" style="color: white; font-size: 0.875rem; margin-left: 2px;"></i>
+                                    </span>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); font-weight: 600; margin-bottom: 0.25rem;">Now Playing</p>
+                                        <div style="width: 100%; height: 2px; background: linear-gradient(90deg, var(--color-accent), transparent); border-radius: 1px;"></div>
+                                    </div>
+                                </div>
+                                <h3 class="now-playing-title" id="song-title" style="font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; color: var(--color-text); background: linear-gradient(135deg, #ffffff, var(--color-accent), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200% auto;">{{ $nowPlaying->currentSong->title }}</h3>
+                                <p class="now-playing-artist" id="song-artist" style="font-size: 1.375rem; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-user-music" style="font-size: 1rem; color: var(--color-accent);" aria-hidden="true"></i>
+                                    {{ $nowPlaying->currentSong->artist }}
+                                </p>
                                 @if($nowPlaying->currentSong->album)
                                     <p style="color: var(--color-text-muted); font-size: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
                                         <i class="fas fa-compact-disc" style="margin-right: 0.25rem; color: var(--color-accent);" aria-hidden="true"></i>
@@ -361,23 +386,7 @@
                                     </div>
                                 </div>
 
-                                @if($nowPlaying->nextSong)
-                                    <div class="up-next-card" style="margin-top: 1.5rem; padding: 1.25rem; background: var(--color-bg-tertiary); border-radius: 12px; border-left: 4px solid var(--color-accent);">
-                                        <p style="color: var(--color-text-muted); font-size: 0.75rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
-                                            <i class="fas fa-forward" aria-hidden="true" style="color: var(--color-accent);"></i> UP NEXT
-                                        </p>
-                                        <div style="display: flex; align-items: center; gap: 1rem;">
-                                            <img src="{{ $nowPlaying->nextSong->art ?? '' }}"
-                                                 alt="Album art for {{ $nowPlaying->nextSong->title }} by {{ $nowPlaying->nextSong->artist }}"
-                                                 style="width: 60px; height: 60px; border-radius: 8px; background: var(--color-bg); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
-                                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2220%22>🎵</text></svg>'">
-                                            <div style="flex: 1; min-width: 0;">
-                                                <p style="font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $nowPlaying->nextSong->title }}</p>
-                                                <p style="font-size: 0.875rem; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $nowPlaying->nextSong->artist }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
+
                             </div>
                         </div>
 
@@ -490,6 +499,36 @@
 
         <!-- Sidebar -->
         <div>
+            <!-- Up Next Section (Moved from main content) -->
+            @if($nowPlaying && $nowPlaying->nextSong)
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-forward" style="color: var(--color-accent);" aria-hidden="true"></i>
+                        Up Next
+                    </h2>
+                </div>
+                <div class="card-body" style="padding: 1rem;">
+                    <div class="up-next-card" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--color-bg-tertiary); border-radius: 12px; border-left: 4px solid var(--color-accent);">
+                        <img src="{{ $nowPlaying->nextSong->art ?? '' }}"
+                             alt="Album art for {{ $nowPlaying->nextSong->title }} by {{ $nowPlaying->nextSong->artist }}"
+                             style="width: 70px; height: 70px; border-radius: 8px; background: var(--color-bg); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
+                             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2220%22>🎵</text></svg>'">
+                        <div style="flex: 1; min-width: 0;">
+                            <p style="font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem;">{{ $nowPlaying->nextSong->title }}</p>
+                            <p style="font-size: 0.875rem; color: var(--color-text-secondary);">{{ $nowPlaying->nextSong->artist }}</p>
+                            @if($nowPlaying->nextSong->album)
+                                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem;">
+                                    <i class="fas fa-compact-disc" style="font-size: 0.625rem;" aria-hidden="true"></i>
+                                    {{ $nowPlaying->nextSong->album }}
+                                </p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Song History -->
             <div class="card">
                 <div class="card-header">
@@ -606,7 +645,7 @@
     </div>
 
     <!-- Additional Homepage Content -->
-    @if($recentNews->isNotEmpty() || $upcomingEvents->isNotEmpty() || $activePolls->isNotEmpty())
+    @if($recentNews->isNotEmpty() || $upcomingEvents->isNotEmpty() || $activePolls->isNotEmpty() || $topGameDeals->isNotEmpty() || $freeGames->isNotEmpty())
     <div style="margin-top: 2rem;">
         <div class="homepage-content-grid">
             <!-- Recent News Section -->
@@ -698,6 +737,94 @@
                         </div>
                         <div style="background: var(--color-bg-tertiary); height: 4px; border-radius: 2px; overflow: hidden;">
                             <div style="background: var(--color-accent); height: 100%; width: {{ $poll->totalVotes() > 0 ? min(100, ($poll->totalVotes() / 100) * 100) : 10 }}%; transition: width 0.3s;"></div>
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <!-- Top Game Deals Section -->
+            @if($topGameDeals->isNotEmpty())
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
+                        <span><i class="fas fa-tags" style="color: #f59e0b;" aria-hidden="true"></i> Hot Game Deals</span>
+                        <a href="{{ route('games.deals') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
+                    </h2>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    @foreach($topGameDeals as $deal)
+                    <a href="{{ $deal->deal_url }}" target="_blank" rel="noopener noreferrer" class="deal-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            @if($deal->thumb)
+                            <img src="{{ $deal->thumb }}" alt="{{ $deal->title }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--color-bg); flex-shrink: 0;">
+                            @endif
+                            <div style="flex: 1; min-width: 0;">
+                                <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($deal->title, 50) }}</h3>
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                                    <span style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+                                        -{{ $deal->savings_percent }}%
+                                    </span>
+                                    <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+                                        <span style="font-size: 1.125rem; font-weight: 700; color: #22c55e;">${{ number_format($deal->sale_price, 2) }}</span>
+                                        <span style="font-size: 0.875rem; text-decoration: line-through; color: var(--color-text-muted);">${{ number_format($deal->normal_price, 2) }}</span>
+                                    </div>
+                                </div>
+                                @if($deal->metacritic_score)
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
+                                    <i class="fas fa-star" style="color: #f59e0b;" aria-hidden="true"></i>
+                                    <span>Metacritic: {{ $deal->metacritic_score }}</span>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <!-- Free Games Section -->
+            @if($freeGames->isNotEmpty())
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
+                        <span><i class="fas fa-gift" style="color: #22c55e;" aria-hidden="true"></i> Free Games</span>
+                        <a href="{{ route('games.free') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
+                    </h2>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    @foreach($freeGames as $game)
+                    <a href="{{ $game->url }}" target="_blank" rel="noopener noreferrer" class="game-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            @if($game->image_url)
+                            <img src="{{ $game->image_url }}" alt="{{ $game->title }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--color-bg); flex-shrink: 0;">
+                            @endif
+                            <div style="flex: 1; min-width: 0;">
+                                <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($game->title, 50) }}</h3>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+                                        FREE
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--color-text-muted); padding: 0.25rem 0.5rem; background: var(--color-bg-tertiary); border-radius: 12px;">
+                                        @if($game->store === 'Epic Games')
+                                            <i class="fas fa-gamepad" aria-hidden="true"></i>
+                                        @elseif($game->store === 'Steam')
+                                            <i class="fab fa-steam" aria-hidden="true"></i>
+                                        @else
+                                            <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                                        @endif
+                                        {{ $game->store }}
+                                    </span>
+                                </div>
+                                @if($game->expires_at)
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
+                                    <i class="far fa-clock" aria-hidden="true"></i>
+                                    <span>Ends {{ $game->expires_at->diffForHumans() }}</span>
+                                </div>
+                                @endif
+                            </div>
                         </div>
                     </a>
                     @endforeach
