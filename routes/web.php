@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\CommentsController;
+use App\Http\Controllers\DjController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\MessagesController;
@@ -114,6 +115,16 @@ Route::prefix('videos')->name('videos.')->group(function () {
     Route::get('/clips', [\App\Http\Controllers\VideosController::class, 'clips'])->name('clips');
     Route::get('/{video}', [\App\Http\Controllers\VideosController::class, 'show'])->name('show');
 });
+
+// DJ/Presenter System
+Route::prefix('djs')->name('djs.')->group(function () {
+    Route::get('/', [DjController::class, 'index'])->name('index');
+    Route::get('/schedule', [DjController::class, 'schedule'])->name('schedule');
+    Route::get('/{dj:slug}', [DjController::class, 'show'])->name('show');
+});
+
+// DJ On-Air API endpoint
+Route::get('/api/djs/on-air', [DjController::class, 'onAir'])->middleware('cache.api:30')->name('djs.on-air');
 
 // Search (with rate limiting to prevent abuse)
 Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->middleware('throttle:30,1')->name('search');

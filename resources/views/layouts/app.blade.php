@@ -2582,398 +2582,352 @@
             border-radius: 4px;
         }
 
-        /* Popup Player Styles */
-        .popup-player {
+        /* Listen Modal Styles */
+        .listen-icon-btn {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 350px;
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            z-index: 9999;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .popup-player.minimized {
-            width: 60px;
-            height: 60px;
-            border-radius: 30px;
+        .listen-icon-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
         }
 
-        .popup-player.minimized .popup-player-content {
+        .listen-icon-btn i {
+            animation: pulse-icon 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-icon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .listen-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 9998;
             display: none;
+            align-items: center;
+            justify-content: center;
         }
 
-        .popup-player.minimized .popup-player-minimize-icon {
+        .listen-modal-backdrop.show {
             display: flex;
         }
 
-        .popup-player-header {
+        .listen-modal {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .listen-modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--color-border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
-            background: var(--color-bg-tertiary);
-            border-bottom: 1px solid var(--color-border);
         }
 
-        .popup-player-title {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .popup-player-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .popup-player-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            border: none;
-            background: transparent;
-            color: var(--color-text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .popup-player-btn:hover {
-            background: var(--color-bg-secondary);
-            color: var(--color-text-primary);
-        }
-
-        .popup-player-content {
-            padding: 16px;
-        }
-
-        .popup-player-artwork {
-            width: 100%;
-            aspect-ratio: 1;
-            border-radius: 8px;
-            object-fit: cover;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .popup-player-info {
-            margin-bottom: 12px;
-        }
-
-        .popup-player-song {
-            font-size: 0.9375rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-            margin-bottom: 4px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .popup-player-artist {
-            font-size: 0.8125rem;
-            color: var(--color-text-muted);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .popup-player-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .popup-player-action-btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--color-border);
-            background: var(--color-bg-tertiary);
-            color: var(--color-text-primary);
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .popup-player-action-btn:hover {
-            background: var(--color-bg-secondary);
-            border-color: var(--color-accent);
-        }
-
-        .popup-player-action-btn.playing {
-            background: var(--color-accent);
-            border-color: var(--color-accent);
-            color: white;
-        }
-
-        .popup-player-minimize-icon {
-            display: none;
-            width: 100%;
-            height: 100%;
-            align-items: center;
-            justify-content: center;
+        .listen-modal-title {
             font-size: 1.5rem;
-            color: var(--color-accent);
-            cursor: pointer;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.05);
-                opacity: 0.8;
-            }
-        }
-
-        .popup-player-listeners {
+            font-weight: 700;
+            color: var(--color-text-primary);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 8px;
-            font-size: 0.75rem;
-            color: var(--color-text-muted);
-            background: var(--color-bg-tertiary);
-            border-radius: 6px;
-            margin-top: 12px;
+            gap: 12px;
         }
 
-        .popup-player-listeners i {
+        .listen-modal-close {
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .listen-modal-close:hover {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+
+        .listen-modal-body {
+            padding: 24px;
+        }
+
+        .listen-option {
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+
+        .listen-option:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .listen-option-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .listen-option-desc {
+            color: var(--color-text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .listen-option-action {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .listen-btn {
+            padding: 10px 20px;
+            background: var(--color-accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .listen-btn:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stream-url-box {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+            color: var(--color-accent);
+            word-break: break-all;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .copy-btn {
+            padding: 6px 12px;
+            background: var(--color-accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--color-accent-hover);
+        }
+
+        .listen-option-icon {
             color: var(--color-accent);
         }
 
         @media (max-width: 640px) {
-            .popup-player {
-                width: calc(100% - 40px);
-                right: 20px;
-                left: 20px;
+            .listen-icon-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+
+            .listen-modal {
+                width: 95%;
+            }
+
+            .listen-option-action {
+                flex-direction: column;
+            }
+
+            .listen-btn {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
 
-    <!-- Popup Player -->
-    <div id="popup-player" class="popup-player" x-data="popupPlayer()" x-show="isActive" x-transition>
-        <div class="popup-player-minimize-icon" @click="toggleMinimize">
-            <i class="fas fa-music"></i>
-        </div>
-        
-        <div class="popup-player-content">
-            <div class="popup-player-header">
-                <div class="popup-player-title">
-                    <i class="fas fa-radio"></i>
-                    <span x-text="isLive ? 'Live DJ' : 'Now Playing'"></span>
-                </div>
-                <div class="popup-player-controls">
-                    <button class="popup-player-btn" @click="toggleMinimize" title="Minimize">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <button class="popup-player-btn" @click="close" title="Close">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
+    <!-- Listen Button -->
+    <button class="listen-icon-btn" 
+            onclick="toggleListenModal()" 
+            aria-label="How to Listen"
+            aria-expanded="false"
+            aria-controls="listenModal">
+        <i class="fas fa-headphones" aria-hidden="true"></i>
+    </button>
+
+    <!-- Listen Modal -->
+    <div id="listenModal" 
+         class="listen-modal-backdrop" 
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="listenModalTitle"
+         onclick="if(event.target === this) toggleListenModal()">
+        <div class="listen-modal">
+            <div class="listen-modal-header">
+                <h2 class="listen-modal-title" id="listenModalTitle">
+                    <i class="fas fa-broadcast-tower" aria-hidden="true"></i>
+                    How to Listen
+                </h2>
+                <button class="listen-modal-close" onclick="toggleListenModal()" aria-label="Close modal">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
             </div>
 
-            <div style="padding: 16px;">
-                <img :src="artwork" :alt="songTitle" class="popup-player-artwork" @@error="$event.target.src='/images/default-album.png'">
-                
-                <div class="popup-player-info">
-                    <div class="popup-player-song" x-text="songTitle"></div>
-                    <div class="popup-player-artist" x-text="songArtist"></div>
+            <div class="listen-modal-body">
+                <div class="listen-option">
+                    <div class="listen-option-title">
+                        <i class="fas fa-window-maximize listen-option-icon" aria-hidden="true"></i>
+                        Open in Popup Window
+                    </div>
+                    <div class="listen-option-desc">
+                        Listen in a separate popup window that stays on top while you browse.
+                    </div>
+                    <div class="listen-option-action">
+                        <button class="listen-btn" onclick="window.open('{{ config('services.radio.public_player_url', 'https://radio.lossantosradio.com/public/los_santos_radio') }}', 'radioPlayer', 'width=400,height=600,resizable=yes')">
+                            <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                            Open Popup Player
+                        </button>
+                    </div>
                 </div>
 
-                <div class="popup-player-actions">
-                    <button class="popup-player-action-btn" :class="{ 'playing': isPlaying }" @click="togglePlay">
-                        <i class="fas" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
-                        <span x-text="isPlaying ? 'Pause' : 'Play'"></span>
-                    </button>
-                    <button class="popup-player-action-btn" @click="openFullPlayer">
-                        <i class="fas fa-expand"></i>
-                        <span>Full Player</span>
-                    </button>
+                <div class="listen-option">
+                    <div class="listen-option-title">
+                        <i class="fab fa-chromecast listen-option-icon" aria-hidden="true"></i>
+                        Use VLC or Media Player
+                    </div>
+                    <div class="listen-option-desc">
+                        Copy the stream URL and open it in VLC, Windows Media Player, or any media player that supports streaming.
+                    </div>
+                    <div class="stream-url-box">
+                        <code id="streamUrl">{{ config('services.radio.stream_url', 'https://radio.lossantosradio.com/listen/los_santos_radio/radio.mp3') }}</code>
+                        <button class="copy-btn" onclick="copyStreamUrl(event)" aria-label="Copy stream URL">
+                            <i class="fas fa-copy" aria-hidden="true"></i> Copy
+                        </button>
+                    </div>
                 </div>
 
-                <div class="popup-player-listeners" x-show="listeners > 0">
-                    <i class="fas fa-users"></i>
-                    <span x-text="listeners + ' listening now'"></span>
+                <div class="listen-option">
+                    <div class="listen-option-title">
+                        <i class="fas fa-mobile-alt listen-option-icon" aria-hidden="true"></i>
+                        Listen on Mobile
+                    </div>
+                    <div class="listen-option-desc">
+                        Use your favorite radio streaming app (like TuneIn Radio) and add the stream URL above, or open the popup player link on your mobile browser.
+                    </div>
+                </div>
+
+                <div class="listen-option">
+                    <div class="listen-option-title">
+                        <i class="fas fa-home listen-option-icon" aria-hidden="true"></i>
+                        Smart Speakers
+                    </div>
+                    <div class="listen-option-desc">
+                        Add Los Santos Radio to your smart speaker by providing the stream URL to services like Alexa Skills or Google Home routines.
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        function popupPlayer() {
-            return {
-                isActive: false,
-                isMinimized: false,
-                isPlaying: false,
-                isLive: false,
-                songTitle: 'No song playing',
-                songArtist: 'Los Santos Radio',
-                artwork: '/images/default-album.png',
-                listeners: 0,
-                audioPlayer: null,
-                streamUrl: {!! json_encode(config("services.icecast.stream_url") ?? "") !!},
-                updateInterval: null,
-
-                init() {
-                    // Listen for global play events
-                    window.addEventListener('radioPlayerStarted', (e) => {
-                        this.isActive = true;
-                        this.isPlaying = true;
-                        if (e.detail) {
-                            this.updatePlayerInfo(e.detail);
-                        }
-                        this.startUpdates();
-                    });
-
-                    // Listen for player state changes
-                    window.addEventListener('radioPlayerStopped', () => {
-                        this.isPlaying = false;
-                    });
-
-                    // Listen for now playing updates
-                    window.addEventListener('nowPlayingUpdate', (e) => {
-                        if (e.detail) {
-                            this.updatePlayerInfo(e.detail);
-                        }
-                    });
-
-                    // Load saved state
-                    const savedState = localStorage.getItem('popupPlayerState');
-                    if (savedState) {
-                        try {
-                            const state = JSON.parse(savedState);
-                            this.isActive = state.isActive || false;
-                            this.isMinimized = state.isMinimized || false;
-                            if (this.isActive) {
-                                this.fetchNowPlaying();
-                                this.startUpdates();
-                            }
-                        } catch (e) {
-                            console.error('Failed to parse popup player state:', e);
-                            localStorage.removeItem('popupPlayerState');
-                        }
-                    }
-                },
-
-                toggleMinimize() {
-                    this.isMinimized = !this.isMinimized;
-                    const player = document.getElementById('popup-player');
-                    if (this.isMinimized) {
-                        player.classList.add('minimized');
-                    } else {
-                        player.classList.remove('minimized');
-                    }
-                    this.saveState();
-                },
-
-                close() {
-                    this.isActive = false;
-                    if (this.audioPlayer) {
-                        this.audioPlayer.pause();
-                    }
-                    if (this.updateInterval) {
-                        clearInterval(this.updateInterval);
-                    }
-                    this.saveState();
-                    window.dispatchEvent(new Event('popupPlayerClosed'));
-                },
-
-                togglePlay() {
-                    if (!this.audioPlayer && this.streamUrl) {
-                        this.audioPlayer = new Audio(this.streamUrl);
-                        this.audioPlayer.addEventListener('playing', () => {
-                            this.isPlaying = true;
-                        });
-                        this.audioPlayer.addEventListener('pause', () => {
-                            this.isPlaying = false;
-                        });
-                    }
-
-                    if (this.isPlaying) {
-                        this.audioPlayer?.pause();
-                        window.dispatchEvent(new Event('radioPlayerStopped'));
-                    } else {
-                        this.audioPlayer?.play()
-                            .catch(error => {
-                                console.error('Failed to play audio:', error);
-                                this.isPlaying = false;
-                            });
-                        window.dispatchEvent(new CustomEvent('radioPlayerStarted', {
-                            detail: {
-                                song: this.songTitle,
-                                artist: this.songArtist,
-                                artwork: this.artwork
-                            }
-                        }));
-                    }
-                },
-
-                openFullPlayer() {
-                    window.location.href = {!! json_encode(route("home")) !!};
-                },
-
-                updatePlayerInfo(data) {
-                    this.songTitle = data.song || data.title || 'Unknown Song';
-                    this.songArtist = data.artist || 'Unknown Artist';
-                    this.artwork = data.artwork || data.art || '/images/default-album.png';
-                    this.isLive = data.is_live || false;
-                    this.listeners = data.listeners || 0;
-                },
-
-                async fetchNowPlaying() {
-                    try {
-                        const response = await fetch('/api/radio/now-playing');
-                        if (response.ok) {
-                            const result = await response.json();
-                            if (result.success && result.data) {
-                                this.updatePlayerInfo(result.data);
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Failed to fetch now playing:', error);
-                    }
-                },
-
-                startUpdates() {
-                    if (this.updateInterval) {
-                        clearInterval(this.updateInterval);
-                    }
-                    this.updateInterval = setInterval(() => {
-                        if (this.isActive) {
-                            this.fetchNowPlaying();
-                        }
-                    }, 10000); // Update every 10 seconds
-                },
-
-                saveState() {
-                    localStorage.setItem('popupPlayerState', JSON.stringify({
-                        isActive: this.isActive,
-                        isMinimized: this.isMinimized
-                    }));
-                }
+        function toggleListenModal() {
+            const modal = document.getElementById('listenModal');
+            const button = document.querySelector('.listen-icon-btn');
+            const isShowing = modal.classList.toggle('show');
+            
+            // Update aria-expanded for accessibility
+            if (button) {
+                button.setAttribute('aria-expanded', isShowing);
             }
+
+            // Handle Escape key to close modal
+            if (isShowing) {
+                document.addEventListener('keydown', handleEscapeKey);
+            } else {
+                document.removeEventListener('keydown', handleEscapeKey);
+            }
+        }
+
+        function handleEscapeKey(event) {
+            if (event.key === 'Escape') {
+                toggleListenModal();
+            }
+        }
+
+        function copyStreamUrl(event) {
+            const urlElement = document.getElementById('streamUrl');
+            const url = urlElement.textContent;
+            const btn = event.target.closest('.copy-btn');
+            
+            navigator.clipboard.writeText(url).then(() => {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copied!';
+                btn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Show error feedback instead of deprecated fallback
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i> Copy failed';
+                btn.style.background = '#ef4444';
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = '';
+                }, 2000);
+            });
         }
     </script>
 

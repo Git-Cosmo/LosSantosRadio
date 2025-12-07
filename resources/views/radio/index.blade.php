@@ -317,7 +317,7 @@
                         <div class="now-playing" id="now-playing" style="display: flex; gap: 1.5rem; align-items: center;">
                             <div class="now-playing-album-container" style="position: relative; flex-shrink: 0;">
                                 <div style="width: 180px; height: 180px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 40px rgba(88, 166, 255, 0.15); position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                    <img src="{{ $nowPlaying->currentSong->art ?? '/images/default-album.png' }}"
+                                    <img src="{{ $nowPlaying->currentSong->art ?? '/images/default-album.svg' }}"
                                          alt="Album art for {{ $nowPlaying->currentSong->title }} by {{ $nowPlaying->currentSong->artist }}"
                                          class="now-playing-art"
                                          style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"

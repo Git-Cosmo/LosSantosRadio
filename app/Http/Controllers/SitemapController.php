@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DjProfile;
 use App\Models\Event;
 use App\Models\News;
 use App\Models\Poll;
@@ -28,6 +29,7 @@ class SitemapController extends Controller
         $urls = array_merge($urls, $this->getNewsUrls());
         $urls = array_merge($urls, $this->getEventUrls());
         $urls = array_merge($urls, $this->getPollUrls());
+        $urls = array_merge($urls, $this->getDjUrls());
 
         $content = view('sitemap.index', ['urls' => $urls])->render();
 
@@ -90,6 +92,18 @@ class SitemapController extends Controller
                 'lastmod' => $now,
                 'changefreq' => 'hourly',
                 'priority' => '0.6',
+            ],
+            [
+                'loc' => route('djs.index'),
+                'lastmod' => $now,
+                'changefreq' => 'weekly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => route('djs.schedule'),
+                'lastmod' => $now,
+                'changefreq' => 'daily',
+                'priority' => '0.7',
             ],
             [
                 'loc' => route('games.free'),
@@ -199,6 +213,29 @@ class SitemapController extends Controller
                     'lastmod' => $poll->updated_at->format('c'),
                     'changefreq' => 'weekly',
                     'priority' => '0.5',
+                ];
+            });
+
+        return $urls;
+    }
+
+    /**
+     * Get DJ profile URLs using cursor for memory efficiency.
+     */
+    protected function getDjUrls(): array
+    {
+        $urls = [];
+
+        DjProfile::where('is_active', true)
+            ->orderBy('stage_name')
+            ->take(self::MAX_ITEMS_PER_TYPE)
+            ->cursor()
+            ->each(function ($dj) use (&$urls) {
+                $urls[] = [
+                    'loc' => route('djs.show', $dj),
+                    'lastmod' => $dj->updated_at->format('c'),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.6',
                 ];
             });
 
