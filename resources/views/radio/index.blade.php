@@ -704,9 +704,10 @@
                                     <span>{{ Str::limit($event->location, 30) }}</span>
                                 </div>
                                 @endif
+                                @php($likesCount = $event->likesCount())
                                 <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
                                     <i class="fas fa-heart" style="color: #ef4444;"></i>
-                                    <span>{{ $event->likesCount() }} {{ Str::plural('like', $event->likesCount()) }}</span>
+                                    <span>{{ $likesCount }} {{ Str::plural('like', $likesCount) }}</span>
                                 </div>
                             </div>
                         </div>

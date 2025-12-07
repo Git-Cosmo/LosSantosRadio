@@ -42,10 +42,13 @@ class EventLikeController extends Controller
             $liked = true;
         }
 
+        // Get fresh count directly from database
+        $likesCount = EventLike::where('event_id', $event->id)->count();
+
         return response()->json([
             'success' => true,
             'liked' => $liked,
-            'likes_count' => $event->likesCount(),
+            'likes_count' => $likesCount,
         ]);
     }
 
