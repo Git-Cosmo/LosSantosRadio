@@ -170,8 +170,7 @@ class SearchController extends Controller
         $djs = DjProfile::where('is_active', true)
             ->where(function ($q) use ($query) {
                 $q->where('stage_name', 'like', "%{$query}%")
-                    ->orWhere('bio', 'like', "%{$query}%")
-                    ->orWhere('genres', 'like', "%{$query}%");
+                    ->orWhere('bio', 'like', "%{$query}%");
             })
             ->take($limit)
             ->get()
