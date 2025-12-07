@@ -13,9 +13,7 @@ class RssFeedController extends Controller
 {
     public function __construct(
         protected RssFeedService $rssFeedService
-    ) {
-        $this->middleware('can:manage settings');
-    }
+    ) {}
 
     /**
      * Display a listing of RSS feeds.

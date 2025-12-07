@@ -40,13 +40,30 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
   - Floating background elements with smooth animations
   - DJ/Host avatar with 360° rotation on hover
   - Backdrop blur effects for depth and modern aesthetics
+- **Popup Mini Player** - Floating player for continuous listening:
+  - Persistent across all pages for uninterrupted radio experience
+  - Minimizable to a floating icon for unobtrusive browsing
+  - Real-time now playing updates with album artwork
+  - Play/pause controls and direct link to full player
+  - Automatically syncs with main player state
+  - Remembers state across page refreshes
 - **Real-time Updates** - Auto-refresh of currently playing songs with smooth transitions
 - **Recently Played** - Song history with timestamps and album art
 - **Up Next** - Enhanced preview of the next song with album artwork
 - **Song Requests** - Browse the song library with a media grid layout and request tracks via modal
+  - **Enhanced Error Handling** - User-friendly messages for failed requests
+  - Graceful handling of unavailable songs (404 errors)
+  - Clear feedback for rate limits and service issues
 - **Live Stream Player** - Built-in audio player with prominent controls and volume management
 - **Song Ratings** - Modern upvote/downvote interface to shape the playlist
+  - **Fixed API Endpoint** - Resolved 405 Method Not Allowed errors
+  - Proper CSRF token handling for secure submissions
 - **Trending Songs** - Top-rated tracks displayed in real-time
+- **Enhanced Homepage** - Rich content display with:
+  - Latest news articles with featured images
+  - Upcoming community events with date highlights
+  - Active polls for community engagement
+  - Three-column responsive layout for better content discovery
 
 ### Schedule System
 - **Playlist Schedule** - Automatically displays schedules from AzuraCast playlists
@@ -746,6 +763,9 @@ The SSE proxy endpoint (`/api/nowplaying/sse`) keeps a PHP worker occupied for t
 4. **Resource Planning**: Each active SSE connection uses one PHP worker. Plan your PHP-FPM pool size accordingly.
 
 ### Bug Fixes
+- **Admin Controller Middleware Error** - Fixed Laravel 12 compatibility issue where `RssFeedController` was calling the deprecated `middleware()` method in the constructor. Removed the redundant middleware call as routes are already protected by `AdminMiddleware`.
+- **Rating API 405 Error** - Resolved "Method Not Allowed" errors when submitting song ratings. Fixed by removing trailing slash from the API endpoint URL in the JavaScript code (`/api/ratings/` → `/api/ratings`).
+- **Song Request 404 Handling** - Enhanced error handling for song requests that fail with 404 responses from AzuraCast. Now provides user-friendly error messages like "This song is not available for requests" instead of generic failures. Includes proper exception catching and logging for better debugging.
 - **Login Route 404s Fixed** - Added support for both `/auth/{provider}/callback` and `/login/{provider}/callback` OAuth redirect URIs. OAuth providers (Discord, Twitch, Steam, Battle.net) can now be configured with either route pattern, resolving 404 errors when callbacks use the `/login` prefix.
 - **Request Page Song List** - Fixed the song library not displaying songs on the request page despite showing the correct total count. The AzuraCast API response uses a `rows` key for paginated request data which is now properly handled.
 - **Theme Toggle Navbar** - Fixed the light/dark mode toggle not changing the navbar color. The navbar now correctly uses CSS variables to match the selected theme.

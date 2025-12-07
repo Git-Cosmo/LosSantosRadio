@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\AzuraCastException;
+use App\Models\Event;
+use App\Models\News;
+use App\Models\Poll;
 use App\Services\AzuraCastService;
 use App\Services\IcecastService;
 use Illuminate\Http\JsonResponse;
@@ -31,8 +34,27 @@ class RadioController extends Controller
                 'history' => collect(),
                 'station' => null,
                 'streamStatus' => $this->icecast->getStatus(),
+                'recentNews' => collect(),
+                'upcomingEvents' => collect(),
+                'activePolls' => collect(),
             ]);
         }
+
+        // Fetch additional homepage content
+        $recentNews = News::published()
+            ->orderBy('published_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        $upcomingEvents = Event::upcoming()
+            ->orderBy('starts_at', 'asc')
+            ->limit(3)
+            ->get();
+
+        $activePolls = Poll::active()
+            ->orderBy('created_at', 'desc')
+            ->limit(2)
+            ->get();
 
         return view('radio.index', [
             'nowPlaying' => $nowPlaying,
@@ -40,6 +62,9 @@ class RadioController extends Controller
             'station' => $station,
             'streamStatus' => $streamStatus,
             'streamUrl' => $this->icecast->getStreamUrl(),
+            'recentNews' => $recentNews,
+            'upcomingEvents' => $upcomingEvents,
+            'activePolls' => $activePolls,
         ]);
     }
 
