@@ -41,7 +41,7 @@ return new class extends Migration
                 // Fallback: catch any syntax errors in case database version doesn't support filtered indexes
                 $errorMessage = strtolower($e->getMessage());
                 
-                if (str_contains($errorMessage, 'syntax error') || str_contains($errorMessage, 'near \'where\'')) {
+                if (str_contains($errorMessage, 'syntax error') || str_contains($errorMessage, "near 'where'")) {
                     Log::info("Skipped filtered index creation for event_likes table - not supported on this {$driver} version");
                 } else {
                     // Unexpected error, re-throw to prevent silent failures
