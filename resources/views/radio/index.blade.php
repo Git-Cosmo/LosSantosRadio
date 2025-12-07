@@ -808,7 +808,14 @@
                                         FREE
                                     </span>
                                     <span style="font-size: 0.75rem; color: var(--color-text-muted); padding: 0.25rem 0.5rem; background: var(--color-bg-tertiary); border-radius: 12px;">
-                                        <i class="fas fa-{{ $game->store === 'Epic Games' ? 'gamepad' : ($game->store === 'Steam' ? 'steam' : 'store') }}"></i> {{ $game->store }}
+                                        @if($game->store === 'Epic Games')
+                                            <i class="fas fa-gamepad"></i>
+                                        @elseif($game->store === 'Steam')
+                                            <i class="fab fa-steam"></i>
+                                        @else
+                                            <i class="fas fa-shopping-cart"></i>
+                                        @endif
+                                        {{ $game->store }}
                                     </span>
                                 </div>
                                 @if($game->expires_at)

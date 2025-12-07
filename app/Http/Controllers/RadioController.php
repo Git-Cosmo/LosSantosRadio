@@ -61,16 +61,24 @@ class RadioController extends Controller
             ->get();
 
         // Fetch game deals and free games for enhanced homepage
-        $topGameDeals = GameDeal::onSale()
-            ->minSavings(50)
-            ->orderBy('savings_percent', 'desc')
-            ->limit(6)
-            ->get();
+        try {
+            $topGameDeals = GameDeal::onSale()
+                ->minSavings(50)
+                ->orderBy('savings_percent', 'desc')
+                ->limit(6)
+                ->get();
+        } catch (\Exception $e) {
+            $topGameDeals = collect();
+        }
 
-        $freeGames = FreeGame::active()
-            ->orderBy('created_at', 'desc')
-            ->limit(4)
-            ->get();
+        try {
+            $freeGames = FreeGame::active()
+                ->orderBy('created_at', 'desc')
+                ->limit(4)
+                ->get();
+        } catch (\Exception $e) {
+            $freeGames = collect();
+        }
 
         return view('radio.index', [
             'nowPlaying' => $nowPlaying,
