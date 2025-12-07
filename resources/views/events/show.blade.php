@@ -196,8 +196,8 @@
         const reminderIcon = document.getElementById('reminder-icon');
         const reminderText = document.getElementById('reminder-text');
 
-        if (reminderBtn && reminderIcon && reminderText && likeBtn) {
-            const eventId = likeBtn.dataset.eventId;
+        if (reminderBtn && reminderIcon && reminderText) {
+            const eventId = reminderBtn.dataset.eventId;
 
             // Load initial reminder status
             fetch(`/events/${eventId}/reminder/status`)
@@ -270,11 +270,21 @@
                 border-radius: 8px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                 z-index: 10000;
-                animation: slideIn 0.3s ease-out;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: opacity 0.3s ease-out, transform 0.3s ease-out;
             `;
             document.body.appendChild(notification);
+            
+            // Trigger animation
             setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease-out';
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateY(0)';
+            }, 10);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-20px)';
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
