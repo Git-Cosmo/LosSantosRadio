@@ -37,6 +37,9 @@ Route::prefix('station/{stationId}')->name('api.station.')->group(function () {
     // Song request endpoints (AzuraCast compatible)
     Route::get('/request', [StationController::class, 'requestableList'])->name('requestable.list');
     Route::post('/request/{requestId}', [StationController::class, 'submitRequest'])->name('request.submit');
+    
+    // Playlist schedule endpoints
+    Route::get('/playlists', [StationController::class, 'playlists'])->name('playlists');
 });
 
 // Search API
