@@ -388,43 +388,19 @@ class AzuraCastService
     {
         $cacheKey = 'azuracast.library.search.'.md5($query).".{$limit}";
 
-        return Cache::remember($cacheKey, $this->cacheTtl * 2, function () use ($query, $limit) {
-            try {
-                // Try to search the media files endpoint (requires admin API key)
-                $data = $this->makeRequest("/api/station/{$this->stationId}/files", [
-                    'searchPhrase' => $query,
-                    'per_page' => $limit,
-                ]);
-
-                // Handle paginated response format (with 'items' key) or plain array
-                $items = $this->extractItems($data);
-
-                return collect($items)
-                    ->filter(fn ($item) => is_array($item))
-                    ->map(fn ($item) => SongDTO::fromApi($item));
-            } catch (AzuraCastException $e) {
-                // Fallback: Use the requestable songs endpoint (public)
-                Log::info('Files endpoint not accessible, falling back to requestable songs', [
-                    'station_id' => $this->stationId,
-                    'query' => $query,
-                    'error' => $e->getMessage(),
-                ]);
-
-                try {
-                    $result = $this->getRequestableSongs($limit, 1, $query);
-                    return $result['songs'] ?? collect();
-                } catch (\Exception $fallbackException) {
-                    Log::warning('Failed to search library from both endpoints', [
-                        'station_id' => $this->stationId,
-                        'query' => $query,
-                        'error' => $fallbackException->getMessage(),
-                    ]);
-
-                    // Return empty collection on complete failure
-                    return collect();
-                }
-            }
+        $data = Cache::remember($cacheKey, $this->cacheTtl * 2, function () use ($query, $limit) {
+            return $this->makeRequest("/api/station/{$this->stationId}/files", [
+                'searchPhrase' => $query,
+                'per_page' => $limit,
+            ]);
         });
+
+        // Handle paginated response format (with 'items' key) or plain array
+        $items = $this->extractItems($data);
+
+        return collect($items)
+            ->filter(fn ($item) => is_array($item))
+            ->map(fn ($item) => SongDTO::fromApi($item));
     }
 
     /**

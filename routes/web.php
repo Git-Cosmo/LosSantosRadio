@@ -116,6 +116,7 @@ Route::prefix('games')->name('games.')->group(function () {
 
 // Videos pages
 Route::prefix('videos')->name('videos.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\VideosController::class, 'index'])->name('index');
     Route::get('/ylyl', [\App\Http\Controllers\VideosController::class, 'ylyl'])->name('ylyl');
     Route::get('/clips', [\App\Http\Controllers\VideosController::class, 'clips'])->name('clips');
     Route::get('/{video}', [\App\Http\Controllers\VideosController::class, 'show'])->name('show');

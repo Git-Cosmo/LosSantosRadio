@@ -9,6 +9,20 @@ use Illuminate\View\View;
 class VideosController extends Controller
 {
     /**
+     * Display all videos.
+     */
+    public function index(Request $request): View
+    {
+        $videos = Video::active()
+            ->orderBy('posted_at', 'desc')
+            ->paginate(20);
+
+        return view('videos.index', [
+            'videos' => $videos,
+        ]);
+    }
+
+    /**
      * Display YLYL (You Laugh You Lose) videos.
      */
     public function ylyl(Request $request): View
