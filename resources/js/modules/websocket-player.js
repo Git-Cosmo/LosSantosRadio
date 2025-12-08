@@ -4,6 +4,8 @@
  * Falls back to polling if WebSocket is unavailable
  */
 
+import { logInfo, logWarn, logError, logDebug } from './logger';
+
 const POLLING_INTERVAL = 15000; // 15 seconds fallback polling
 let pollingTimer = null;
 let isWebSocketConnected = false;
@@ -14,7 +16,7 @@ let isWebSocketConnected = false;
  */
 export function initializeNowPlaying(stationId) {
     if (!stationId) {
-        console.warn('Station ID not provided for now playing updates');
+        logWarn('Station ID not provided for now playing updates');
         return;
     }
 
@@ -22,7 +24,7 @@ export function initializeNowPlaying(stationId) {
     if (window.Echo) {
         setupWebSocket(stationId);
     } else {
-        console.info('Laravel Echo not available, using polling fallback');
+        logInfo('Laravel Echo not available, using polling fallback');
         startPolling(stationId);
     }
 }
@@ -36,7 +38,7 @@ function setupWebSocket(stationId) {
         const channel = window.Echo.channel(`radio.station.${stationId}`);
 
         channel.listen('.now-playing.updated', (data) => {
-            console.log('Received now playing update via WebSocket', data);
+            logDebug('Received now playing update via WebSocket', data);
             isWebSocketConnected = true;
             
             // Stop polling if it was running
@@ -50,13 +52,13 @@ function setupWebSocket(stationId) {
 
         // Listen for connection errors
         window.Echo.connector.pusher.connection.bind('error', (err) => {
-            console.warn('WebSocket connection error, falling back to polling', err);
+            logWarn('WebSocket connection error, falling back to polling', err);
             isWebSocketConnected = false;
             startPolling(stationId);
         });
 
         window.Echo.connector.pusher.connection.bind('unavailable', () => {
-            console.warn('WebSocket unavailable, falling back to polling');
+            logWarn('WebSocket unavailable, falling back to polling');
             isWebSocketConnected = false;
             startPolling(stationId);
         });
@@ -64,12 +66,12 @@ function setupWebSocket(stationId) {
         // Check connection state after a few seconds
         setTimeout(() => {
             if (!isWebSocketConnected) {
-                console.info('WebSocket did not connect, using polling');
+                logInfo('WebSocket did not connect, using polling');
                 startPolling(stationId);
             }
         }, 3000);
     } catch (error) {
-        console.error('Failed to setup WebSocket:', error);
+        logError('Failed to setup WebSocket:', error);
         startPolling(stationId);
     }
 }
@@ -82,7 +84,7 @@ function startPolling(stationId) {
     // Don't start polling if already running
     if (pollingTimer) return;
 
-    console.info('Starting now playing polling');
+    logInfo('Starting now playing polling');
     
     // Initial fetch
     fetchNowPlaying(stationId);
@@ -105,7 +107,7 @@ async function fetchNowPlaying(stationId) {
         const data = await response.json();
         updateNowPlayingUI(data);
     } catch (error) {
-        console.error('Error fetching now playing:', error);
+        logError('Error fetching now playing:', error);
     }
 }
 

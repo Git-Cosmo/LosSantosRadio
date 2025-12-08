@@ -3,6 +3,8 @@
  * Handles audio playback and now playing updates for the radio stream
  */
 
+import { logError } from './logger';
+
 // Configuration constants
 const NOW_PLAYING_REFRESH_INTERVAL = 10000; // 10 seconds
 
@@ -131,7 +133,7 @@ export function rateSong(rating) {
         }
     })
     .catch(err => {
-        console.error(err);
+        logError('Failed to rate song:', err);
         window.showToast?.('error', 'Failed to rate song. Please try again.');
     });
 }
@@ -161,7 +163,7 @@ export function loadSongRating() {
             }
         })
         .catch((err) => {
-            console.error('Failed to load song rating:', err);
+            logError('Failed to load song rating:', err);
         });
 }
 
@@ -285,7 +287,7 @@ function updateNowPlaying() {
             }
         })
         .catch((err) => {
-            console.error('Failed to update now playing:', err);
+            logError('Failed to update now playing:', err);
         });
 }
 

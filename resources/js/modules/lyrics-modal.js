@@ -3,6 +3,8 @@
  * Handles displaying lyrics with guest limit enforcement and signup prompts
  */
 
+import { logError } from './logger';
+
 let lyricsModalElement = null;
 let guestLimitModalElement = null;
 let currentSessionStatus = null;
@@ -50,7 +52,7 @@ async function fetchLyricsStatus() {
         // Update UI indicators if they exist
         updateStatusIndicators(data);
     } catch (error) {
-        console.error('Failed to fetch lyrics status:', error);
+        logError('Failed to fetch lyrics status:', error);
     }
 }
 
@@ -86,7 +88,7 @@ export async function showLyrics(songId, title, artist) {
 
     } catch (error) {
         hideLoadingModal();
-        console.error('Error fetching lyrics:', error);
+        logError('Error fetching lyrics:', error);
         window.showToast('error', 'An error occurred while loading lyrics');
     }
 }
@@ -200,7 +202,7 @@ export async function unlockGuestLyrics() {
             window.showToast('error', data.message);
         }
     } catch (error) {
-        console.error('Error unlocking lyrics:', error);
+        logError('Error unlocking lyrics:', error);
         window.showToast('error', 'Failed to unlock lyrics');
     }
 }
