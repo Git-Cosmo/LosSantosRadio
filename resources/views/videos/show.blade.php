@@ -62,7 +62,7 @@
                         <a href="{{ route('videos.show', $related) }}" class="history-item" style="text-decoration: none; color: inherit;">
                             <div style="width: 100px; height: 60px; background: var(--color-bg-tertiary); border-radius: 4px; flex-shrink: 0; overflow: hidden;">
                                 @if($related->thumbnail_url)
-                                    <img src="{{ $related->thumbnail_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <img src="{{ $related->thumbnail_url }}" alt="{{ $related->title }}" style="width: 100%; height: 100%; object-fit: cover;">
                                 @else
                                     <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
                                         <i class="fas fa-video" style="color: var(--color-text-muted);"></i>

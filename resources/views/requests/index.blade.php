@@ -53,7 +53,7 @@
                                         <td style="padding: 0.75rem 1rem;">
                                             <div style="display: flex; align-items: center; gap: 0.75rem;">
                                                 <img src="{{ $song->art ?? '' }}"
-                                                     alt=""
+                                                     alt="{{ $song->title }} by {{ $song->artist }}"
                                                      style="width: 40px; height: 40px; border-radius: 4px; background-color: var(--color-bg-tertiary);"
                                                      onerror="this.style.display='none'">
                                                 <span style="font-weight: 500;">{{ $song->title }}</span>

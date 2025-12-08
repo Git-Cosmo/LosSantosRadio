@@ -89,7 +89,7 @@
                         <a href="{{ route('games.free.show', $related) }}" class="history-item" style="text-decoration: none; color: inherit;">
                             <div style="width: 60px; height: 60px; background: var(--color-bg-tertiary); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                                 @if($related->image_url)
-                                    <img src="{{ $related->image_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <img src="{{ $related->image_url }}" alt="{{ $related->title }}" style="width: 100%; height: 100%; object-fit: cover;">
                                 @else
                                     <i class="fas fa-gamepad" style="color: var(--color-text-muted);"></i>
                                 @endif

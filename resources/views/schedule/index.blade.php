@@ -28,7 +28,7 @@
                     </div>
                     <div style="display: flex; align-items: center; gap: 1.5rem;">
                         <img src="{{ $nowPlaying->currentSong->art ?? '' }}"
-                             alt="Album Art"
+                             alt="{{ $nowPlaying->currentSong->title }} by {{ $nowPlaying->currentSong->artist }} - Album Art"
                              style="width: 100px; height: 100px; border-radius: 8px; object-fit: cover; background: var(--color-bg-tertiary);"
                              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2230%22>🎵</text></svg>'">
                         <div>

@@ -2,6 +2,9 @@
  * Search Modal Alpine.js Component
  * Provides global search functionality across the site
  */
+
+import { logError } from './logger';
+
 export function searchModal() {
     return {
         isOpen: false,
@@ -48,7 +51,7 @@ export function searchModal() {
                     this.results = data.results;
                 }
             } catch (error) {
-                console.error('Search error:', error);
+                logError('Search error:', error);
             } finally {
                 this.loading = false;
             }
