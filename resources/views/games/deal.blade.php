@@ -131,7 +131,7 @@
                         <a href="{{ route('games.deals.show', $related) }}" class="history-item" style="text-decoration: none; color: inherit;">
                             <div style="width: 60px; height: 60px; background: var(--color-bg-tertiary); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
                                 @if($related->thumb)
-                                    <img src="{{ $related->thumb }}" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                    <img src="{{ $related->thumb }}" alt="{{ $related->title }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                                 @else
                                     <i class="fas fa-gamepad" style="color: var(--color-text-muted);"></i>
                                 @endif

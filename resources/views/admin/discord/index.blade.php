@@ -115,7 +115,7 @@
                                 <tr>
                                     <td>
                                         <span style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                                            <img src="{{ $member->avatar_url }}" alt="" style="width: 24px; height: 24px; border-radius: 50%;">
+                                            <img src="{{ $member->avatar_url }}" alt="{{ $member->tag }} avatar" style="width: 24px; height: 24px; border-radius: 50%;">
                                             {{ $member->tag }}
                                         </span>
                                     </td>

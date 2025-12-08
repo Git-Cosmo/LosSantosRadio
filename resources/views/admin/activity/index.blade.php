@@ -37,7 +37,7 @@
                             <td>
                                 @if($activity->causer)
                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <img src="{{ $activity->causer->avatar_url }}" alt="" class="avatar-sm">
+                                        <img src="{{ $activity->causer->avatar_url }}" alt="{{ $activity->causer->name }} avatar" class="avatar-sm">
                                         <span>{{ $activity->causer->name }}</span>
                                     </div>
                                 @else

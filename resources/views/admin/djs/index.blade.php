@@ -26,7 +26,7 @@
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                                     @if($dj->avatar)
-                                        <img src="{{ $dj->avatar }}" style="width: 40px; height: 40px; border-radius: 50%;">
+                                        <img src="{{ $dj->avatar }}" alt="{{ $dj->name }} avatar" style="width: 40px; height: 40px; border-radius: 50%;">
                                     @else
                                         <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--color-accent), #a855f7); display: flex; align-items: center; justify-content: center;">
                                             <i class="fas fa-headphones" style="color: white;"></i>

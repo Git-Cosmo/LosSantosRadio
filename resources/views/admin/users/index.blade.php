@@ -36,7 +36,7 @@
                         <tr>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                    <img src="{{ $user->avatar_url }}" alt="" class="avatar">
+                                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }} avatar" class="avatar">
                                     <span>{{ $user->name }}</span>
                                 </div>
                             </td>

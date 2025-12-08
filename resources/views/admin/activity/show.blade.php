@@ -23,7 +23,7 @@
                     <label class="form-label">Performed By</label>
                     @if($activity->causer)
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <img src="{{ $activity->causer->avatar_url }}" alt="" class="avatar">
+                            <img src="{{ $activity->causer->avatar_url }}" alt="{{ $activity->causer->name }} avatar" class="avatar">
                             <span>{{ $activity->causer->name }}</span>
                         </div>
                     @else
