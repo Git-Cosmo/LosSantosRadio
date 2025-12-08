@@ -170,6 +170,7 @@
             --color-text-muted: #8c959f;
 
             --color-accent: #0969da;
+            --color-accent-rgb: 9 105 218;
             --color-accent-hover: #0550ae;
             --color-success: #1a7f37;
             --color-warning: #9a6700;
@@ -196,6 +197,7 @@
             --color-text-muted: #6e7681;
 
             --color-accent: #58a6ff;
+            --color-accent-rgb: 88 166 255;
             --color-accent-hover: #79c0ff;
             --color-success: #3fb950;
             --color-warning: #d29922;
@@ -1848,6 +1850,9 @@
     </style>
 </head>
 <body>
+    {{-- Floating Background Effects - Subtle gamer feel --}}
+    <x-floating-background intensity="subtle" :icons="['music', 'headphones', 'radio', 'gamepad']" />
+
     <header class="header">
         <div class="header-content">
             <a href="{{ route('home') }}" class="logo">
