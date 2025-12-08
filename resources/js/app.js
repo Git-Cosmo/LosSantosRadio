@@ -6,6 +6,7 @@ import './modules/search-modal';
 import './modules/radio-player';
 import './modules/ui-helpers';
 import { initializeNowPlaying, cleanup as cleanupWebSocket } from './modules/websocket-player';
+import { initializeLyricsModal, showLyrics } from './modules/lyrics-modal';
 
 // Import module functions for direct use
 import { liveClock } from './modules/live-clock';
@@ -41,6 +42,7 @@ window.createScrollToTop = createScrollToTop;
 window.addEntranceAnimations = addEntranceAnimations;
 window.showToast = showToast;
 window.initializeNowPlaying = initializeNowPlaying;
+window.showLyrics = showLyrics;
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -61,6 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
             handleNowPlayingUpdate(e.detail);
         });
     }
+
+    // Initialize lyrics modal
+    initializeLyricsModal();
 });
 
 // Cleanup on page unload

@@ -1,0 +1,303 @@
+/* Lyrics Modal Styles */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+}
+
+.modal-container {
+    position: relative;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+    z-index: 10000;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-tertiary);
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: var(--color-text-primary);
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(80vh - 120px);
+}
+
+/* Lyrics Display */
+.lyrics-content {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--color-text-primary);
+}
+
+.lyrics-line {
+    margin: 0.5rem 0;
+    padding: 0.25rem 0;
+}
+
+.lyrics-line:empty {
+    height: 1rem;
+}
+
+/* Guest Limit Modal */
+.guest-limit-modal .modal-container {
+    max-width: 700px;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.benefit-card {
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-accent);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.benefit-card i {
+    font-size: 2.5rem;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.benefit-card h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-primary);
+}
+
+.benefit-card p {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+.signup-options {
+    margin-top: 2rem;
+}
+
+.signup-options h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--color-accent), #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.auth-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.btn-discord {
+    background: #5865F2;
+    color: white;
+    border: none;
+}
+
+.btn-discord:hover {
+    background: #4752C4;
+}
+
+.btn-twitch {
+    background: #9146FF;
+    color: white;
+    border: none;
+}
+
+.btn-twitch:hover {
+    background: #7d3ace;
+}
+
+.btn-steam {
+    background: #1b2838;
+    color: white;
+    border: none;
+}
+
+.btn-steam:hover {
+    background: #2a475e;
+}
+
+.btn-battlenet {
+    background: #00AEFF;
+    color: white;
+    border: none;
+}
+
+.btn-battlenet:hover {
+    background: #0095d6;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--color-border);
+    color: var(--color-text-primary);
+}
+
+.btn-outline:hover {
+    border-color: var(--color-accent);
+    background: rgba(88, 166, 255, 0.1);
+}
+
+.or-divider {
+    position: relative;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.or-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--color-border);
+}
+
+.or-divider span {
+    position: relative;
+    background: var(--color-bg-secondary);
+    padding: 0 1rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+.small-text {
+    font-size: 0.85rem;
+    margin-top: 1rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Loading Spinner */
+.spinner-border {
+    display: inline-block;
+}
+
+.fa-spin {
+    animation: fa-spin 1s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-container {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Dark mode adjustments */
+html.dark .modal-overlay {
+    background: rgba(0, 0, 0, 0.85);
+}
