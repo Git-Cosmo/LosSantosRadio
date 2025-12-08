@@ -539,6 +539,7 @@
 
             async fetchNowPlaying() {
                 try {
+                    // Use the radio now-playing endpoint
                     const response = await fetch('/api/radio/now-playing');
                     const data = await response.json();
                     if (data.success) {

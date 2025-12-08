@@ -2040,7 +2040,7 @@
                         <div class="footer-logo">
                             <i class="fas fa-radio"></i>
                         </div>
-                        <span class="footer-brand-name">LSR</span>
+                        <span class="footer-brand-name">Los Santos Radio</span>
                     </div>
                     <p class="footer-tagline">24/7 Online Radio & Gaming Hub</p>
                 </div>

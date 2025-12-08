@@ -12,6 +12,7 @@
         particles: [],
         animationFrame: null,
         fireworkInterval: null,
+        FIREWORK_INTERVAL_MS: 2000, // Interval between fireworks in milliseconds
 
         init() {
             console.log('🎉 Initializing New Year Theme...');
@@ -73,7 +74,7 @@
                 const x = Math.random() * this.canvas.width;
                 const y = Math.random() * (this.canvas.height * 0.5);
                 this.createFirework(x, y);
-            }, 2000);
+            }, this.FIREWORK_INTERVAL_MS);
         },
 
         animate() {

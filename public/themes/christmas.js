@@ -44,8 +44,9 @@
         },
 
         startSnowfall() {
-            // Create snowflakes
-            const snowflakeCount = Math.min(100, Math.floor(window.innerWidth / 10));
+            // Create snowflakes - reduce count on mobile for better performance
+            const baseCount = window.innerWidth < 768 ? 50 : 100;
+            const snowflakeCount = Math.min(baseCount, Math.floor(window.innerWidth / 10));
             for (let i = 0; i < snowflakeCount; i++) {
                 this.snowflakes.push({
                     x: Math.random() * this.canvas.width,
