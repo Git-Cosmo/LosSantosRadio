@@ -56,6 +56,10 @@ Route::prefix('legal')->name('legal.')->group(function () {
     Route::get('/cookies', [\App\Http\Controllers\LegalController::class, 'cookies'])->name('cookies');
 });
 
+// About and Contact pages
+Route::get('/about', [\App\Http\Controllers\LegalController::class, 'about'])->name('about');
+Route::get('/contact', [\App\Http\Controllers\LegalController::class, 'contact'])->name('contact');
+
 // News pages
 Route::prefix('news')->name('news.')->group(function () {
     Route::get('/', [NewsController::class, 'index'])->name('index');

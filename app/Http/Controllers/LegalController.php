@@ -43,4 +43,26 @@ class LegalController extends Controller
             'metaDescription' => 'Los Santos Radio Cookie Policy - Information about how we use cookies on our website.',
         ]);
     }
+
+    /**
+     * Display the About Us page.
+     */
+    public function about(): View
+    {
+        return view('legal.about', [
+            'title' => 'About Us',
+            'metaDescription' => 'Learn about Los Santos Radio - Your online radio station and gaming community.',
+        ]);
+    }
+
+    /**
+     * Display the Contact page.
+     */
+    public function contact(): View
+    {
+        return view('legal.contact', [
+            'title' => 'Contact Us',
+            'metaDescription' => 'Get in touch with Los Santos Radio - We\'d love to hear from you.',
+        ]);
+    }
 }

@@ -2101,7 +2101,7 @@
                         <a href="{{ route('events.index') }}">Events</a>
                         <a href="{{ route('games.index') }}">Games</a>
                         <a href="{{ route('videos.index') }}">Videos</a>
-                        <a href="{{ route('dj.index') }}">DJ Profiles</a>
+                        <a href="{{ route('djs.index') }}">DJ Profiles</a>
                     </div>
                 </div>
 
