@@ -35,6 +35,17 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 ## 📦 Features
 
 ### Radio Experience
+- **Enhanced Audio Player** - Feature-rich embedded player with:
+  - **Autoplay functionality** - Automatically resumes playback based on user preference
+  - Album artwork with animated visualizer bars that respond to playback
+  - Large play/pause button with gradient styling and pulse animation
+  - **Volume controls** - Slider with mute/unmute toggle and visual feedback
+  - Now playing information with song title, artist, and listener count
+  - Live/AutoDJ status badge with color-coded indicators
+  - Progress bar showing elapsed and total time for songs
+  - External player link for popup window
+  - Remembers volume settings and autoplay preference via localStorage
+  - Fully responsive design optimized for mobile and tablet devices
 - **Redesigned Now Playing Widget** - Professional, balanced display with:
   - Compact album artwork (180x180px) with enhanced 3D hover effects, shadows, and ambient glow
   - Optimized sizing for better visual balance and space utilization
@@ -191,6 +202,27 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Settings** - Configure application settings
 - **Activity Log** - Audit trail of admin actions
 - **RSS Feeds Management** - Manage RSS feeds for automatic news import from popular gaming sites
+- **Theme Management** - Control global appearance themes at `/admin/theme`:
+  - **No Theme** - Default appearance without overlay effects
+  - **Christmas Theme** - Festive holiday experience with:
+    - Animated snowfall across the entire page (100 snowflakes)
+    - Colorful string lights at the top (red, green, blue, gold)
+    - Festive corner decorations (tree, star, gift, bell emojis)
+    - Red and green accent colors on interactive elements
+    - Swinging animation for decorations
+    - Twinkling lights effect
+  - **New Year Theme** - Celebration party effects with:
+    - Periodic firework displays (launches every 2 seconds)
+    - Animated confetti falling from top (30 pieces in various colors)
+    - Rainbow color animations on key elements
+    - Party banner with celebration message
+    - Purple and pink party color scheme
+    - Glowing pulse effects on player and controls
+  - **Admin-Only Control** - Themes applied globally, no user override
+  - **Instant Updates** - Changes take effect immediately site-wide
+  - **Performance Optimized** - Uses requestAnimationFrame for smooth animations
+  - **Accessibility Friendly** - Respects prefers-reduced-motion settings
+  - Theme files located in `public/themes/` (christmas.js, newyear.js)
 
 ### Discord Bot Integration
 - **User/Role Sync** - Sync Discord server roles and members to database
@@ -258,6 +290,17 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
   - Positioned to not conflict with scroll-to-top button
   - Opens modal with multiple listening options
   - Responsive mobile positioning
+- **Modern Footer** - Redesigned compact footer with:
+  - Grid layout for organized content (Explore, Community, Connect)
+  - Shorter vertical height for better space utilization
+  - Brand section with logo and tagline
+  - Quick links to major sections (Home, Schedule, Requests, News)
+  - Community links (Events, Games, Videos, DJ Profiles)
+  - Social connections (Discord invite, About, Contact)
+  - Legal links in compact bottom bar (Terms, Privacy, Cookies)
+  - Copyright and powered-by information
+  - Fully responsive with mobile-optimized layout (2 columns on tablet, 1 column on mobile)
+  - Centered alignment on small screens for better readability
 
 ### SEO & Discoverability
 - **Comprehensive Meta Tags** - Title, description, keywords optimized for search engines
@@ -342,6 +385,52 @@ php artisan serve
 ```
 
 ## 🆕 Recent Updates (December 2025)
+
+### Player Improvements, Theme System & Modern Footer (December 8, 2025)
+- ✅ **Enhanced Audio Player Component** - Feature-rich embedded player:
+  - Autoplay functionality with localStorage persistence
+  - Visual album artwork with animated equalizer bars
+  - Large gradient play/pause button with pulse effect
+  - Volume controls with vertical slider and mute toggle
+  - Now playing information (title, artist, listeners, live status)
+  - Progress bar with time display for songs
+  - External player link for popup window
+  - Fully responsive design (tablet/mobile optimized)
+  - Component available at `resources/views/components/enhanced-audio-player.blade.php`
+- ✅ **Global Theme System** - Admin-controlled appearance overlays:
+  - Christmas theme with snow effects, lights, and decorations
+  - New Year theme with fireworks, confetti, and party effects
+  - Admin panel at `/admin/theme` for theme management
+  - Instant site-wide updates when theme changes
+  - Performance optimized with requestAnimationFrame
+  - Respects accessibility (prefers-reduced-motion)
+  - Theme files in `public/themes/` directory
+  - Database migration adds `site_theme` setting
+- ✅ **Redesigned Footer** - Modern, compact layout:
+  - Grid-based organization (Explore, Community, Connect)
+  - Reduced vertical height for better space usage
+  - Quick links to all major sections
+  - Legal links in bottom bar
+  - Fully responsive (2-column tablet, 1-column mobile)
+  - Centered alignment on small screens
+- ✅ **Mobile Optimizations**:
+  - Enhanced player scales down on small screens
+  - Footer adapts to mobile viewports
+  - Theme effects optimized for performance on mobile
+  - All new features tested across device sizes
+
+### How to Use New Features
+1. **Enhanced Audio Player**: Include component in any Blade view:
+   ```blade
+   <x-enhanced-audio-player streamUrl="{{ $streamUrl }}" />
+   ```
+
+2. **Theme Management**: Admin users can access at `/admin/theme`
+   - Select theme from visual cards (None, Christmas, New Year)
+   - Changes apply instantly across the site
+   - Themes are JavaScript overlays, don't affect core design
+
+3. **Footer**: Automatically displayed on all pages, no configuration needed
 
 ### Massive Backend Enhancement & Real-Time Features (December 8, 2025)
 - ✅ **Universal Cache Service** - Centralized cache management with smart DRY patterns:
