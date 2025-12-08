@@ -387,18 +387,6 @@ class AzuraCastService
             }
 
             return $response->json() ?? [];
-        } catch (\Illuminate\Http\Client\RequestException $e) {
-            // Handle HTTP errors (including 403, 404, 500, etc.)
-            Log::error('AzuraCast API request failed', [
-                'endpoint' => $endpoint,
-                'status' => $e->response?->status(),
-                'error' => $e->getMessage(),
-            ]);
-
-            throw AzuraCastException::requestFailed(
-                $e->response?->json('message', 'API request failed'),
-                $e->response?->status() ?? 500
-            );
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             Log::error('AzuraCast API connection failed', [
                 'endpoint' => $endpoint,
