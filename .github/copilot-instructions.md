@@ -1,5 +1,56 @@
 # GitHub Copilot Instructions for Los Santos Radio
 
+## 🚀 Quick Reference Cheat Sheet
+
+### Most Common Commands
+```bash
+composer dev              # Start dev server with hot reload, queue, logs, Vite
+composer test             # Run all tests
+./vendor/bin/pint         # Format code with Laravel Pint
+php artisan migrate       # Run migrations
+php artisan cache:clear   # Clear application cache
+npm run build             # Build frontend assets
+```
+
+### Key Patterns
+```php
+// Cache with CacheService
+$key = $cacheService->key(CacheService::NAMESPACE_RADIO, 'data');
+$data = $cacheService->remember($key, CacheService::TTL_REALTIME, fn() => $this->fetch());
+
+// HTTP requests with retry
+$response = $this->httpClient->get($url, ['timeout' => 10, 'retry' => [3, 100]]);
+
+// Graceful error handling
+try {
+    $data = $this->service->getData();
+} catch (ServiceException $e) {
+    Log::error('Error', ['error' => $e->getMessage()]);
+    return back()->with('error', 'Unable to fetch data');
+}
+```
+
+### Cache TTL Selection
+- `TTL_REALTIME` (30s): Now playing, live streams
+- `TTL_SHORT` (5m): Discord bot status, frequently changing data
+- `TTL_MEDIUM` (1h): Game deals, moderately stable data
+- `TTL_LONG` (12h): Game metadata, stable data
+- `TTL_VERY_LONG` (24h): Lyrics, very stable data
+
+### Database Compatibility
+```php
+// Filtered indexes (PostgreSQL/SQLite only)
+$driver = DB::connection()->getDriverName();
+if (in_array($driver, ['pgsql', 'sqlite'])) {
+    DB::statement('CREATE INDEX idx ON table(col) WHERE condition');
+}
+
+// Process large datasets
+Table::chunk(1000, fn($items) => /* process */);
+```
+
+---
+
 ## Project Overview
 
 Los Santos Radio is a feature-rich online radio and gaming community hub powered by **AzuraCast**. It provides an interactive listener experience with real-time radio data, music discovery, user profiles, community features, and gamification systems.
@@ -333,6 +384,506 @@ tests/
 - Jobs: `{Action}{Resource}Job` (e.g., `UpdateDealsJob`, `SyncFreeGamesJob`)
 - Events: `{Resource}{Action}` (e.g., `NowPlayingUpdated`)
 - Exceptions: `{Domain}Exception` (e.g., `AzuraCastException`)
+
+## 🎯 Decision Trees
+
+### When to Use `chunk()` vs `each()`
+
+**Use `chunk(1000)`:**
+- ✅ Processing large datasets (>1000 records)
+- ✅ Updating existing data in migrations
+- ✅ Batch operations that might run out of memory
+- ✅ Background jobs processing many records
+
+**Use `each()` or regular loops:**
+- ✅ Small datasets (<100 records)
+- ✅ When you need to stop early (break)
+- ✅ Simple iterations with low memory impact
+
+### When to Create New Service vs Extend Existing
+
+**Create New Service:**
+- ✅ Integrating with a new external API (e.g., `SpotifyService`)
+- ✅ Adding a distinct business domain (e.g., `NotificationService`)
+- ✅ Logic is complex and self-contained
+- ✅ Service will have multiple public methods
+
+**Extend Existing Service:**
+- ✅ Adding methods to existing API integration (e.g., new AzuraCast endpoint)
+- ✅ Helper methods for the same domain
+- ✅ Refactoring existing logic in same service
+
+### Cache TTL Selection Guide
+
+**Choose TTL based on data characteristics:**
+
+- **TTL_REALTIME (30s)**: Data changes constantly
+  - Now playing information
+  - Live stream status
+  - Active user counts
+
+- **TTL_SHORT (5m)**: Data changes frequently
+  - Discord bot status
+  - Recent activity feeds
+  - Session-based data
+
+- **TTL_MEDIUM (1h)**: Data changes occasionally
+  - Game deals
+  - News articles
+  - API responses with moderate freshness needs
+
+- **TTL_LONG (12h)**: Data rarely changes
+  - Game metadata
+  - Static content
+  - Reference data
+
+- **TTL_VERY_LONG (24h)**: Data almost never changes
+  - Song lyrics
+  - Historical data
+  - Archived content
+
+### When to Add Tests
+
+**Feature Tests (tests/Feature/):**
+- ✅ Testing HTTP endpoints
+- ✅ Testing user workflows (login, registration)
+- ✅ Testing form submissions
+- ✅ Testing authentication/authorization
+- ✅ Integration testing
+
+**Unit Tests (tests/Unit/):**
+- ✅ Testing individual service methods
+- ✅ Testing business logic
+- ✅ Testing utility functions
+- ✅ Testing DTOs and data transformations
+- ✅ Testing complex calculations
+
+## ⚠️ Anti-Patterns (Things to Avoid)
+
+### Database Anti-Patterns
+
+**DON'T concatenate SQL with user input**
+```php
+// ❌ BAD: SQL injection vulnerability
+$results = DB::select("SELECT * FROM users WHERE email = '{$email}'");
+
+// ✅ GOOD: Use parameter binding
+$results = DB::select('SELECT * FROM users WHERE email = ?', [$email]);
+// Or better: use query builder
+$results = DB::table('users')->where('email', $email)->get();
+```
+
+**DON'T use database-specific features without driver detection**
+```php
+// ❌ BAD: Only works in MySQL
+DB::statement("ALTER TABLE users ADD FULLTEXT INDEX (name)");
+
+// ✅ GOOD: Check driver first
+$driver = DB::connection()->getDriverName();
+if ($driver === 'mysql') {
+    DB::statement("ALTER TABLE users ADD FULLTEXT INDEX (name)");
+}
+```
+
+**DON'T use `each()` on large tables**
+```php
+// ❌ BAD: Loads all records into memory
+User::each(function ($user) {
+    $user->update(['processed' => true]);
+});
+
+// ✅ GOOD: Process in chunks
+User::chunk(1000, function ($users) {
+    foreach ($users as $user) {
+        $user->update(['processed' => true]);
+    });
+});
+```
+
+### Security Anti-Patterns
+
+**DON'T skip CSRF tokens in forms**
+```blade
+{{-- ❌ BAD: Missing CSRF protection --}}
+<form method="POST" action="{{ route('submit') }}">
+    <button type="submit">Submit</button>
+</form>
+
+{{-- ✅ GOOD: Include CSRF token --}}
+<form method="POST" action="{{ route('submit') }}">
+    @csrf
+    <button type="submit">Submit</button>
+</form>
+```
+
+**DON'T use unescaped output for user content**
+```blade
+{{-- ❌ BAD: XSS vulnerability --}}
+<div>{!! $user->bio !!}</div>
+
+{{-- ✅ GOOD: Escaped output --}}
+<div>{{ $user->bio }}</div>
+```
+
+**DON'T use unsanitized shell commands**
+```php
+// ❌ BAD: Command injection risk
+$containerId = $request->container_id;
+shell_exec("docker restart {$containerId}");
+
+// ✅ GOOD: Sanitize input
+$containerId = escapeshellcmd($request->container_id);
+shell_exec("docker restart {$containerId}");
+```
+
+### Caching Anti-Patterns
+
+**DON'T cache directly without using CacheService**
+```php
+// ❌ BAD: Direct cache usage without namespace
+Cache::remember('nowplaying', 30, fn() => $this->fetch());
+
+// ✅ GOOD: Use CacheService with namespace
+$key = $this->cacheService->key(CacheService::NAMESPACE_RADIO, 'nowplaying');
+$this->cacheService->remember($key, CacheService::TTL_REALTIME, fn() => $this->fetch());
+```
+
+**DON'T forget to handle cache failures**
+```php
+// ❌ BAD: No fallback if cache fails
+$data = Cache::get('key');
+return $data->property; // Crashes if null
+
+// ✅ GOOD: Handle missing cache
+$data = Cache::get('key');
+if (!$data) {
+    $data = $this->fetchFromSource();
+}
+```
+
+### Service Layer Anti-Patterns
+
+**DON'T put business logic in controllers**
+```php
+// ❌ BAD: Business logic in controller
+public function index()
+{
+    $data = Http::get('https://api.example.com/data')->json();
+    $processed = array_map(fn($item) => /* complex logic */, $data);
+    return view('page', ['data' => $processed]);
+}
+
+// ✅ GOOD: Delegate to service
+public function index()
+{
+    try {
+        $data = $this->service->getData();
+        return view('page', ['data' => $data]);
+    } catch (ServiceException $e) {
+        return view('page', ['data' => collect()]);
+    }
+}
+```
+
+**DON'T make HTTP requests without retry logic**
+```php
+// ❌ BAD: No retry on failure
+$response = Http::get($url);
+
+// ✅ GOOD: Use HttpClientService with retry
+$response = $this->httpClient->get($url, [
+    'timeout' => 10,
+    'retry' => [3, 100],
+]);
+```
+
+### Frontend Anti-Patterns
+
+**DON'T forget accessibility attributes**
+```blade
+{{-- ❌ BAD: Missing alt text --}}
+<img src="{{ $image }}" />
+
+{{-- ✅ GOOD: Include alt text --}}
+<img src="{{ $image }}" alt="{{ $event->title }}" />
+```
+
+**DON'T use arbitrary Tailwind values unnecessarily**
+```blade
+{{-- ❌ BAD: Arbitrary values --}}
+<div class="p-[17px] mt-[33px]">
+
+{{-- ✅ GOOD: Standard Tailwind classes --}}
+<div class="p-4 mt-8">
+```
+
+## 📋 File Templates
+
+### Service Class Template
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\Exceptions\ServiceNameException;
+use Illuminate\Support\Facades\Log;
+
+class ServiceNameService
+{
+    public function __construct(
+        private readonly CacheService $cacheService,
+        private readonly HttpClientService $httpClient
+    ) {}
+
+    /**
+     * Method description.
+     *
+     * @param  type  $param  Description
+     * @return type Description
+     * @throws ServiceNameException
+     */
+    public function methodName($param): mixed
+    {
+        $cacheKey = $this->cacheService->key(
+            CacheService::NAMESPACE_APPROPRIATE,
+            "key.{$param}"
+        );
+
+        return $this->cacheService->remember(
+            $cacheKey,
+            CacheService::TTL_APPROPRIATE,
+            fn() => $this->fetchData($param)
+        );
+    }
+
+    private function fetchData($param): mixed
+    {
+        try {
+            $response = $this->httpClient->get('https://api.example.com/endpoint', [
+                'query' => ['param' => $param],
+                'timeout' => 10,
+                'retry' => [3, 100],
+            ]);
+
+            if (!$response->successful()) {
+                throw new ServiceNameException(
+                    "Failed to fetch data: {$response->status()}"
+                );
+            }
+
+            return $response->json();
+        } catch (\Exception $e) {
+            Log::error('ServiceName error', [
+                'param' => $param,
+                'error' => $e->getMessage(),
+            ]);
+            throw new ServiceNameException('Failed to fetch data');
+        }
+    }
+}
+```
+
+### Controller Template
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Exceptions\ServiceException;
+use App\Services\ServiceNameService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+class ResourceController extends Controller
+{
+    public function __construct(
+        private readonly ServiceNameService $service
+    ) {}
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        try {
+            $data = $this->service->getData();
+            
+            return view('resource.index', [
+                'data' => $data,
+            ]);
+        } catch (ServiceException $e) {
+            Log::error('Failed to load resource', ['error' => $e->getMessage()]);
+            
+            return view('resource.index', [
+                'error' => 'Unable to load data. Please try again later.',
+                'data' => collect(),
+            ]);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $slug)
+    {
+        try {
+            $item = $this->service->getBySlug($slug);
+            
+            return view('resource.show', [
+                'item' => $item,
+            ]);
+        } catch (ServiceException $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        try {
+            $item = $this->service->create($validated);
+            
+            return redirect()
+                ->route('resource.show', $item->slug)
+                ->with('success', 'Resource created successfully');
+        } catch (ServiceException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Failed to create resource');
+        }
+    }
+}
+```
+
+### Migration Template
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('table_name', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->string('slug')->unique();
+            $table->text('content')->nullable();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+            $table->softDeletes();
+
+            // Indexes
+            $table->index(['user_id', 'created_at']);
+        });
+
+        // Optional: Filtered index for PostgreSQL/SQLite only
+        $driver = DB::connection()->getDriverName();
+        
+        if (in_array($driver, ['pgsql', 'sqlite'])) {
+            try {
+                DB::statement('CREATE INDEX table_name_active_idx ON table_name(created_at) WHERE is_active = true');
+            } catch (\Illuminate\Database\QueryException $e) {
+                $errorMessage = strtolower($e->getMessage());
+                
+                if (str_contains($errorMessage, 'syntax error') || str_contains($errorMessage, "near 'where'")) {
+                    Log::info("Skipped filtered index for table_name - not supported on this {$driver} version");
+                } else {
+                    throw $e;
+                }
+            }
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('table_name');
+    }
+};
+```
+
+### Feature Test Template
+
+```php
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class ResourceTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_index_page_loads_successfully(): void
+    {
+        $response = $this->get('/resource');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_authenticated_user_can_create_resource(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('/resource', [
+            'title' => 'Test Title',
+            'content' => 'Test content',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('resources', [
+            'title' => 'Test Title',
+        ]);
+    }
+
+    public function test_guest_cannot_create_resource(): void
+    {
+        $response = $this->post('/resource', [
+            'title' => 'Test Title',
+        ]);
+
+        $response->assertRedirect('/login');
+    }
+
+    public function test_validation_fails_with_invalid_data(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('/resource', [
+            'title' => '', // Required field empty
+        ]);
+
+        $response->assertSessionHasErrors('title');
+    }
+}
+```
 
 ## Common Tasks and Workflows
 
