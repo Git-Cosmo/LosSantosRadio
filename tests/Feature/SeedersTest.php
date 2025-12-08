@@ -37,8 +37,9 @@ class SeedersTest extends TestCase
             'event_type' => 'tournament',
         ]);
 
-        // Verify we have multiple events
-        $this->assertGreaterThan(10, \App\Models\Event::count());
+        // Verify we have at least 18 events (based on EventSeeder implementation)
+        // Using >= to allow for additional events that may be added in the future
+        $this->assertGreaterThanOrEqual(18, \App\Models\Event::count());
     }
 
     public function test_poll_seeder_creates_gaming_polls(): void
@@ -62,8 +63,9 @@ class SeedersTest extends TestCase
             'is_active' => true,
         ]);
 
-        // Verify we have multiple polls
-        $this->assertGreaterThan(4, \App\Models\Poll::count());
+        // Verify we have at least 6 polls (based on PollSeeder implementation)
+        // Using >= to allow for additional polls that may be added in the future
+        $this->assertGreaterThanOrEqual(6, \App\Models\Poll::count());
     }
 
     public function test_poll_seeder_creates_poll_options(): void
