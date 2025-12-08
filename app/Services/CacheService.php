@@ -230,6 +230,11 @@ class CacheService
     }
 
     /**
+     * Guest lyrics unlock duration in seconds (10 minutes)
+     */
+    const GUEST_LYRICS_UNLOCK_DURATION = 600;
+
+    /**
      * Session-specific: Check if guest has unlocked lyrics
      */
     public function hasGuestUnlockedLyrics(string $sessionId): bool
@@ -241,8 +246,8 @@ class CacheService
             return false;
         }
 
-        // Check if unlock is still valid (10 minutes = 600 seconds)
-        return (time() - $unlockTime) < 600;
+        // Check if unlock is still valid
+        return (time() - $unlockTime) < self::GUEST_LYRICS_UNLOCK_DURATION;
     }
 
     /**

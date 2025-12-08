@@ -116,13 +116,10 @@ class LyricsService
 
             // Note: Genius API doesn't provide lyrics directly
             // You need to scrape from the song URL or use a lyrics scraping library
-            // This is a simplified placeholder
+            // For now, return null to indicate lyrics not available via API
+            // Implement actual scraping or use a lyrics API that provides content
 
-            return [
-                'lyrics' => 'Lyrics content would be scraped from: ' . $song['url'],
-                'source' => 'genius',
-                'source_url' => $song['url'] ?? null,
-            ];
+            return null; // Returning null until actual lyrics scraping is implemented
         } catch (\Exception $e) {
             Log::error('Failed to fetch lyrics from Genius', [
                 'title' => $title,

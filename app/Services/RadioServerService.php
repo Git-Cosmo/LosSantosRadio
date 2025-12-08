@@ -193,7 +193,17 @@ class RadioServerService
             return $stopResult;
         }
 
-        sleep(2); // Wait for container to fully stop
+        // Wait for container to fully stop with polling
+        $maxAttempts = 10;
+        $attempt = 0;
+        while ($attempt < $maxAttempts) {
+            sleep(1);
+            $status = $this->getServerStatus($server);
+            if (!$status['running']) {
+                break;
+            }
+            $attempt++;
+        }
         
         return $this->startDockerContainer($server);
     }
@@ -279,9 +289,12 @@ class RadioServerService
      */
     protected function executeDockerCommand(string $dockerHost, string $command): array
     {
-        // For local Docker, execute directly
+        // For local Docker, execute directly with proper escaping
         if (empty($dockerHost) || $dockerHost === 'local' || $dockerHost === 'unix:///var/run/docker.sock') {
-            exec($command . ' 2>&1', $output, $returnCode);
+            // Use escapeshellcmd to prevent command injection
+            // Note: In production, consider using Docker SDK for PHP instead
+            $safeCommand = escapeshellcmd($command);
+            exec($safeCommand . ' 2>&1', $output, $returnCode);
             
             return [
                 'success' => $returnCode === 0,
@@ -292,6 +305,7 @@ class RadioServerService
         
         // For remote Docker, use SSH or Docker API
         // This is a placeholder - implement based on your infrastructure
+        // Consider using Docker SDK for PHP (https://github.com/docker-php/docker-php)
         return [
             'success' => false,
             'message' => 'Remote Docker execution not yet implemented. Please configure Docker host.',
