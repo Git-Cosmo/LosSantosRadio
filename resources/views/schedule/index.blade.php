@@ -1,4 +1,26 @@
 <x-layouts.app :title="'Station Schedule'">
+    @php
+        // Define color and icon mappings once at the top to avoid duplication
+        $dayColors = [
+            'Sunday' => '#ef4444',
+            'Monday' => '#3b82f6',
+            'Tuesday' => '#10b981',
+            'Wednesday' => '#f59e0b',
+            'Thursday' => '#8b5cf6',
+            'Friday' => '#ec4899',
+            'Saturday' => '#06b6d4',
+        ];
+        
+        $iconMap = [
+            'default' => 'music',
+            'scheduled' => 'clock',
+            'once_per_day' => 'star',
+            'once_per_x_songs' => 'random',
+            'once_per_x_minutes' => 'stopwatch',
+            'once_per_hour' => 'hourglass-half',
+        ];
+    @endphp
+
     @if($error)
         <div class="alert alert-error">
             {{ $error }}
@@ -45,7 +67,7 @@
                 
                 <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
                     <img src="{{ $nowPlaying->currentSong->art ?? '' }}"
-                         alt="Album Art"
+                         alt="{{ $nowPlaying->currentSong->title }} by {{ $nowPlaying->currentSong->artist }} - Album Art"
                          style="width: 120px; height: 120px; border-radius: 12px; object-fit: cover; background: var(--color-bg-tertiary); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);"
                          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%2321262d%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238b949e%22 font-size=%2230%22>🎵</text></svg>'">
                     <div style="flex: 1; min-width: 0;">
@@ -73,15 +95,6 @@
             <div class="card-body" style="padding: 0;">
                 @php
                     $groupedSchedule = collect($schedule)->groupBy('day');
-                    $dayColors = [
-                        'Sunday' => '#ef4444',
-                        'Monday' => '#3b82f6',
-                        'Tuesday' => '#10b981',
-                        'Wednesday' => '#f59e0b',
-                        'Thursday' => '#8b5cf6',
-                        'Friday' => '#ec4899',
-                        'Saturday' => '#06b6d4',
-                    ];
                 @endphp
                 
                 <div style="display: grid; gap: 0;">
@@ -101,17 +114,24 @@
                             <!-- Schedule Items -->
                             <div style="padding: 0.75rem;">
                                 @foreach($items as $item)
-                                    <div style="display: flex; align-items: stretch; gap: 1rem; padding: 1rem; margin-bottom: 0.5rem; background: {{ $item['is_current'] ? 'linear-gradient(135deg, rgba(88, 166, 255, 0.1), rgba(168, 85, 247, 0.1))' : 'var(--color-bg-tertiary)' }}; border-radius: 10px; border: 1px solid {{ $item['is_current'] ? 'var(--color-accent)' : 'var(--color-border)' }}; transition: all 0.2s ease;" 
-                                         onmouseover="this.style.transform='translateX(4px)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.1)';" 
-                                         onmouseout="this.style.transform=''; this.style.boxShadow='';">
+                                    <div class="schedule-item" style="display: flex; align-items: stretch; gap: 1rem; padding: 1rem; margin-bottom: 0.5rem; background: {{ $item['is_current'] ? 'linear-gradient(135deg, rgba(88, 166, 255, 0.1), rgba(168, 85, 247, 0.1))' : 'var(--color-bg-tertiary)' }}; border-radius: 10px; border: 1px solid {{ $item['is_current'] ? 'var(--color-accent)' : 'var(--color-border)' }}; transition: all 0.2s ease;">
                                         <!-- Time Badge -->
+                                        @php
+                                            $startTime = '';
+                                            $endTime = '';
+                                            if (is_string($item['time']) && str_contains($item['time'], ' - ')) {
+                                                [$startTime, $endTime] = explode(' - ', $item['time'], 2);
+                                            } elseif (is_string($item['time'])) {
+                                                $startTime = $item['time'];
+                                            }
+                                        @endphp
                                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 80px; padding: 0.75rem; background: linear-gradient(135deg, {{ $dayColors[$day] ?? 'var(--color-accent)' }}, {{ $dayColors[$day] ?? '#a855f7' }}); border-radius: 8px; color: white; text-align: center; flex-shrink: 0;">
                                             <div style="font-size: 1.125rem; font-weight: 700; line-height: 1;">
-                                                {{ explode(' - ', $item['time'])[0] }}
+                                                {{ $startTime }}
                                             </div>
                                             <div style="font-size: 0.625rem; opacity: 0.9; margin: 0.25rem 0;">to</div>
                                             <div style="font-size: 0.875rem; font-weight: 600; line-height: 1;">
-                                                {{ explode(' - ', $item['time'])[1] ?? '' }}
+                                                {{ $endTime }}
                                             </div>
                                         </div>
                                         
@@ -137,13 +157,6 @@
                                         <!-- Show Type Icon -->
                                         <div style="display: flex; align-items: center; justify-content: center; width: 40px; flex-shrink: 0;">
                                             @php
-                                                $iconMap = [
-                                                    'scheduled' => 'clock',
-                                                    'once_per_day' => 'star',
-                                                    'once_per_x_songs' => 'random',
-                                                    'once_per_x_minutes' => 'stopwatch',
-                                                    'once_per_hour' => 'hourglass-half',
-                                                ];
                                                 $icon = $iconMap[$item['type'] ?? ''] ?? 'music';
                                             @endphp
                                             <i class="fas fa-{{ $icon }}" style="font-size: 1.25rem; color: {{ $dayColors[$day] ?? 'var(--color-accent)' }}; opacity: 0.5;"></i>
@@ -194,14 +207,6 @@
                 <div class="playlist-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
                     @foreach($playlists->filter(fn($p) => $p->isEnabled && !$p->isJingle) as $playlist)
                         @php
-                            $iconMap = [
-                                'default' => 'music',
-                                'scheduled' => 'clock',
-                                'once_per_day' => 'star',
-                                'once_per_x_songs' => 'random',
-                                'once_per_x_minutes' => 'stopwatch',
-                                'once_per_hour' => 'hourglass-half',
-                            ];
                             $icon = $iconMap[$playlist->type] ?? 'music';
                             $scheduleItems = $playlist->getFormattedSchedule();
                             $isActive = $playlist->isCurrentlyActive();
@@ -288,6 +293,11 @@
     </div>
 
     <style>
+        .schedule-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
         .playlist-card {
             transition: all 0.3s ease;
         }
