@@ -113,13 +113,25 @@ function displayLyrics(lyrics, remaining) {
 
     // Update status message for guests
     if (remaining !== null && remaining !== undefined) {
-        statusEl.innerHTML = `
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i>
-                You have <strong>${remaining}</strong> free lyrics view${remaining !== 1 ? 's' : ''} remaining. 
-                <a href="/auth/discord" class="alert-link">Sign in</a> for unlimited access!
-            </div>
-        `;
+        statusEl.innerHTML = '';
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-info';
+        alertDiv.innerHTML = '<i class="fas fa-info-circle"></i> ';
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = `You have ${remaining} free lyrics view${remaining !== 1 ? 's' : ''} remaining. `;
+        alertDiv.appendChild(textSpan);
+        
+        const signInLink = document.createElement('a');
+        signInLink.href = '/auth/discord';
+        signInLink.className = 'alert-link';
+        signInLink.textContent = 'Sign in';
+        alertDiv.appendChild(signInLink);
+        
+        const unlimitedText = document.createTextNode(' for unlimited access!');
+        alertDiv.appendChild(unlimitedText);
+        
+        statusEl.appendChild(alertDiv);
         statusEl.style.display = 'block';
     } else {
         statusEl.style.display = 'none';
@@ -128,7 +140,17 @@ function displayLyrics(lyrics, remaining) {
     // Show source attribution if available
     if (lyrics.source && lyrics.source_url) {
         const attribution = modal.querySelector('#lyrics-attribution');
-        attribution.innerHTML = `<small class="text-muted">Lyrics from <a href="${lyrics.source_url}" target="_blank" rel="noopener">${lyrics.source}</a></small>`;
+        attribution.innerHTML = '';
+        const small = document.createElement('small');
+        small.className = 'text-muted';
+        small.textContent = 'Lyrics from ';
+        const link = document.createElement('a');
+        link.href = escapeHtml(lyrics.source_url);
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = escapeHtml(lyrics.source);
+        small.appendChild(link);
+        attribution.appendChild(small);
         attribution.style.display = 'block';
     }
 
@@ -191,14 +213,14 @@ function createLyricsModal() {
     modal.id = 'lyrics-modal';
     modal.className = 'modal lyrics-modal';
     modal.innerHTML = `
-        <div class="modal-overlay" onclick="closeLyricsModal()"></div>
+        <div class="modal-overlay"></div>
         <div class="modal-container">
             <div class="modal-header">
                 <div>
                     <h3 id="lyrics-title">Song Title</h3>
                     <p id="lyrics-artist" class="text-muted">Artist</p>
                 </div>
-                <button onclick="closeLyricsModal()" class="modal-close" aria-label="Close">
+                <button class="modal-close lyrics-close-btn" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -210,6 +232,10 @@ function createLyricsModal() {
         </div>
     `;
     document.body.appendChild(modal);
+    
+    // Add event listeners
+    modal.querySelector('.modal-overlay').addEventListener('click', closeLyricsModal);
+    modal.querySelector('.lyrics-close-btn').addEventListener('click', closeLyricsModal);
 }
 
 /**
@@ -220,9 +246,9 @@ function createGuestLimitModal() {
     modal.id = 'guest-limit-modal';
     modal.className = 'modal guest-limit-modal';
     modal.innerHTML = `
-        <div class="modal-overlay" onclick="closeGuestLimitModal()"></div>
+        <div class="modal-overlay"></div>
         <div class="modal-container">
-            <button onclick="closeGuestLimitModal()" class="modal-close" aria-label="Close">
+            <button class="modal-close guest-limit-close-btn" aria-label="Close">
                 <i class="fas fa-times"></i>
             </button>
             <div class="modal-body text-center">
@@ -269,7 +295,7 @@ function createGuestLimitModal() {
                         <span>or</span>
                     </div>
 
-                    <button onclick="unlockGuestLyrics()" class="btn btn-outline">
+                    <button class="btn btn-outline unlock-lyrics-btn">
                         <i class="fas fa-clock"></i> Wait 10 minutes for temporary unlock
                     </button>
 
@@ -281,6 +307,11 @@ function createGuestLimitModal() {
         </div>
     `;
     document.body.appendChild(modal);
+    
+    // Add event listeners
+    modal.querySelector('.modal-overlay').addEventListener('click', closeGuestLimitModal);
+    modal.querySelector('.guest-limit-close-btn').addEventListener('click', closeGuestLimitModal);
+    modal.querySelector('.unlock-lyrics-btn').addEventListener('click', unlockGuestLyrics);
 }
 
 /**
@@ -315,27 +346,22 @@ function hideLoadingModal() {
 /**
  * Close lyrics modal
  */
-window.closeLyricsModal = function() {
+function closeLyricsModal() {
     if (lyricsModalElement) {
         lyricsModalElement.classList.remove('active');
         document.body.style.overflow = '';
     }
-};
+}
 
 /**
  * Close guest limit modal
  */
-window.closeGuestLimitModal = function() {
+function closeGuestLimitModal() {
     if (guestLimitModalElement) {
         guestLimitModalElement.classList.remove('active');
         document.body.style.overflow = '';
     }
-};
-
-/**
- * Make unlock function available globally
- */
-window.unlockGuestLyrics = unlockGuestLyrics;
+}
 
 /**
  * Update status indicators throughout the page
