@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\AzuraCastService;
+use App\Services\CacheService;
 use App\Services\IcecastService;
 use App\Services\RequestLimitService;
 use Illuminate\Support\Facades\Event;
@@ -22,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register services as singletons
         $this->app->singleton(AzuraCastService::class, function ($app) {
-            return new AzuraCastService($app->make(\App\Services\CacheService::class));
+            return new AzuraCastService($app->make(CacheService::class));
         });
 
         $this->app->singleton(IcecastService::class, function ($app) {
