@@ -722,8 +722,31 @@ The application provides the following API endpoints:
 ### Running Tests
 
 ```bash
+# Run all tests (unit + feature)
 php artisan test
+
+# Run only unit tests
+php artisan test tests/Unit
+
+# Run only feature tests
+php artisan test tests/Feature
 ```
+
+#### Integration Testing with AzuraCast
+
+Integration tests can run against a real AzuraCast instance when API credentials are provided. See [Integration Testing Guide](docs/INTEGRATION_TESTING.md) for details.
+
+```bash
+# Set credentials for integration testing
+export AZURACAST_BASE_URL=https://radio.lossantosradio.com
+export AZURACAST_API_KEY=your-api-key-here
+export AZURACAST_STATION_ID=1
+
+# Run integration tests
+php artisan test tests/Feature/AzuraCastIntegrationTest.php
+```
+
+**Note**: Integration tests will be skipped if `AZURACAST_API_KEY` is not set.
 
 ### Code Style
 
