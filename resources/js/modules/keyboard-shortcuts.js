@@ -10,7 +10,9 @@ export function initializeKeyboardShortcuts() {
             return;
         }
 
-        const playerComponent = document.querySelector('[x-data]');
+        // Find the audio player component specifically
+        const playerComponent = document.querySelector('.enhanced-audio-player[x-data]') || 
+                                document.querySelector('[x-data*="audioPlayer"]');
         if (!playerComponent || !playerComponent.__x) return;
 
         const player = playerComponent.__x.$data;
@@ -60,7 +62,7 @@ export function initializeKeyboardShortcuts() {
 }
 
 function showShortcutFeedback(message) {
-    if (window.showToast) {
+    if (typeof window.showToast === 'function') {
         window.showToast('info', message);
     }
 }

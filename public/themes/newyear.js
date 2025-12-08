@@ -71,6 +71,10 @@
             
             // Launch fireworks periodically
             this.fireworkInterval = setInterval(() => {
+                // Limit total particles to prevent memory issues
+                if (this.particles.length > 500) {
+                    return;
+                }
                 const x = Math.random() * this.canvas.width;
                 const y = Math.random() * (this.canvas.height * 0.5);
                 this.createFirework(x, y);
@@ -78,7 +82,11 @@
         },
 
         animate() {
-            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            // Clear canvas completely for clean frame
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            
+            // Use trail effect more intentionally
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
             // Update and draw particles

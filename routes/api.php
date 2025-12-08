@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\NowPlayingController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\StationController;
+use App\Http\Controllers\RadioController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +24,12 @@ Route::prefix('nowplaying')->name('api.nowplaying.')->group(function () {
     Route::get('/', [NowPlayingController::class, 'index'])->name('index');
     Route::get('/sse-config', [NowPlayingController::class, 'sseConfig'])->name('sse-config');
     Route::get('/sse', [NowPlayingController::class, 'sseProxy'])->name('sse');
+});
+
+// Radio API endpoints for player and stats
+Route::prefix('radio')->name('api.radio.')->group(function () {
+    Route::get('/now-playing', [RadioController::class, 'nowPlaying'])->name('now-playing');
+    Route::get('/stats', [RadioController::class, 'status'])->name('stats');
 });
 
 // Station-related API endpoints

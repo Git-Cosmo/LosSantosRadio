@@ -1,4 +1,8 @@
-<x-layouts.app title="My Favorites">
+@extends('layouts.app')
+
+@section('title', 'My Favorites')
+
+@section('content')
     <div class="favorites-page">
         <div class="container">
             <div class="page-header">
@@ -295,9 +299,10 @@
 
                 clearAll() {
                     if (confirm('Are you sure you want to clear all favorites? This cannot be undone.')) {
-                        if (window.clearFavorites) {
-                            window.clearFavorites();
-                        }
+                        localStorage.removeItem('lsr_favorite_songs');
+                        window.dispatchEvent(new CustomEvent('favoritesUpdated', {
+                            detail: { favorites: [] }
+                        }));
                         this.favorites = [];
                     }
                 },
@@ -315,15 +320,5 @@
                 }
             };
         }
-
-        // Make clearFavorites available globally
-        if (!window.clearFavorites) {
-            window.clearFavorites = function() {
-                localStorage.removeItem('lsr_favorite_songs');
-                window.dispatchEvent(new CustomEvent('favoritesUpdated', {
-                    detail: { favorites: [] }
-                }));
-            };
-        }
     </script>
-</x-layouts.app>
+@endsection

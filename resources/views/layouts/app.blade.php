@@ -3051,9 +3051,15 @@
 
     {{-- Theme Overlay Loader --}}
     @php
-        $activeTheme = \App\Models\Setting::get('site_theme', 'none');
+        try {
+            $activeTheme = \App\Models\Setting::get('site_theme', 'none');
+            $allowedThemes = ['christmas', 'newyear'];
+        } catch (\Exception $e) {
+            $activeTheme = 'none';
+            \Illuminate\Support\Facades\Log::warning('Failed to load theme setting', ['error' => $e->getMessage()]);
+        }
     @endphp
-    @if($activeTheme && $activeTheme !== 'none')
+    @if($activeTheme && in_array($activeTheme, $allowedThemes, true))
         <script src="{{ asset('themes/' . $activeTheme . '.js') }}" defer></script>
     @endif
 

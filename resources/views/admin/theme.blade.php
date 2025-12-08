@@ -1,4 +1,8 @@
-<x-admin.layouts.app title="Theme Settings">
+@extends('admin.layouts.app')
+
+@section('title', 'Theme Settings')
+
+@section('content')
     <div class="admin-header">
         <h1>🎨 Theme Settings</h1>
         <p style="color: var(--color-text-secondary); margin-top: 0.5rem;">
@@ -328,4 +332,4 @@
             }, 300);
         }
     </script>
-</x-admin.layouts.app>
+@endsection

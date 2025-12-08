@@ -65,6 +65,9 @@ function saveFavorites(favorites) {
         }));
     } catch (e) {
         console.error('Error saving favorites:', e);
+        if (typeof window.showToast === 'function') {
+            window.showToast('error', 'Unable to save favorites. Storage may be full or disabled.');
+        }
     }
 }
 

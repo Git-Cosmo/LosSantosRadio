@@ -14,10 +14,23 @@
 
         init() {
             console.log('🎄 Initializing Christmas Theme...');
+            this.injectStyles();
             this.createCanvas();
             this.addFestiveElements();
             this.startSnowfall();
             this.addChristmasColors();
+        },
+
+        injectStyles() {
+            const style = document.createElement('style');
+            style.id = 'christmas-theme-styles';
+            style.textContent = `
+                body.christmas-theme .btn-primary.christmas-accent,
+                body.christmas-theme .control-btn.play-btn.christmas-accent {
+                    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+                }
+            `;
+            document.head.appendChild(style);
         },
 
         createCanvas() {
@@ -192,10 +205,13 @@
         },
 
         addChristmasColors() {
+            // Add Christmas theme class to body for CSS-based styling
+            document.body.classList.add('christmas-theme');
+            
             // Add subtle Christmas color theme to buttons and accents
             const accentElements = document.querySelectorAll('.btn-primary, .control-btn.play-btn');
             accentElements.forEach(el => {
-                el.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                el.classList.add('christmas-accent');
             });
         },
 
@@ -212,13 +228,21 @@
                 this.canvas.remove();
             }
 
-            // Remove style
-            const style = document.getElementById('christmas-theme-style');
+            // Remove styles
+            const style = document.getElementById('christmas-theme-styles');
             if (style) style.remove();
+            
+            const oldStyle = document.getElementById('christmas-theme-style');
+            if (oldStyle) oldStyle.remove();
 
             // Remove decorations
             document.querySelectorAll('.christmas-decoration, .christmas-lights').forEach(el => el.remove());
+            
+            // Remove Christmas classes
             document.body.classList.remove('christmas-theme');
+            document.querySelectorAll('.christmas-accent').forEach(el => {
+                el.classList.remove('christmas-accent');
+            });
         }
     };
 
