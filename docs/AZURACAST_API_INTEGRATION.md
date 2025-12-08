@@ -239,10 +239,12 @@ Returns all playlists for the station.
 
 ### 6. Song History
 **Endpoint:** `GET /api/station/{station_id}/history`  
-**Authentication:** Required (X-API-Key header)  
+**Authentication:** Required (X-API-Key header with admin permissions)  
 **OpenAPI Reference:** `getStationHistory`
 
 Returns the station's song playback history.
+
+**Note:** This endpoint requires admin-level API key permissions. If the API key doesn't have sufficient permissions, the service automatically falls back to using the song history from the Now Playing endpoint (`/api/nowplaying/{station_id}`), which provides recent history (typically last 5-15 songs) without requiring authentication.
 
 **Query Parameters:**
 - `start` - Start date (optional, PHP date format)
@@ -256,6 +258,12 @@ Returns the station's song playback history.
 - `streamer` - DJ name if applicable
 - `is_request` - Whether this was a listener request
 - `song` - Song details
+
+**Fallback Behavior:**
+The `AzuraCastService::getHistory()` method implements a graceful fallback strategy:
+1. First attempts to fetch from `/api/station/{id}/history` (requires admin API key)
+2. If that fails with authentication error, falls back to `song_history` from `/api/nowplaying/{id}` (public endpoint)
+3. If both fail, returns an empty collection and logs the error
 
 ### 7. Requestable Songs
 **Endpoint:** `GET /api/station/{station_id}/requests`  

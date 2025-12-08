@@ -167,16 +167,28 @@ class AzuraCastService
     {
         $cacheKey = "azuracast.playlists.{$this->stationId}";
 
-        $data = Cache::remember($cacheKey, 300, function () {
-            return $this->makeRequest("/api/station/{$this->stationId}/playlists");
+        return Cache::remember($cacheKey, 300, function () {
+            try {
+                // Try to fetch from the dedicated playlists endpoint (requires admin API key)
+                $data = $this->makeRequest("/api/station/{$this->stationId}/playlists");
+
+                // Handle paginated response format (with 'items' key) or plain array
+                $items = $this->extractItems($data);
+
+                return collect($items)
+                    ->filter(fn ($item) => is_array($item))
+                    ->map(fn ($item) => PlaylistDTO::fromApi($item));
+            } catch (AzuraCastException $e) {
+                // Playlists endpoint requires admin access - no public fallback available
+                Log::info('Playlists endpoint not accessible (requires admin API key)', [
+                    'station_id' => $this->stationId,
+                    'error' => $e->getMessage(),
+                ]);
+
+                // Return empty collection
+                return collect();
+            }
         });
-
-        // Handle paginated response format (with 'items' key) or plain array
-        $items = $this->extractItems($data);
-
-        return collect($items)
-            ->filter(fn ($item) => is_array($item))
-            ->map(fn ($item) => PlaylistDTO::fromApi($item));
     }
 
     /**
@@ -188,18 +200,46 @@ class AzuraCastService
     {
         $cacheKey = "azuracast.history.{$this->stationId}.{$limit}";
 
-        $data = Cache::remember($cacheKey, $this->cacheTtl, function () use ($limit) {
-            return $this->makeRequest("/api/station/{$this->stationId}/history", [
-                'limit' => $limit,
-            ]);
+        return Cache::remember($cacheKey, $this->cacheTtl, function () use ($limit) {
+            try {
+                // Try to fetch from the dedicated history endpoint (requires admin API key)
+                $data = $this->makeRequest("/api/station/{$this->stationId}/history", [
+                    'limit' => $limit,
+                ]);
+
+                // Handle paginated response format (with 'items' key) or plain array
+                $items = $this->extractItems($data);
+
+                return collect($items)
+                    ->filter(fn ($item) => is_array($item))
+                    ->map(fn ($item) => SongHistoryDTO::fromApi($item))
+                    ->take($limit);
+            } catch (AzuraCastException $e) {
+                // Fallback: Get history from now playing endpoint (public endpoint)
+                Log::info('History endpoint not accessible, falling back to now playing history', [
+                    'station_id' => $this->stationId,
+                    'error' => $e->getMessage(),
+                ]);
+
+                try {
+                    $nowPlayingData = $this->makeRequest("/api/nowplaying/{$this->stationId}");
+                    $historyItems = $nowPlayingData['song_history'] ?? [];
+
+                    return collect($historyItems)
+                        ->filter(fn ($item) => is_array($item))
+                        ->map(fn ($item) => SongHistoryDTO::fromApi($item))
+                        ->take($limit);
+                } catch (\Exception $fallbackException) {
+                    Log::warning('Failed to fetch history from both endpoints', [
+                        'station_id' => $this->stationId,
+                        'error' => $fallbackException->getMessage(),
+                    ]);
+
+                    // Return empty collection on complete failure
+                    return collect();
+                }
+            }
         });
-
-        // Handle paginated response format (with 'items' key) or plain array
-        $items = $this->extractItems($data);
-
-        return collect($items)
-            ->filter(fn ($item) => is_array($item))
-            ->map(fn ($item) => SongHistoryDTO::fromApi($item));
     }
 
     /**
@@ -211,16 +251,45 @@ class AzuraCastService
     {
         $cacheKey = "azuracast.requests.queue.{$this->stationId}";
 
-        $data = Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->makeRequest("/api/station/{$this->stationId}/queue");
+        return Cache::remember($cacheKey, $this->cacheTtl, function () {
+            try {
+                // Try to fetch from the dedicated queue endpoint (requires admin API key)
+                $data = $this->makeRequest("/api/station/{$this->stationId}/queue");
+
+                // Handle paginated response format (with 'items' key) or plain array
+                $items = $this->extractItems($data);
+
+                return collect($items)
+                    ->filter(fn ($item) => is_array($item))
+                    ->map(fn ($item) => SongDTO::fromApi($item['song'] ?? $item));
+            } catch (AzuraCastException $e) {
+                // Fallback: Get upcoming songs from now playing endpoint (public endpoint)
+                Log::info('Queue endpoint not accessible, falling back to now playing queue', [
+                    'station_id' => $this->stationId,
+                    'error' => $e->getMessage(),
+                ]);
+
+                try {
+                    $nowPlayingData = $this->makeRequest("/api/nowplaying/{$this->stationId}");
+                    $playingNext = $nowPlayingData['playing_next'] ?? null;
+
+                    // Now playing endpoint only provides the next song, not full queue
+                    if ($playingNext && isset($playingNext['song'])) {
+                        return collect([SongDTO::fromApi($playingNext['song'])]);
+                    }
+
+                    return collect();
+                } catch (\Exception $fallbackException) {
+                    Log::warning('Failed to fetch queue from both endpoints', [
+                        'station_id' => $this->stationId,
+                        'error' => $fallbackException->getMessage(),
+                    ]);
+
+                    // Return empty collection on complete failure
+                    return collect();
+                }
+            }
         });
-
-        // Handle paginated response format (with 'items' key) or plain array
-        $items = $this->extractItems($data);
-
-        return collect($items)
-            ->filter(fn ($item) => is_array($item))
-            ->map(fn ($item) => SongDTO::fromApi($item['song'] ?? $item));
     }
 
     /**
@@ -319,19 +388,43 @@ class AzuraCastService
     {
         $cacheKey = 'azuracast.library.search.'.md5($query).".{$limit}";
 
-        $data = Cache::remember($cacheKey, $this->cacheTtl * 2, function () use ($query, $limit) {
-            return $this->makeRequest("/api/station/{$this->stationId}/files", [
-                'searchPhrase' => $query,
-                'per_page' => $limit,
-            ]);
+        return Cache::remember($cacheKey, $this->cacheTtl * 2, function () use ($query, $limit) {
+            try {
+                // Try to search the media files endpoint (requires admin API key)
+                $data = $this->makeRequest("/api/station/{$this->stationId}/files", [
+                    'searchPhrase' => $query,
+                    'per_page' => $limit,
+                ]);
+
+                // Handle paginated response format (with 'items' key) or plain array
+                $items = $this->extractItems($data);
+
+                return collect($items)
+                    ->filter(fn ($item) => is_array($item))
+                    ->map(fn ($item) => SongDTO::fromApi($item));
+            } catch (AzuraCastException $e) {
+                // Fallback: Use the requestable songs endpoint (public)
+                Log::info('Files endpoint not accessible, falling back to requestable songs', [
+                    'station_id' => $this->stationId,
+                    'query' => $query,
+                    'error' => $e->getMessage(),
+                ]);
+
+                try {
+                    $result = $this->getRequestableSongs($limit, 1, $query);
+                    return $result['songs'] ?? collect();
+                } catch (\Exception $fallbackException) {
+                    Log::warning('Failed to search library from both endpoints', [
+                        'station_id' => $this->stationId,
+                        'query' => $query,
+                        'error' => $fallbackException->getMessage(),
+                    ]);
+
+                    // Return empty collection on complete failure
+                    return collect();
+                }
+            }
         });
-
-        // Handle paginated response format (with 'items' key) or plain array
-        $items = $this->extractItems($data);
-
-        return collect($items)
-            ->filter(fn ($item) => is_array($item))
-            ->map(fn ($item) => SongDTO::fromApi($item));
     }
 
     /**
