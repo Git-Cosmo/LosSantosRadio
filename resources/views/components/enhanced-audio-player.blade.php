@@ -39,14 +39,16 @@
             {{-- Play/Pause Button --}}
             <button @click="togglePlayback" 
                     class="control-btn play-btn"
-                    :class="{ 'playing': isPlaying }"
-                    :aria-label="isPlaying ? 'Pause' : 'Play'">
-                <i :class="isPlaying ? 'fas fa-pause' : 'fas fa-play'"></i>
+                    :class="{ 'playing': isPlaying, 'loading': isLoading }"
+                    :aria-label="isLoading ? 'Loading...' : (isPlaying ? 'Pause' : 'Play')"
+                    :disabled="isLoading">
+                <i x-show="!isLoading" :class="isPlaying ? 'fas fa-pause' : 'fas fa-play'"></i>
+                <i x-show="isLoading" class="fas fa-spinner fa-spin"></i>
             </button>
 
             {{-- Volume Control --}}
             <div class="volume-control" x-data="{ showVolume: false }">
-                <button @click="toggleMute" 
+                <button @click="showVolume = !showVolume" 
                         @mouseenter="showVolume = true"
                         class="control-btn volume-btn"
                         :aria-label="isMuted ? 'Unmute' : 'Mute'">
@@ -55,6 +57,7 @@
                 <div class="volume-slider" 
                      x-show="showVolume" 
                      @mouseleave="showVolume = false"
+                     @click.away="showVolume = false"
                      x-transition>
                     <input type="range" 
                            min="0" 
@@ -64,6 +67,10 @@
                            class="slider"
                            aria-label="Volume">
                     <span class="volume-value" x-text="volume + '%'"></span>
+                    <button @click="toggleMute" class="volume-mute-btn" :aria-label="isMuted ? 'Unmute' : 'Mute'">
+                        <i :class="isMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up'"></i>
+                        <span x-text="isMuted ? 'Unmute' : 'Mute'"></span>
+                    </button>
                 </div>
             </div>
 
@@ -288,6 +295,15 @@
         animation: playingPulse 2s ease-in-out infinite;
     }
 
+    .play-btn.loading {
+        opacity: 0.7;
+        cursor: wait;
+    }
+
+    .play-btn:disabled {
+        cursor: not-allowed;
+    }
+
     @keyframes playingPulse {
         0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
         50% { box-shadow: 0 4px 20px var(--color-accent); }
@@ -348,6 +364,27 @@
         font-size: 0.75rem;
         color: var(--color-text-secondary);
         font-weight: 600;
+    }
+
+    .volume-mute-btn {
+        background: var(--color-bg-tertiary);
+        border: none;
+        border-radius: 6px;
+        padding: 0.5rem;
+        color: var(--color-text-primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        transition: all 0.2s ease;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .volume-mute-btn:hover {
+        background: var(--color-accent);
+        color: white;
     }
 
     /* Progress Bar */
@@ -427,11 +464,12 @@
             audio: null,
             isPlaying: false,
             isMuted: false,
+            isLoading: false,
             volume: 70,
             nowPlaying: {
-                title: '',
-                artist: '',
-                artwork: ''
+                title: 'Los Santos Radio',
+                artist: 'Loading...',
+                artwork: '/images/default-album.png'
             },
             progress: {
                 elapsed: 0,
@@ -445,6 +483,14 @@
                 // Initialize audio element
                 this.audio = new Audio(streamUrl);
                 this.audio.volume = this.volume / 100;
+                
+                // Add audio event listeners
+                this.audio.addEventListener('waiting', () => this.isLoading = true);
+                this.audio.addEventListener('canplay', () => this.isLoading = false);
+                this.audio.addEventListener('error', () => {
+                    this.isLoading = false;
+                    window.showToast?.('error', 'Unable to connect to stream');
+                });
                 
                 // Load saved volume from localStorage
                 const savedVolume = localStorage.getItem('playerVolume');
@@ -480,9 +526,13 @@
             },
 
             play() {
-                this.audio.play().catch(err => {
+                this.isLoading = true;
+                this.audio.play().then(() => {
+                    this.isLoading = false;
+                }).catch(err => {
                     console.error('Playback failed:', err);
-                    window.showToast?.('error', 'Failed to start playback');
+                    this.isLoading = false;
+                    window.showToast?.('error', 'Failed to start playback. Please check your connection.');
                 });
                 this.isPlaying = true;
                 localStorage.setItem('playerAutoplay', 'true');
@@ -491,6 +541,7 @@
             pause() {
                 this.audio.pause();
                 this.isPlaying = false;
+                this.isLoading = false;
                 localStorage.setItem('playerAutoplay', 'false');
             },
 

@@ -111,6 +111,11 @@
             style.id = 'newyear-theme-style';
             style.textContent = `
                 /* New Year Theme Styles */
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: scale(0.9); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+
                 @keyframes confetti-fall {
                     0% { transform: translateY(-100vh) rotate(0deg); }
                     100% { transform: translateY(100vh) rotate(360deg); }
@@ -169,7 +174,7 @@
                     color: white;
                     font-weight: bold;
                     z-index: 9997;
-                    animation: pulse-glow 2s ease-in-out infinite;
+                    animation: pulse-glow 2s ease-in-out infinite, fadeIn 0.5s ease-in;
                     font-size: 1.125rem;
                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
                 }

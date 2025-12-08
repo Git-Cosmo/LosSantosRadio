@@ -102,7 +102,12 @@
                     pointer-events: none;
                     z-index: 9998;
                     font-size: 24px;
-                    animation: swing 3s ease-in-out infinite;
+                    animation: swing 3s ease-in-out infinite, fadeIn 0.5s ease-in;
+                }
+
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: scale(0.8); }
+                    to { opacity: 1; transform: scale(1); }
                 }
 
                 @keyframes swing {
@@ -126,6 +131,7 @@
                     display: flex;
                     justify-content: space-around;
                     align-items: flex-start;
+                    animation: fadeIn 0.5s ease-in;
                 }
 
                 .christmas-light {

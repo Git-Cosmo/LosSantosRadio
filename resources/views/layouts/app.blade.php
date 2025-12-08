@@ -210,6 +210,10 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
             background-color: var(--color-bg-primary);
@@ -1453,11 +1457,29 @@
             color: var(--color-text-secondary);
             font-size: 0.875rem;
             text-decoration: none;
-            transition: color 0.2s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--color-accent);
+            transition: width 0.3s ease;
         }
 
         .footer-links a:hover {
             color: var(--color-accent);
+            transform: translateX(4px);
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
         }
 
         .footer-brand {
@@ -1515,11 +1537,27 @@
             color: var(--color-text-muted);
             font-size: 0.8125rem;
             text-decoration: none;
-            transition: color 0.2s ease;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .footer-legal-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--color-accent);
+            transition: width 0.3s ease;
         }
 
         .footer-legal-links a:hover {
             color: var(--color-accent);
+        }
+
+        .footer-legal-links a:hover::after {
+            width: 100%;
         }
 
         /* Footer Mobile Responsive */
