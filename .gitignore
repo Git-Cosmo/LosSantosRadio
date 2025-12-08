@@ -29,3 +29,4 @@ Thumbs.db
 database/database.sqlite
 .backup
 laravel_test
+*.pid

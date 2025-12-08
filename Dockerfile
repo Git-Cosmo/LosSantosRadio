@@ -78,7 +78,10 @@ COPY --from=build /var/www /var/www
 COPY --from=build /usr/bin/composer /usr/bin/composer
 
 # Copy configs
-COPY scripts/nginx.conf /etc/nginx/conf.d/default.conf
+# Put nginx.conf into the correct http.d directory
+COPY scripts/nginx.conf /etc/nginx/http.d/lossantosradio.conf
+RUN rm -f /etc/nginx/http.d/default.conf
+
 COPY scripts/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
@@ -93,6 +96,14 @@ RUN echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/opcache.i
     && echo "opcache.max_accelerated_files=4000" >> /usr/local/etc/php/conf.d/opcache.ini \
     && echo "opcache.validate_timestamps=0" >> /usr/local/etc/php/conf.d/opcache.ini \
     && echo "opcache.enable_cli=1" >> /usr/local/etc/php/conf.d/opcache.ini
+
+# Create Supervisor log directories
+RUN mkdir -p /var/log/supervisor \
+    && chown -R www-data:www-data /var/log/supervisor
+
+# Create Nginx runtime directories
+RUN mkdir -p /var/log/nginx /run/nginx \
+    && chown -R www-data:www-data /var/log/nginx /run/nginx
 
 EXPOSE 80
 ENTRYPOINT ["docker-entrypoint.sh"]
