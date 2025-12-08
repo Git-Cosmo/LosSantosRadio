@@ -31,5 +31,10 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!-- AzuraCast Configuration for Integration Tests -->
+        <!-- These will be overridden by environment variables in CI -->
+        <env name="AZURACAST_BASE_URL" value="https://radio.lossantosradio.com" force="true"/>
+        <env name="AZURACAST_API_KEY" value="" force="true"/>
+        <env name="AZURACAST_STATION_ID" value="1" force="true"/>
     </php>
 </phpunit>

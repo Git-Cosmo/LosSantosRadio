@@ -68,6 +68,10 @@ jobs:
 
       - name: Run tests
         run: php artisan test --parallel
+        env:
+          AZURACAST_BASE_URL: https://radio.lossantosradio.com
+          AZURACAST_API_KEY: ${{ secrets.AZURACAST_API_KEY }}
+          AZURACAST_STATION_ID: 1
 
   build:
     name: Build
