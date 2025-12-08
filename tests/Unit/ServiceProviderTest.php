@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Services\AzuraCastService;
-use App\Services\CacheService;
 use App\Services\IcecastService;
 use App\Services\RequestLimitService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,6 +10,7 @@ use Tests\TestCase;
 
 class ServiceProviderTest extends TestCase
 {
+    // RefreshDatabase is needed because RequestLimitService accesses the database in its constructor
     use RefreshDatabase;
     /**
      * Test that AzuraCastService can be resolved from the container.
