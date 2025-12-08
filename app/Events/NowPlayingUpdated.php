@@ -14,6 +14,7 @@ class NowPlayingUpdated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public NowPlayingDTO $nowPlaying;
+
     public int $stationId;
 
     /**

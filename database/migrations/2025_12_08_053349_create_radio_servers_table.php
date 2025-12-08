@@ -33,7 +33,7 @@ return new class extends Migration
             $table->timestamp('last_check_at')->nullable();
             $table->text('last_error')->nullable();
             $table->timestamps();
-            
+
             $table->index('type');
             $table->index('is_active');
             $table->index('status');

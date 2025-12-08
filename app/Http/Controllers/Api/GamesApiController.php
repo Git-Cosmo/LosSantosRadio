@@ -182,4 +182,3 @@ class GamesApiController extends Controller
         return response()->json(['results' => $games]);
     }
 }
-

@@ -132,4 +132,3 @@ class Game extends Model
         ];
     }
 }
-

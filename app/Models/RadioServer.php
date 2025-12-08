@@ -90,6 +90,7 @@ class RadioServer extends Model
     public function getAdminUrlAttribute(): string
     {
         $protocol = $this->ssl ? 'https' : 'http';
+
         return "{$protocol}://{$this->host}:{$this->port}/admin";
     }
 

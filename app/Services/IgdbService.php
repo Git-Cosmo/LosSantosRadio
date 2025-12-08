@@ -120,11 +120,11 @@ class IgdbService
         // Sanitize query - remove quotes and semicolons to prevent injection
         $query = str_replace(['"', ';', "\n", "\r"], '', $query);
         $query = trim($query);
-        
+
         if (empty($query)) {
             return collect();
         }
-        
+
         // Validate and bound the limit
         $limit = max(1, min($limit, 500));
 
@@ -162,7 +162,7 @@ class IgdbService
         // Sanitize slug - remove quotes and semicolons to prevent injection
         $slug = str_replace(['"', ';', "\n", "\r"], '', $slug);
         $slug = trim($slug);
-        
+
         if (empty($slug)) {
             return null;
         }
@@ -186,11 +186,11 @@ class IgdbService
         if (empty($igdbIds)) {
             return collect();
         }
-        
+
         // Validate that all IDs are integers
-        $igdbIds = array_filter($igdbIds, fn($id) => is_int($id) || (is_numeric($id) && (int)$id == $id));
+        $igdbIds = array_filter($igdbIds, fn ($id) => is_int($id) || (is_numeric($id) && (int) $id == $id));
         $igdbIds = array_map('intval', $igdbIds);
-        
+
         if (empty($igdbIds)) {
             return collect();
         }

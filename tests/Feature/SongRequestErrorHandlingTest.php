@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Services\AzuraCastService;
 use App\Services\RequestLimitService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Mockery;
 use Tests\TestCase;
 
 class SongRequestErrorHandlingTest extends TestCase
