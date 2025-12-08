@@ -42,6 +42,11 @@ use Illuminate\Support\Facades\Route;
 // Main radio page
 Route::get('/', [RadioController::class, 'index'])->name('home');
 
+// Favorites page
+Route::get('/favorites', function () {
+    return view('favorites');
+})->name('favorites');
+
 // SEO: Sitemap and Robots.txt
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');

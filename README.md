@@ -386,6 +386,56 @@ php artisan serve
 
 ## 🆕 Recent Updates (December 2025)
 
+### Quick Win Features - Enhanced User Experience (December 8, 2025)
+- ✅ **Keyboard Shortcuts** - Power user controls:
+  - Space bar or K to play/pause the player
+  - Arrow Up/Down to adjust volume (±5%)
+  - M to mute/unmute audio
+  - Works globally except in text input fields
+  - Visual feedback toasts show current action
+  - Initialized automatically on page load
+- ✅ **Share Now Playing** - Social engagement feature:
+  - Share button in audio player
+  - Copies formatted song info to clipboard
+  - Social media friendly text format
+  - Includes title, artist, and listen link
+  - Success toast notification on copy
+- ✅ **Favorite Songs System** - Personal music collection:
+  - Heart button in audio player to favorite songs
+  - Save up to 100 favorites in localStorage
+  - Dedicated favorites page at `/favorites`
+  - View all favorited songs with artwork
+  - Remove individual favorites or clear all
+  - Shows when each song was added
+  - No backend/database required
+- ✅ **Player Minimize Mode** - Sticky mini player:
+  - Minimize button collapses player to corner
+  - Stays fixed in bottom-right while scrolling
+  - Compact 350px width with all controls
+  - Remembers state across page reloads
+  - Expand button returns to full size
+  - Mobile-optimized (300px on small screens)
+- ✅ **Quick Stats Widget** - Live radio metrics:
+  - Current listener count display
+  - Peak listeners for today
+  - Total songs played counter
+  - Live/AutoDJ stream status
+  - Auto-refresh every 30 seconds
+  - Manual refresh button available
+  - Component: `<x-quick-stats-widget />`
+- ✅ **Toast Notifications** - Non-intrusive alerts:
+  - "Now Playing" alerts when song changes
+  - Auto-dismiss after 5 seconds
+  - Can be toggled on/off by user
+  - Preference saved to localStorage
+  - Shows for keyboard shortcuts feedback
+  - Success/error/info notification types
+- ✅ **Dark/Light Mode Toggle** - Already implemented:
+  - Sun/Moon icon in header (top right)
+  - Instant theme switching
+  - Syncs with localStorage
+  - Visual indicator of current mode
+
 ### Player Improvements, Theme System & Modern Footer (December 8, 2025)
 - ✅ **Enhanced Audio Player Component** - Feature-rich embedded player:
   - Autoplay functionality with localStorage persistence
