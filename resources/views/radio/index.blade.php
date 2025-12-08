@@ -363,7 +363,7 @@
                                      role="group"
                                      aria-label="Rate this song"
                                      style="margin-bottom: 1rem;">
-                                    <div style="display: flex; gap: 0.75rem; align-items: center;">
+                                    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                                         <button class="rating-btn upvote" data-rating="1" title="Like this song" aria-label="Like this song" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
                                             <i class="fas fa-thumbs-up" aria-hidden="true" style="color: #43b581; font-size: 1rem;"></i>
                                             <span id="upvote-count" style="font-size: 0.9375rem;">0</span>
@@ -371,6 +371,16 @@
                                         <button class="rating-btn downvote" data-rating="-1" title="Dislike this song" aria-label="Dislike this song" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: var(--color-bg-tertiary); border: 2px solid transparent; border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
                                             <i class="fas fa-thumbs-down" aria-hidden="true" style="color: #f04747; font-size: 1rem;"></i>
                                             <span id="downvote-count" style="font-size: 0.9375rem;">0</span>
+                                        </button>
+                                        <button class="rating-btn lyrics-btn" 
+                                                data-lyrics-song-id="{{ $nowPlaying->currentSong->id }}" 
+                                                data-lyrics-title="{{ $nowPlaying->currentSong->title }}" 
+                                                data-lyrics-artist="{{ $nowPlaying->currentSong->artist }}" 
+                                                title="View Lyrics" 
+                                                aria-label="View lyrics for this song" 
+                                                style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: linear-gradient(135deg, rgba(88, 166, 255, 0.2), rgba(168, 85, 247, 0.2)); border: 2px solid var(--color-accent); border-radius: 50px; transition: all 0.3s ease; font-weight: 600; cursor: pointer; color: var(--color-text);">
+                                            <i class="fas fa-music" aria-hidden="true" style="color: var(--color-accent); font-size: 1rem;"></i>
+                                            <span style="font-size: 0.9375rem;">Lyrics</span>
                                         </button>
                                     </div>
                                 </div>

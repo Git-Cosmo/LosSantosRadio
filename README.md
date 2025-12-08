@@ -15,20 +15,22 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Backend**: Laravel 12
 - **Frontend**: Tailwind CSS, Alpine.js, Blade Templates
 - **Radio Integration**: AzuraCast API
-- **Streaming**: Icecast
-- **Caching**: Redis (optional) / File cache with intelligent TTL management
+- **Streaming**: Icecast / Shoutcast (multi-server support with Docker orchestration)
+- **Real-time**: Laravel Reverb (WebSocket) for instant now playing updates
+- **Caching**: Universal CacheService with Redis support and namespace organization
   - AzuraCast data: 30 seconds (configurable, real-time radio updates)
   - CheapShark deals: 1 hour (gaming deals)
   - Reddit content: 30 minutes (free games and videos)
   - IGDB game data: 12 hours (game metadata)
   - Discord bot data: 5 minutes (bot status and guild info)
+  - Lyrics data: 24 hours (persistent lyrics cache)
 - **Database**: SQLite / MySQL / PostgreSQL
-- **Real-time**: Event broadcasting (optional WebSocket support)
 - **HTTP Client**: Guzzle with random user agent rotation
 - **Search**: Laravel Scout with collection driver
 - **Permissions**: Spatie Laravel Permission
 - **Media**: Spatie Laravel Media Library with Intervention Image
 - **Sitemap**: Spatie Laravel Sitemap (auto-generated every 6 hours)
+- **Lyrics**: Genius API integration with guest limits and monetization flow
 
 ## 📦 Features
 
@@ -340,6 +342,65 @@ php artisan serve
 ```
 
 ## 🆕 Recent Updates (December 2025)
+
+### Massive Backend Enhancement & Real-Time Features (December 8, 2025)
+- ✅ **Universal Cache Service** - Centralized cache management with smart DRY patterns:
+  - Namespace-based organization (radio/, lyrics/, games/, user/, etc.)
+  - Pre-built methods for radio and lyrics features
+  - Session-based guest tracking with TTL management
+  - Redis support with fallback to file/database cache
+- ✅ **Laravel Reverb Integration** - Real-time WebSocket support:
+  - Now playing updates broadcast instantly when songs change
+  - Automatic fallback to polling when WebSocket unavailable
+  - NowPlayingUpdated event for efficient real-time updates
+  - Reduced API calls and improved performance
+- ✅ **Lyrics System** - Full lyrics integration with monetization flow:
+  - Lyrics table with song_id, title, artist, source tracking
+  - Guest limit system (4 songs per session)
+  - Time-based unlock (10 minutes after viewing ad/requirement)
+  - Unlimited lyrics for registered users
+  - Genius API integration structure (configurable)
+  - LyricsController with RESTful API endpoints
+  - Popular lyrics and search functionality
+- ✅ **Radio Server Management** - Scalable Icecast/Shoutcast CRUD system:
+  - RadioServer model with full CRUD operations
+  - RadioServerService for Docker container orchestration
+  - Support for multiple Icecast and Shoutcast servers
+  - Remote Docker host configuration via .env
+  - Container lifecycle management (start, stop, restart, status)
+  - Connection testing and health monitoring
+  - Admin UI routes (RadioServersController)
+- ✅ **Floating Background Effects** - Reusable visual component:
+  - Extracted from coming-soon page for site-wide use
+  - Configurable intensity (subtle, medium, full)
+  - Customizable icons (music, headphones, radio, gamepad, etc.)
+  - Respect for prefers-reduced-motion accessibility
+  - Integrated into main layout with subtle gamer aesthetic
+- ✅ **Enhanced AzuraCastService** - Smart caching and broadcasting:
+  - Integrated with CacheService for consistent cache management
+  - Automatic song change detection
+  - WebSocket broadcasting on song changes
+  - Reduced redundant API calls
+- ✅ **Configuration Updates**:
+  - Added REVERB_* environment variables for WebSocket config
+  - Added GENIUS_API_TOKEN for lyrics integration
+  - Added DOCKER_DEFAULT_HOST for container management
+  - Updated services.php with genius and docker config
+
+### API Endpoints Added
+- `/api/lyrics/{songId}` - Get lyrics for a song (with guest limits)
+- `/api/lyrics/unlock` - Unlock lyrics for guest after time requirement
+- `/api/lyrics/status` - Get current lyrics viewing status
+- `/api/lyrics/search` - Search lyrics by title/artist/content
+- `/api/lyrics/popular` - Get popular lyrics
+
+### Admin Routes Added
+- `/admin/radio-servers` - Manage radio servers (index, create, edit, delete)
+- `/admin/radio-servers/{id}/test` - Test server connection
+- `/admin/radio-servers/{id}/start` - Start Docker container
+- `/admin/radio-servers/{id}/stop` - Stop Docker container
+- `/admin/radio-servers/{id}/restart` - Restart Docker container
+- `/admin/radio-servers/{id}/status` - Get server status
 
 ### Homepage Improvements & Feature Additions (December 7, 2025)
 - ✅ **Redesigned Now Playing Widget** - Optimized album art size (180x180px) for better balance and visual appeal
