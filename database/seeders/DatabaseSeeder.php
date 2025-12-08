@@ -26,6 +26,14 @@ class DatabaseSeeder extends Seeder
 
         // Create default settings
         $this->createDefaultSettings();
+
+        // Run all additional seeders
+        $this->call([
+            AchievementSeeder::class,
+            EventSeeder::class,
+            PollSeeder::class,
+            RssFeedSeeder::class,
+        ]);
     }
 
     /**

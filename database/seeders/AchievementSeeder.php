@@ -193,12 +193,14 @@ class AchievementSeeder extends Seeder
         ];
 
         foreach ($achievements as $achievement) {
-            Achievement::updateOrCreate(
+            Achievement::firstOrCreate(
                 ['slug' => $achievement['slug']],
                 $achievement
             );
         }
 
-        $this->command->info('Achievements seeded successfully! Added '.count($achievements).' achievements.');
+        if ($this->command) {
+            $this->command->info('Achievements seeded successfully! Added '.count($achievements).' achievements.');
+        }
     }
 }

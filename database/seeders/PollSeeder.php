@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Poll;
 use App\Models\PollOption;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class PollSeeder extends Seeder
 {
@@ -132,14 +133,19 @@ class PollSeeder extends Seeder
             $options = $pollData['options'];
             unset($pollData['options']);
 
-            $poll = Poll::updateOrCreate(
-                ['question' => $pollData['question']],
+            // Generate slug if not present
+            if (!isset($pollData['slug'])) {
+                $pollData['slug'] = Str::slug($pollData['question']);
+            }
+
+            $poll = Poll::firstOrCreate(
+                ['slug' => $pollData['slug']],
                 $pollData
             );
 
             // Add options for this poll
             foreach ($options as $index => $optionText) {
-                PollOption::updateOrCreate(
+                PollOption::firstOrCreate(
                     [
                         'poll_id' => $poll->id,
                         'option_text' => $optionText,
@@ -151,6 +157,8 @@ class PollSeeder extends Seeder
             }
         }
 
-        $this->command->info('Polls seeded successfully! Added '.count($polls).' gaming polls (including 2 odd ones for fun).');
+        if ($this->command) {
+            $this->command->info('Polls seeded successfully! Added '.count($polls).' gaming polls (including 2 odd ones for fun).');
+        }
     }
 }
