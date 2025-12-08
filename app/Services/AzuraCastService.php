@@ -388,15 +388,15 @@ class AzuraCastService
     {
         $cacheKey = 'azuracast.library.search.'.md5($query).".{$limit}";
 
-        $data = Cache::remember($cacheKey, $this->cacheTtl * 2, function () use ($query, $limit) {
-            return $this->makeRequest("/api/station/{$this->stationId}/files", [
-                'searchPhrase' => $query,
-                'per_page' => $limit,
-            ]);
-        });
+        return Cache::remember($cacheKey, $this->cacheTtl * 2, function () use ($query, $limit) {
+            try {
+                $data = $this->makeRequest("/api/station/{$this->stationId}/files", [
+                    'searchPhrase' => $query,
+                    'per_page' => $limit,
+                ]);
 
-        // Handle paginated response format (with 'items' key) or plain array
-        $items = $this->extractItems($data);
+                // Handle paginated response format (with 'items' key) or plain array
+                $items = $this->extractItems($data);
 
                 return collect($items)
                     ->filter(fn ($item) => is_array($item))
