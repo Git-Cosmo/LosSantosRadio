@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Event;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class EventSeeder extends Seeder
 {
@@ -205,12 +206,19 @@ class EventSeeder extends Seeder
         ];
 
         foreach ($events as $event) {
-            Event::updateOrCreate(
-                ['title' => $event['title']],
+            // Generate slug if not present
+            if (!isset($event['slug'])) {
+                $event['slug'] = Str::slug($event['title']);
+            }
+            
+            Event::firstOrCreate(
+                ['slug' => $event['slug']],
                 $event
             );
         }
 
-        $this->command->info('Gaming events seeded successfully! Added '.count($events).' events for 2026.');
+        if ($this->command) {
+            $this->command->info('Gaming events seeded successfully! Added '.count($events).' events for 2026.');
+        }
     }
 }

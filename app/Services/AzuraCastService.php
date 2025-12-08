@@ -41,7 +41,7 @@ class AzuraCastService
             ->timeout(10)
             ->retry(3, 100, function ($exception) {
                 return $exception instanceof \Illuminate\Http\Client\ConnectionException;
-            });
+            }, throw: false);
     }
 
     /**
