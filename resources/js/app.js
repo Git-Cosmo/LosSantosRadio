@@ -5,6 +5,7 @@ import './modules/live-clock';
 import './modules/search-modal';
 import './modules/radio-player';
 import './modules/ui-helpers';
+import { initializeNowPlaying, cleanup as cleanupWebSocket } from './modules/websocket-player';
 
 // Import module functions for direct use
 import { liveClock } from './modules/live-clock';
@@ -39,16 +40,30 @@ window.toggleMobileMenu = toggleMobileMenu;
 window.createScrollToTop = createScrollToTop;
 window.addEntranceAnimations = addEntranceAnimations;
 window.showToast = showToast;
+window.initializeNowPlaying = initializeNowPlaying;
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-    // Start now playing auto-refresh if on a page with radio functionality
+    // Initialize WebSocket for real-time now playing updates
+    // Station ID is typically 1, but can be configured
+    const stationId = document.querySelector('[data-station-id]')?.dataset.stationId || 1;
+    
+    // Start WebSocket (with polling fallback) if on a page with radio functionality
     if (document.getElementById('now-playing') || document.getElementById('song-rating')) {
-        startNowPlayingRefresh();
+        initializeNowPlaying(stationId);
 
-        // Listen for now playing updates
+        // Listen for now playing updates (from both WebSocket and polling)
         document.addEventListener('nowPlayingUpdate', (e) => {
             handleNowPlayingUpdate(e.detail);
         });
+        
+        window.addEventListener('nowPlayingUpdated', (e) => {
+            handleNowPlayingUpdate(e.detail);
+        });
     }
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    cleanupWebSocket();
 });
