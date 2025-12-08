@@ -197,4 +197,33 @@ return [
         'client_secret' => env('IGDB_CLIENT_SECRET'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Genius API Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Genius API for lyrics retrieval. Get your API token from:
+    | https://genius.com/api-clients
+    |
+    */
+
+    'genius' => [
+        'api_token' => env('GENIUS_API_TOKEN'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Docker Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for Docker container orchestration used in radio server
+    | management. Set to 'local' for local Docker daemon, or specify a
+    | remote Docker host URL.
+    |
+    */
+
+    'docker' => [
+        'default_host' => env('DOCKER_DEFAULT_HOST', 'local'),
+    ],
+
 ];
