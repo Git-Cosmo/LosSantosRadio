@@ -1,64 +1,18 @@
 services:
-
-  app:
+  lsr-app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: lsr-app
     container_name: lsr-app
     restart: unless-stopped
-    environment:
-      # MySQL / Database settings
-      DB_CONNECTION: mysql
-      DB_HOST: host.docker.internal  # points to host machine
-      DB_PORT: 3306
-      DB_DATABASE: lsr-app
-      DB_USERNAME: root
-      DB_PASSWORD: Wg5@bHNpTmRF1L84@14S
-
-      # Optional: Laravel environment
-      APP_ENV: local
-      APP_DEBUG: "true"
-      COMINGSOON: "true"
-    volumes:
-      - .:/var/www
-    networks:
-      - lsr
-
-  worker:
-    image: lsr-app
-    container_name: lsr-worker
-    restart: unless-stopped
-    depends_on:
-      - app
-    command: php artisan queue:work --verbose --tries=1 --timeout=90
-    environment:
-      DB_CONNECTION: mysql
-      DB_HOST: host.docker.internal
-      DB_PORT: 3306
-      DB_DATABASE: lsr-app
-      DB_USERNAME: root
-      DB_PASSWORD: Wg5@bHNpTmRF1L84@14S
-    volumes:
-      - .:/var/www
-    networks:
-      - lsr
-
-
-  nginx:
-    image: nginx:alpine
-    container_name: lsr-nginx
-    restart: unless-stopped
-    volumes:
-      - .:/var/www
-      - ./scripts/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - app
     ports:
-      - "8080:80"
+      - "8080:80"          # Expose HTTP internally; NPM will proxy here
+    volumes:
+      - .:/var/www
+      - ./scripts:/var/www/scripts
     networks:
-      - lsr
+      - main_network       # join existing network
 
 networks:
-  lsr:
-    driver: bridge
+  main_network:
+    external: true        # tells Docker to use an existing network
