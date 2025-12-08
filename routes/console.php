@@ -26,4 +26,3 @@ Schedule::job(new SyncFreeGamesJob)->everySixHours()->withoutOverlapping();
 
 // Update IGDB game metadata once daily
 Schedule::job(new UpdateIGDBJob)->daily()->withoutOverlapping();
-

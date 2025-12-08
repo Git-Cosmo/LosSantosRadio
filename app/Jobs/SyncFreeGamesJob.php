@@ -47,4 +47,3 @@ class SyncFreeGamesJob implements ShouldQueue
         }
     }
 }
-

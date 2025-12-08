@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('views_count')->default(0);
             $table->timestamp('last_viewed_at')->nullable();
             $table->timestamps();
-            
+
             $table->index('song_id');
             $table->index(['title', 'artist']);
         });

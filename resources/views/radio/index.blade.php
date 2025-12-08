@@ -442,27 +442,22 @@
                 <div class="card-header">
                     <h2 class="card-title">
                         <i class="fas fa-calendar-alt" style="color: var(--color-accent);"></i>
-                        Today's Schedule
+                        Schedule
                     </h2>
                 </div>
                 <div class="card-body">
                     <div class="schedule-list" id="schedule-list">
-                        <div class="schedule-item active">
-                            <div class="schedule-time">
-                                <span class="schedule-hour">Now</span>
-                            </div>
-                            <div class="schedule-info">
-                                <h4 class="schedule-title">{{ $nowPlaying?->isLive ? 'Live Show' : 'AutoDJ' }}</h4>
-                                <p class="schedule-desc">Currently broadcasting</p>
-                            </div>
-                            <span class="badge badge-live">ON AIR</span>
+                        <div class="schedule-loading" id="schedule-loading" style="text-align: center; padding: 2rem; color: var(--color-text-muted);">
+                            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
+                            Loading schedule...
                         </div>
-                        <div class="schedule-fallback" id="schedule-fallback">
+                        <div class="schedule-fallback" id="schedule-fallback" style="display: none;">
                             <p style="color: var(--color-text-muted); text-align: center; padding: 1rem;">
                                 <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
                                 Schedule data unavailable. AutoDJ is playing your favorite tracks 24/7!
                             </p>
                         </div>
+                        <div id="schedule-content"></div>
                     </div>
                 </div>
             </div>
@@ -1003,6 +998,144 @@
                 });
         }
 
+        // Load schedule from API
+        function loadSchedule() {
+            const stationId = 1; // Default station ID
+            fetch(`/api/station/${stationId}/playlists`)
+                .then(response => response.json())
+                .then(data => {
+                    const scheduleContent = document.getElementById('schedule-content');
+                    const scheduleLoading = document.getElementById('schedule-loading');
+                    const scheduleFallback = document.getElementById('schedule-fallback');
+                    
+                    if (scheduleLoading) scheduleLoading.style.display = 'none';
+                    
+                    if (data.success && data.data && data.data.length > 0) {
+                        // Filter playlists that have schedules and are enabled
+                        const scheduledPlaylists = data.data.filter(p => 
+                            p.is_enabled && 
+                            p.formatted_schedule && 
+                            p.formatted_schedule.length > 0
+                        );
+                        
+                        if (scheduledPlaylists.length > 0) {
+                            if (scheduleFallback) scheduleFallback.style.display = 'none';
+                            
+                            // Group schedules by day
+                            const schedulesByDay = {};
+                            const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                            
+                            scheduledPlaylists.forEach(playlist => {
+                                playlist.formatted_schedule.forEach(schedule => {
+                                    if (!schedulesByDay[schedule.day]) {
+                                        schedulesByDay[schedule.day] = [];
+                                    }
+                                    schedulesByDay[schedule.day].push({
+                                        ...schedule,
+                                        playlistName: playlist.name,
+                                        isActive: playlist.is_currently_active
+                                    });
+                                });
+                            });
+                            
+                            // Get current day
+                            const currentDay = dayOrder[new Date().getDay()];
+                            
+                            // Clear schedule content
+                            scheduleContent.innerHTML = '';
+                            
+                            // Render schedule using DOM manipulation to prevent XSS
+                            dayOrder.forEach(day => {
+                                if (schedulesByDay[day] && schedulesByDay[day].length > 0) {
+                                    const isToday = day === currentDay;
+                                    
+                                    // Create day section
+                                    const daySection = document.createElement('div');
+                                    daySection.className = 'schedule-day-section';
+                                    
+                                    // Create day header
+                                    const dayHeader = document.createElement('h3');
+                                    dayHeader.className = 'schedule-day-header';
+                                    
+                                    // Add icon
+                                    const icon = document.createElement('i');
+                                    icon.className = isToday ? 'fas fa-calendar-day schedule-day-icon-today' : 'far fa-calendar schedule-day-icon';
+                                    dayHeader.appendChild(icon);
+                                    
+                                    // Add day name
+                                    const dayText = document.createTextNode(' ' + day);
+                                    dayHeader.appendChild(dayText);
+                                    
+                                    // Add today badge if applicable
+                                    if (isToday) {
+                                        const todayBadge = document.createElement('span');
+                                        todayBadge.className = 'schedule-today-badge';
+                                        todayBadge.textContent = 'Today';
+                                        dayHeader.appendChild(todayBadge);
+                                    }
+                                    
+                                    daySection.appendChild(dayHeader);
+                                    
+                                    // Create schedule items container
+                                    const scheduleItems = document.createElement('div');
+                                    scheduleItems.className = 'schedule-items-container';
+                                    
+                                    schedulesByDay[day].forEach(schedule => {
+                                        const isActive = schedule.isActive && isToday;
+                                        
+                                        // Create schedule item
+                                        const scheduleItem = document.createElement('div');
+                                        scheduleItem.className = 'schedule-item' + (isActive ? ' active' : '');
+                                        
+                                        // Create time section
+                                        const timeDiv = document.createElement('div');
+                                        timeDiv.className = 'schedule-time';
+                                        const timeSpan = document.createElement('span');
+                                        timeSpan.textContent = schedule.start_time + ' - ' + schedule.end_time;
+                                        timeDiv.appendChild(timeSpan);
+                                        scheduleItem.appendChild(timeDiv);
+                                        
+                                        // Create info section
+                                        const infoDiv = document.createElement('div');
+                                        infoDiv.className = 'schedule-info';
+                                        const infoTitle = document.createElement('h4');
+                                        infoTitle.textContent = schedule.playlistName; // Safe - uses textContent
+                                        infoDiv.appendChild(infoTitle);
+                                        scheduleItem.appendChild(infoDiv);
+                                        
+                                        // Add ON AIR badge if active
+                                        if (isActive) {
+                                            const badge = document.createElement('span');
+                                            badge.className = 'badge badge-live schedule-live-badge';
+                                            badge.textContent = 'ON AIR';
+                                            scheduleItem.appendChild(badge);
+                                        }
+                                        
+                                        scheduleItems.appendChild(scheduleItem);
+                                    });
+                                    
+                                    daySection.appendChild(scheduleItems);
+                                    scheduleContent.appendChild(daySection);
+                                }
+                            });
+                        } else {
+                            // No scheduled playlists
+                            if (scheduleFallback) scheduleFallback.style.display = 'block';
+                        }
+                    } else {
+                        // No playlists or error
+                        if (scheduleFallback) scheduleFallback.style.display = 'block';
+                    }
+                })
+                .catch(err => {
+                    console.error('Failed to load schedule:', err);
+                    const scheduleLoading = document.getElementById('schedule-loading');
+                    const scheduleFallback = document.getElementById('schedule-fallback');
+                    if (scheduleLoading) scheduleLoading.style.display = 'none';
+                    if (scheduleFallback) scheduleFallback.style.display = 'block';
+                });
+        }
+
         // Update progress bar and song info
         document.addEventListener('nowPlayingUpdate', function(e) {
             const data = e.detail;
@@ -1121,6 +1254,7 @@
 
             loadSongRating();
             loadTrendingSongs();
+            loadSchedule();
             createScrollToTop();
             addEntranceAnimations();
             initHighPerformanceUpdates();
@@ -1498,6 +1632,109 @@
             .now-playing-art {
                 width: 180px !important;
                 height: 180px !important;
+            }
+        }
+
+        /* Schedule Styles */
+        .schedule-day-section {
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .schedule-day-header {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .schedule-day-icon {
+            color: var(--color-text-muted);
+        }
+
+        .schedule-day-icon-today {
+            color: var(--color-accent);
+        }
+
+        .schedule-today-badge {
+            background: var(--color-accent);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            margin-left: 0.5rem;
+        }
+
+        .schedule-items-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-item.active {
+            background: var(--color-bg-tertiary);
+            border-left: 4px solid var(--color-accent);
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .schedule-item:hover {
+            background: var(--color-bg-tertiary) !important;
+            transform: translateX(4px);
+        }
+
+        .schedule-time {
+            min-width: 120px;
+        }
+
+        .schedule-time span {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            font-size: 0.875rem;
+        }
+
+        .schedule-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .schedule-info h4 {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 0.125rem;
+            font-size: 0.9375rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .schedule-live-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            flex-shrink: 0;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>

@@ -334,7 +334,7 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
 
     // Settings
     Route::resource('settings', SettingController::class)->except(['show']);
-    
+
     // Theme Management
     Route::get('/theme', [SettingController::class, 'theme'])->name('theme');
     Route::put('/theme', [SettingController::class, 'updateTheme'])->name('theme.update');

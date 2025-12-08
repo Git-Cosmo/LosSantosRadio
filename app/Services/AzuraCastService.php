@@ -68,20 +68,20 @@ class AzuraCastService
             function () {
                 $data = $this->makeRequest("/api/nowplaying/{$this->stationId}");
                 $nowPlaying = NowPlayingDTO::fromApi($data);
-                
+
                 // Check if song has changed and broadcast update
                 $previousData = $this->cacheService->get(
                     CacheService::NAMESPACE_RADIO,
                     "nowplaying.{$this->stationId}.previous"
                 );
-                
+
                 $currentSongId = $nowPlaying->currentSong->id ?? null;
                 $previousSongId = $previousData['current_song_id'] ?? null;
-                
+
                 if ($currentSongId !== $previousSongId) {
                     // Song changed, broadcast update
                     event(new NowPlayingUpdated($nowPlaying, $this->stationId));
-                    
+
                     // Store current song ID for next comparison
                     $this->cacheService->put(
                         CacheService::NAMESPACE_RADIO,
@@ -90,7 +90,7 @@ class AzuraCastService
                         CacheService::TTL_REALTIME * 2
                     );
                 }
-                
+
                 return $nowPlaying;
             }
         );
@@ -412,6 +412,7 @@ class AzuraCastService
 
                 try {
                     $result = $this->getRequestableSongs($limit, 1, $query);
+
                     return $result['songs'] ?? collect();
                 } catch (\Exception $fallbackException) {
                     Log::warning('Failed to search library from both endpoints', [

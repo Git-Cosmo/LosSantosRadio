@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 /**
  * Integration tests for AzuraCast API.
- * 
+ *
  * These tests will run against a real AzuraCast instance when credentials are provided.
  * Set the following environment variables to enable integration testing:
  * - AZURACAST_BASE_URL (e.g., https://radio.lossantosradio.com)
@@ -38,7 +38,7 @@ class AzuraCastIntegrationTest extends TestCase
         // Verify the structure of now playing data
         $this->assertNotNull($nowPlaying);
         $this->assertIsArray($nowPlaying);
-        
+
         // Check for expected keys
         $this->assertArrayHasKey('station', $nowPlaying);
         $this->assertArrayHasKey('now_playing', $nowPlaying);
@@ -123,7 +123,7 @@ class AzuraCastIntegrationTest extends TestCase
 
         $this->assertNotNull($playlists);
         $this->assertInstanceOf(\Illuminate\Support\Collection::class, $playlists);
-        
+
         // If there are playlists, verify structure
         if ($playlists->count() > 0) {
             $firstPlaylist = $playlists->first();
@@ -136,7 +136,7 @@ class AzuraCastIntegrationTest extends TestCase
     {
         // Create a service with invalid credentials to test error handling
         config(['services.azuracast.api_key' => 'invalid-key']);
-        
+
         $service = app(AzuraCastService::class);
 
         try {
@@ -156,14 +156,14 @@ class AzuraCastIntegrationTest extends TestCase
 
         // First call - should hit the API
         $firstCall = $service->getNowPlaying();
-        
+
         // Second call - should use cache
         $secondCall = $service->getNowPlaying();
 
         // Both should return data
         $this->assertNotNull($firstCall);
         $this->assertNotNull($secondCall);
-        
+
         // Data structure should be consistent
         $this->assertEquals(
             array_keys($firstCall),

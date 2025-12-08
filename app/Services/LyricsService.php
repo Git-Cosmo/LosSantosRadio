@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Lyrics Service
- * 
+ *
  * Handles lyrics retrieval and matching for songs from AzuraCast.
  * Supports multiple lyrics providers with fallback.
  */
@@ -31,6 +31,7 @@ class LyricsService
 
         if ($lyric && $lyric->hasLyrics()) {
             $lyric->incrementViews();
+
             return $lyric;
         }
 
@@ -39,11 +40,12 @@ class LyricsService
 
         if ($fetchedLyrics) {
             $lyric = $this->storeLyrics($songId, $title, $artist, $fetchedLyrics);
+
             return $lyric;
         }
 
         // Store empty record to avoid repeated API calls
-        if (!$lyric) {
+        if (! $lyric) {
             Lyric::create([
                 'song_id' => $songId,
                 'title' => $title,
@@ -84,8 +86,9 @@ class LyricsService
     {
         $apiToken = config('services.genius.api_token');
 
-        if (!$apiToken) {
+        if (! $apiToken) {
             Log::debug('Genius API token not configured');
+
             return null;
         }
 
@@ -97,7 +100,7 @@ class LyricsService
                 'q' => "{$artist} {$title}",
             ]);
 
-            if (!$searchResponse->successful()) {
+            if (! $searchResponse->successful()) {
                 return null;
             }
 
@@ -110,7 +113,7 @@ class LyricsService
 
             $song = $hits[0]['result'] ?? null;
 
-            if (!$song) {
+            if (! $song) {
                 return null;
             }
 

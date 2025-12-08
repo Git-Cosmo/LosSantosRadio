@@ -36,7 +36,7 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 
 ### Radio Experience
 - **Enhanced Audio Player** - Feature-rich embedded player with:
-  - **Autoplay functionality** - Automatically resumes playback based on user preference
+  - **Autoplay functionality** - Automatically resumes playback based on user preference stored in localStorage (set via `playerAutoplay` key)
   - Album artwork with animated visualizer bars that respond to playback
   - Large play/pause button with gradient styling and pulse animation
   - **Volume controls** - Slider with mute/unmute toggle and visual feedback
@@ -60,6 +60,14 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
   - Floating background elements with smooth animations
   - DJ/Host avatar with 360° rotation on hover
   - Backdrop blur effects for depth and modern aesthetics
+- **Schedule Display** - Dynamic playlist schedule showing:
+  - Weekly schedule organized by day with today highlighted
+  - Time slots with formatted start/end times (12-hour format)
+  - Active show indicators with "ON AIR" badges
+  - Playlist names with smooth hover effects
+  - Fetched dynamically from AzuraCast API endpoint (`/api/station/{id}/playlists`)
+  - Graceful fallback when schedule data unavailable
+  - Mobile-responsive layout with collapsible days
 - **Popup Mini Player** - Floating player for continuous listening:
   - Persistent across all pages for uninterrupted radio experience
   - Minimizable to a floating icon for unobtrusive browsing
