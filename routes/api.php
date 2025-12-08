@@ -55,6 +55,15 @@ Route::prefix('free-games')->name('api.free-games.')->group(function () {
     Route::get('/', [GamesApiController::class, 'freeGames'])->name('index');
 });
 
+// Lyrics API endpoints
+Route::middleware(['web'])->prefix('lyrics')->name('api.lyrics.')->group(function () {
+    Route::get('/{songId}', [\App\Http\Controllers\LyricsController::class, 'show'])->name('show');
+    Route::post('/unlock', [\App\Http\Controllers\LyricsController::class, 'unlock'])->name('unlock');
+    Route::get('/status', [\App\Http\Controllers\LyricsController::class, 'status'])->name('status');
+    Route::get('/search', [\App\Http\Controllers\LyricsController::class, 'search'])->name('search');
+    Route::get('/popular', [\App\Http\Controllers\LyricsController::class, 'popular'])->name('popular');
+});
+
 // Media API (for admin media management)
 // Uses web middleware for session-based authentication with admin middleware check
 Route::middleware(['web', 'auth'])->prefix('media')->name('api.media.')->group(function () {

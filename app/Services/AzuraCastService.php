@@ -7,6 +7,7 @@ use App\DTOs\PlaylistDTO;
 use App\DTOs\SongDTO;
 use App\DTOs\SongHistoryDTO;
 use App\DTOs\StationDTO;
+use App\Events\NowPlayingUpdated;
 use App\Exceptions\AzuraCastException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
@@ -26,12 +27,15 @@ class AzuraCastService
 
     protected PendingRequest $http;
 
-    public function __construct()
+    protected CacheService $cacheService;
+
+    public function __construct(CacheService $cacheService)
     {
         $this->baseUrl = rtrim(config('services.azuracast.base_url', ''), '/');
         $this->apiKey = config('services.azuracast.api_key', '');
         $this->stationId = (int) config('services.azuracast.station_id', 1);
         $this->cacheTtl = (int) config('services.azuracast.cache_ttl', 30);
+        $this->cacheService = $cacheService;
 
         $this->http = Http::baseUrl($this->baseUrl)
             ->withHeaders([
@@ -57,13 +61,39 @@ class AzuraCastService
      */
     public function getNowPlaying(): NowPlayingDTO
     {
-        $cacheKey = "azuracast.nowplaying.{$this->stationId}";
-
-        $data = Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->makeRequest("/api/nowplaying/{$this->stationId}");
-        });
-
-        return NowPlayingDTO::fromApi($data);
+        return $this->cacheService->remember(
+            CacheService::NAMESPACE_RADIO,
+            "nowplaying.{$this->stationId}",
+            $this->cacheTtl,
+            function () {
+                $data = $this->makeRequest("/api/nowplaying/{$this->stationId}");
+                $nowPlaying = NowPlayingDTO::fromApi($data);
+                
+                // Check if song has changed and broadcast update
+                $previousData = $this->cacheService->get(
+                    CacheService::NAMESPACE_RADIO,
+                    "nowplaying.{$this->stationId}.previous"
+                );
+                
+                $currentSongId = $nowPlaying->currentSong->id ?? null;
+                $previousSongId = $previousData['current_song_id'] ?? null;
+                
+                if ($currentSongId !== $previousSongId) {
+                    // Song changed, broadcast update
+                    event(new NowPlayingUpdated($nowPlaying, $this->stationId));
+                    
+                    // Store current song ID for next comparison
+                    $this->cacheService->put(
+                        CacheService::NAMESPACE_RADIO,
+                        "nowplaying.{$this->stationId}.previous",
+                        ['current_song_id' => $currentSongId],
+                        CacheService::TTL_REALTIME * 2
+                    );
+                }
+                
+                return $nowPlaying;
+            }
+        );
     }
 
     /**

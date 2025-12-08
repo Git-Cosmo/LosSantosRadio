@@ -313,6 +313,22 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::post('/clear-cache', [RadioServerController::class, 'clearCache'])->name('clear-cache');
     });
 
+    // Radio Servers Management (Icecast/Shoutcast CRUD)
+    Route::prefix('radio-servers')->name('radio-servers.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\RadioServersController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\RadioServersController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\RadioServersController::class, 'store'])->name('store');
+        Route::get('/{radioServer}', [\App\Http\Controllers\Admin\RadioServersController::class, 'show'])->name('show');
+        Route::get('/{radioServer}/edit', [\App\Http\Controllers\Admin\RadioServersController::class, 'edit'])->name('edit');
+        Route::put('/{radioServer}', [\App\Http\Controllers\Admin\RadioServersController::class, 'update'])->name('update');
+        Route::delete('/{radioServer}', [\App\Http\Controllers\Admin\RadioServersController::class, 'destroy'])->name('destroy');
+        Route::post('/{radioServer}/test', [\App\Http\Controllers\Admin\RadioServersController::class, 'test'])->name('test');
+        Route::post('/{radioServer}/start', [\App\Http\Controllers\Admin\RadioServersController::class, 'start'])->name('start');
+        Route::post('/{radioServer}/stop', [\App\Http\Controllers\Admin\RadioServersController::class, 'stop'])->name('stop');
+        Route::post('/{radioServer}/restart', [\App\Http\Controllers\Admin\RadioServersController::class, 'restart'])->name('restart');
+        Route::get('/{radioServer}/status', [\App\Http\Controllers\Admin\RadioServersController::class, 'status'])->name('status');
+    });
+
     // Settings
     Route::resource('settings', SettingController::class)->except(['show']);
 
