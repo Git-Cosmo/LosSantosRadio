@@ -8,6 +8,11 @@ import './modules/ui-helpers';
 import { initializeNowPlaying, cleanup as cleanupWebSocket } from './modules/websocket-player';
 import { initializeLyricsModal, showLyrics } from './modules/lyrics-modal';
 
+// Import quick win feature modules
+import { initializeKeyboardShortcuts } from './modules/keyboard-shortcuts';
+import { initializeFavorites, getFavorites, isFavorite, toggleFavorite } from './modules/favorites';
+import { initializeToastNotifications, isToastEnabled, toggleToastNotifications } from './modules/toast-notifications';
+
 // Import module functions for direct use
 import { liveClock } from './modules/live-clock';
 import { searchModal } from './modules/search-modal';
@@ -44,6 +49,13 @@ window.showToast = showToast;
 window.initializeNowPlaying = initializeNowPlaying;
 window.showLyrics = showLyrics;
 
+// Make quick win features available globally
+window.getFavorites = getFavorites;
+window.isFavorite = isFavorite;
+window.toggleFavorite = toggleFavorite;
+window.isToastEnabled = isToastEnabled;
+window.toggleToastNotifications = toggleToastNotifications;
+
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize WebSocket for real-time now playing updates
@@ -66,6 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize lyrics modal
     initializeLyricsModal();
+
+    // Initialize quick win features
+    initializeKeyboardShortcuts();
+    initializeFavorites();
+    initializeToastNotifications();
 });
 
 // Cleanup on page unload

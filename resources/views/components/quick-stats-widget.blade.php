@@ -1,0 +1,250 @@
+{{-- Quick Stats Widget Component --}}
+<div class="quick-stats-widget" x-data="quickStats()" x-init="init()">
+    <div class="stats-header">
+        <h3 class="stats-title">
+            <i class="fas fa-chart-line"></i>
+            Live Stats
+        </h3>
+        <button @click="refresh()" class="stats-refresh-btn" :disabled="isRefreshing">
+            <i class="fas fa-sync-alt" :class="{ 'fa-spin': isRefreshing }"></i>
+        </button>
+    </div>
+
+    <div class="stats-grid">
+        {{-- Current Listeners --}}
+        <div class="stat-item stat-primary">
+            <div class="stat-icon">
+                <i class="fas fa-headphones"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value" x-text="stats.currentListeners"></div>
+                <div class="stat-label">Listening Now</div>
+            </div>
+        </div>
+
+        {{-- Peak Listeners --}}
+        <div class="stat-item">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value" x-text="stats.peakListeners"></div>
+                <div class="stat-label">Peak Today</div>
+            </div>
+        </div>
+
+        {{-- Songs Played --}}
+        <div class="stat-item">
+            <div class="stat-icon">
+                <i class="fas fa-music"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value" x-text="stats.songsPlayed"></div>
+                <div class="stat-label">Songs Played</div>
+            </div>
+        </div>
+
+        {{-- Stream Status --}}
+        <div class="stat-item">
+            <div class="stat-icon">
+                <i class="fas fa-broadcast-tower"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value" x-text="stats.isLive ? 'LIVE' : 'AutoDJ'"></div>
+                <div class="stat-label">Stream Status</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .quick-stats-widget {
+        background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-tertiary));
+        border: 1px solid var(--color-border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .stats-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .stats-refresh-btn {
+        background: var(--color-bg-tertiary);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .stats-refresh-btn:hover:not(:disabled) {
+        background: var(--color-accent);
+        color: white;
+        transform: scale(1.05);
+    }
+
+    .stats-refresh-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+    }
+
+    .stat-item {
+        background: var(--color-bg-tertiary);
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.2s ease;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-item.stat-primary {
+        background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+        border-color: transparent;
+    }
+
+    .stat-item.stat-primary .stat-icon,
+    .stat-item.stat-primary .stat-value,
+    .stat-item.stat-primary .stat-label {
+        color: white;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--color-bg-secondary);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-accent);
+        font-size: 1.125rem;
+    }
+
+    .stat-item.stat-primary .stat-icon {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--color-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .quick-stats-widget {
+            padding: 1rem;
+        }
+
+        .stats-grid {
+            gap: 0.75rem;
+        }
+
+        .stat-item {
+            flex-direction: column;
+            text-align: center;
+            padding: 0.75rem;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+        }
+    }
+</style>
+
+<script>
+    function quickStats() {
+        return {
+            stats: {
+                currentListeners: 0,
+                peakListeners: 0,
+                songsPlayed: 0,
+                isLive: false
+            },
+            isRefreshing: false,
+
+            init() {
+                this.fetchStats();
+                // Update every 30 seconds
+                setInterval(() => this.fetchStats(), 30000);
+            },
+
+            async fetchStats() {
+                try {
+                    const response = await fetch('/api/radio/stats');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.stats = {
+                            currentListeners: data.data.currentListeners || 0,
+                            peakListeners: data.data.peakListeners || 0,
+                            songsPlayed: data.data.songsPlayed || 0,
+                            isLive: data.data.isLive || false
+                        };
+                    }
+                } catch (err) {
+                    console.error('Failed to fetch stats:', err);
+                }
+            },
+
+            async refresh() {
+                this.isRefreshing = true;
+                await this.fetchStats();
+                setTimeout(() => {
+                    this.isRefreshing = false;
+                }, 500);
+            }
+        };
+    }
+</script>

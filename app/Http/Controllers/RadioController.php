@@ -154,4 +154,12 @@ class RadioController extends Controller
             'data' => $status,
         ]);
     }
+
+    /**
+     * Display the favorites page.
+     */
+    public function favorites()
+    {
+        return view('favorites');
+    }
 }

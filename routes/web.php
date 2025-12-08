@@ -42,6 +42,9 @@ use Illuminate\Support\Facades\Route;
 // Main radio page
 Route::get('/', [RadioController::class, 'index'])->name('home');
 
+// Favorites page
+Route::get('/favorites', [RadioController::class, 'favorites'])->name('favorites');
+
 // SEO: Sitemap and Robots.txt
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
@@ -331,6 +334,10 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
 
     // Settings
     Route::resource('settings', SettingController::class)->except(['show']);
+    
+    // Theme Management
+    Route::get('/theme', [SettingController::class, 'theme'])->name('theme');
+    Route::put('/theme', [SettingController::class, 'updateTheme'])->name('theme.update');
 
     // Song Requests
     Route::get('/requests', [AdminSongRequestController::class, 'index'])->name('requests.index');
