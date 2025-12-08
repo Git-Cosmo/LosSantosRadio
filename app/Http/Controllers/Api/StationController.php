@@ -28,16 +28,18 @@ class StationController extends Controller
     {
         try {
             $playlists = $this->azuraCast->getPlaylists();
+            $data = $playlists->map(fn ($playlist) => $playlist->toArray())->values()->all();
 
             return response()->json([
                 'success' => true,
-                'data' => $playlists->map(fn ($playlist) => $playlist->toArray())->values()->all(),
+                'data' => $data,
+                'meta' => [
+                    'total' => $playlists->count(),
+                ],
             ]);
         } catch (AzuraCastException $e) {
             return response()->json([
-                'success' => false,
-                'error' => 'Unable to fetch playlists.',
-                'message' => $e->getMessage(),
+                'message' => 'Unable to fetch playlists.',
             ], 503);
         }
     }

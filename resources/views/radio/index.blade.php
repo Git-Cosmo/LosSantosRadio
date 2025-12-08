@@ -1041,50 +1041,83 @@
                             // Get current day
                             const currentDay = dayOrder[new Date().getDay()];
                             
-                            // Render schedule
-                            let html = '';
+                            // Clear schedule content
+                            scheduleContent.innerHTML = '';
+                            
+                            // Render schedule using DOM manipulation to prevent XSS
                             dayOrder.forEach(day => {
                                 if (schedulesByDay[day] && schedulesByDay[day].length > 0) {
                                     const isToday = day === currentDay;
-                                    html += `
-                                        <div class="schedule-day-section" style="margin-bottom: 1.5rem;">
-                                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                                                ${isToday ? '<i class="fas fa-calendar-day" style="color: var(--color-accent);"></i>' : '<i class="far fa-calendar" style="color: var(--color-text-muted);"></i>'}
-                                                ${day}
-                                                ${isToday ? '<span style="background: var(--color-accent); color: white; font-size: 0.75rem; padding: 0.125rem 0.5rem; border-radius: 12px; margin-left: 0.5rem;">Today</span>' : ''}
-                                            </h3>
-                                            <div class="schedule-items">
-                                    `;
+                                    
+                                    // Create day section
+                                    const daySection = document.createElement('div');
+                                    daySection.className = 'schedule-day-section';
+                                    
+                                    // Create day header
+                                    const dayHeader = document.createElement('h3');
+                                    dayHeader.className = 'schedule-day-header';
+                                    
+                                    // Add icon
+                                    const icon = document.createElement('i');
+                                    icon.className = isToday ? 'fas fa-calendar-day schedule-day-icon-today' : 'far fa-calendar schedule-day-icon';
+                                    dayHeader.appendChild(icon);
+                                    
+                                    // Add day name
+                                    const dayText = document.createTextNode(' ' + day);
+                                    dayHeader.appendChild(dayText);
+                                    
+                                    // Add today badge if applicable
+                                    if (isToday) {
+                                        const todayBadge = document.createElement('span');
+                                        todayBadge.className = 'schedule-today-badge';
+                                        todayBadge.textContent = 'Today';
+                                        dayHeader.appendChild(todayBadge);
+                                    }
+                                    
+                                    daySection.appendChild(dayHeader);
+                                    
+                                    // Create schedule items container
+                                    const scheduleItems = document.createElement('div');
+                                    scheduleItems.className = 'schedule-items-container';
                                     
                                     schedulesByDay[day].forEach(schedule => {
                                         const isActive = schedule.isActive && isToday;
-                                        html += `
-                                            <div class="schedule-item ${isActive ? 'active' : ''}" style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--color-bg-${isActive ? 'tertiary' : 'secondary'}); border-radius: 8px; margin-bottom: 0.5rem; ${isActive ? 'border-left: 4px solid var(--color-accent);' : ''}">
-                                                <div class="schedule-time" style="min-width: 120px;">
-                                                    <span style="font-weight: 600; color: var(--color-text-primary); font-size: 0.875rem;">
-                                                        ${schedule.start_time} - ${schedule.end_time}
-                                                    </span>
-                                                </div>
-                                                <div class="schedule-info" style="flex: 1;">
-                                                    <h4 style="font-weight: 600; color: var(--color-text-primary); margin-bottom: 0.125rem; font-size: 0.9375rem;">
-                                                        ${schedule.playlistName}
-                                                    </h4>
-                                                </div>
-                                                ${isActive ? '<span class="badge badge-live" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">ON AIR</span>' : ''}
-                                            </div>
-                                        `;
+                                        
+                                        // Create schedule item
+                                        const scheduleItem = document.createElement('div');
+                                        scheduleItem.className = 'schedule-item' + (isActive ? ' active' : '');
+                                        
+                                        // Create time section
+                                        const timeDiv = document.createElement('div');
+                                        timeDiv.className = 'schedule-time';
+                                        const timeSpan = document.createElement('span');
+                                        timeSpan.textContent = schedule.start_time + ' - ' + schedule.end_time;
+                                        timeDiv.appendChild(timeSpan);
+                                        scheduleItem.appendChild(timeDiv);
+                                        
+                                        // Create info section
+                                        const infoDiv = document.createElement('div');
+                                        infoDiv.className = 'schedule-info';
+                                        const infoTitle = document.createElement('h4');
+                                        infoTitle.textContent = schedule.playlistName; // Safe - uses textContent
+                                        infoDiv.appendChild(infoTitle);
+                                        scheduleItem.appendChild(infoDiv);
+                                        
+                                        // Add ON AIR badge if active
+                                        if (isActive) {
+                                            const badge = document.createElement('span');
+                                            badge.className = 'badge badge-live schedule-live-badge';
+                                            badge.textContent = 'ON AIR';
+                                            scheduleItem.appendChild(badge);
+                                        }
+                                        
+                                        scheduleItems.appendChild(scheduleItem);
                                     });
                                     
-                                    html += `
-                                            </div>
-                                        </div>
-                                    `;
+                                    daySection.appendChild(scheduleItems);
+                                    scheduleContent.appendChild(daySection);
                                 }
                             });
-                            
-                            if (scheduleContent) {
-                                scheduleContent.innerHTML = html;
-                            }
                         } else {
                             // No scheduled playlists
                             if (scheduleFallback) scheduleFallback.style.display = 'block';
@@ -1603,8 +1636,59 @@
         }
 
         /* Schedule Styles */
+        .schedule-day-section {
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .schedule-day-header {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .schedule-day-icon {
+            color: var(--color-text-muted);
+        }
+
+        .schedule-day-icon-today {
+            color: var(--color-accent);
+        }
+
+        .schedule-today-badge {
+            background: var(--color-accent);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            margin-left: 0.5rem;
+        }
+
+        .schedule-items-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
         .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
             transition: all 0.3s ease;
+        }
+
+        .schedule-item.active {
+            background: var(--color-bg-tertiary);
+            border-left: 4px solid var(--color-accent);
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+            animation: pulse-glow 2s ease-in-out infinite;
         }
 
         .schedule-item:hover {
@@ -1612,13 +1696,35 @@
             transform: translateX(4px);
         }
 
-        .schedule-item.active {
-            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
-            animation: pulse-glow 2s ease-in-out infinite;
+        .schedule-time {
+            min-width: 120px;
         }
 
-        .schedule-day-section {
-            animation: fadeInUp 0.4s ease-out;
+        .schedule-time span {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            font-size: 0.875rem;
+        }
+
+        .schedule-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .schedule-info h4 {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 0.125rem;
+            font-size: 0.9375rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .schedule-live-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            flex-shrink: 0;
         }
 
         @keyframes fadeInUp {
