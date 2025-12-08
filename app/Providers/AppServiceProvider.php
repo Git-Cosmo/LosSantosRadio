@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register services as singletons
         $this->app->singleton(AzuraCastService::class, function ($app) {
-            return new AzuraCastService;
+            return new AzuraCastService($app->make(\App\Services\CacheService::class));
         });
 
         $this->app->singleton(IcecastService::class, function ($app) {
