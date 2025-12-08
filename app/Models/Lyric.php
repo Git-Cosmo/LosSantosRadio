@@ -40,7 +40,7 @@ class Lyric extends Model
      */
     public function hasLyrics(): bool
     {
-        return !empty($this->lyrics);
+        return ! empty($this->lyrics);
     }
 
     /**

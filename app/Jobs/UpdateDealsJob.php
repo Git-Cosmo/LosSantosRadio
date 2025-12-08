@@ -57,4 +57,3 @@ class UpdateDealsJob implements ShouldQueue
         }
     }
 }
-

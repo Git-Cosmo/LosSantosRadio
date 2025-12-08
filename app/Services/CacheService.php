@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Redis as RedisFacade;
 
 /**
  * Universal Cache Service
- * 
+ *
  * Centralized cache management with smart DRY patterns and namespace organization.
  * All cache operations should go through this service for consistency and reliability.
  */
@@ -17,19 +17,28 @@ class CacheService
      * Cache namespace prefixes for organized key management
      */
     const NAMESPACE_RADIO = 'radio';
+
     const NAMESPACE_GAMES = 'games';
+
     const NAMESPACE_LYRICS = 'lyrics';
+
     const NAMESPACE_USER = 'user';
+
     const NAMESPACE_CONTENT = 'content';
+
     const NAMESPACE_SESSION = 'session';
 
     /**
      * Default TTL values in seconds
      */
     const TTL_REALTIME = 30;        // 30 seconds for real-time data (now playing, etc.)
+
     const TTL_SHORT = 300;          // 5 minutes for frequently changing data
+
     const TTL_MEDIUM = 3600;        // 1 hour for moderately stable data
+
     const TTL_LONG = 43200;         // 12 hours for stable data
+
     const TTL_VERY_LONG = 86400;    // 24 hours for very stable data
 
     /**
@@ -69,6 +78,7 @@ class CacheService
     public function get(string $namespace, string $key, mixed $default = null): mixed
     {
         $cacheKey = $this->key($namespace, $key);
+
         return Cache::get($cacheKey, $default);
     }
 
@@ -78,6 +88,7 @@ class CacheService
     public function remember(string $namespace, string $key, int $ttl, callable $callback): mixed
     {
         $cacheKey = $this->key($namespace, $key);
+
         return Cache::remember($cacheKey, $ttl, $callback);
     }
 
@@ -87,6 +98,7 @@ class CacheService
     public function rememberForever(string $namespace, string $key, callable $callback): mixed
     {
         $cacheKey = $this->key($namespace, $key);
+
         return Cache::rememberForever($cacheKey, $callback);
     }
 
@@ -96,6 +108,7 @@ class CacheService
     public function has(string $namespace, string $key): bool
     {
         $cacheKey = $this->key($namespace, $key);
+
         return Cache::has($cacheKey);
     }
 
@@ -105,6 +118,7 @@ class CacheService
     public function forget(string $namespace, string $key): bool
     {
         $cacheKey = $this->key($namespace, $key);
+
         return Cache::forget($cacheKey);
     }
 
@@ -117,6 +131,7 @@ class CacheService
         if ($this->isRedisAvailable()) {
             try {
                 Cache::tags([$namespace])->flush();
+
                 return true;
             } catch (\Exception $e) {
                 // Fallback to manual deletion
@@ -201,9 +216,10 @@ class CacheService
     {
         $key = "guest_lyrics_views.{$sessionId}";
         $views = $this->get(self::NAMESPACE_SESSION, $key, []);
-        
-        if (!in_array($songId, $views)) {
+
+        if (! in_array($songId, $views)) {
             $views[] = $songId;
+
             return $this->put(self::NAMESPACE_SESSION, $key, $views, self::TTL_VERY_LONG);
         }
 
@@ -217,6 +233,7 @@ class CacheService
     {
         $key = "guest_lyrics_views.{$sessionId}";
         $views = $this->get(self::NAMESPACE_SESSION, $key, []);
+
         return count($views);
     }
 
@@ -226,6 +243,7 @@ class CacheService
     public function trackGuestUnlockTime(string $sessionId, int $timestamp): bool
     {
         $key = "guest_unlock_time.{$sessionId}";
+
         return $this->put(self::NAMESPACE_SESSION, $key, $timestamp, self::TTL_VERY_LONG);
     }
 
@@ -241,8 +259,8 @@ class CacheService
     {
         $key = "guest_unlock_time.{$sessionId}";
         $unlockTime = $this->get(self::NAMESPACE_SESSION, $key);
-        
-        if (!$unlockTime) {
+
+        if (! $unlockTime) {
             return false;
         }
 

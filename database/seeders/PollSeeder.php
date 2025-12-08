@@ -134,7 +134,7 @@ class PollSeeder extends Seeder
             unset($pollData['options']);
 
             // Generate slug if not present
-            if (!isset($pollData['slug'])) {
+            if (! isset($pollData['slug'])) {
                 $pollData['slug'] = Str::slug($pollData['question']);
             }
 

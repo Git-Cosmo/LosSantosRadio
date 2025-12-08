@@ -207,10 +207,10 @@ class EventSeeder extends Seeder
 
         foreach ($events as $event) {
             // Generate slug if not present
-            if (!isset($event['slug'])) {
+            if (! isset($event['slug'])) {
                 $event['slug'] = Str::slug($event['title']);
             }
-            
+
             Event::firstOrCreate(
                 ['slug' => $event['slug']],
                 $event

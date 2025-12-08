@@ -21,7 +21,7 @@ class UpdateIGDBJob implements ShouldQueue
      * The number of seconds to wait before retrying the job.
      */
     public int $backoff = 120;
-    
+
     /**
      * Rate limit delay in microseconds between IGDB API requests.
      * 250ms (250000 microseconds) is used to avoid hitting IGDB rate limits.
@@ -145,4 +145,3 @@ class UpdateIGDBJob implements ShouldQueue
         ]);
     }
 }
-

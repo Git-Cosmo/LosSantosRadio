@@ -14,7 +14,7 @@ class ComingSoonTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Ensure coming soon mode is off by default for other tests
         Config::set('app.coming_soon', false);
     }
@@ -46,14 +46,14 @@ class ComingSoonTest extends TestCase
 
         // Create admin user with permission
         $admin = User::factory()->create();
-        
+
         // Create admin role if it doesn't exist
         try {
             $role = \Spatie\Permission\Models\Role::findOrCreate('admin', 'web');
             $admin->assignRole($role);
         } catch (\Exception $e) {
             // Skip test if roles can't be created
-            $this->markTestSkipped('Could not create admin role: ' . $e->getMessage());
+            $this->markTestSkipped('Could not create admin role: '.$e->getMessage());
         }
 
         $response = $this->actingAs($admin)->get('/');
@@ -104,14 +104,14 @@ class ComingSoonTest extends TestCase
         Config::set('app.coming_soon', true);
 
         $admin = User::factory()->create();
-        
+
         // Create admin role if it doesn't exist
         try {
             $role = \Spatie\Permission\Models\Role::findOrCreate('admin', 'web');
             $admin->assignRole($role);
         } catch (\Exception $e) {
             // Skip test if roles can't be created
-            $this->markTestSkipped('Could not create admin role: ' . $e->getMessage());
+            $this->markTestSkipped('Could not create admin role: '.$e->getMessage());
         }
 
         // Admin routes should be accessible

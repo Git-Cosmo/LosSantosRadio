@@ -68,20 +68,20 @@ class AzuraCastService
             function () {
                 $data = $this->makeRequest("/api/nowplaying/{$this->stationId}");
                 $nowPlaying = NowPlayingDTO::fromApi($data);
-                
+
                 // Check if song has changed and broadcast update
                 $previousData = $this->cacheService->get(
                     CacheService::NAMESPACE_RADIO,
                     "nowplaying.{$this->stationId}.previous"
                 );
-                
+
                 $currentSongId = $nowPlaying->currentSong->id ?? null;
                 $previousSongId = $previousData['current_song_id'] ?? null;
-                
+
                 if ($currentSongId !== $previousSongId) {
                     // Song changed, broadcast update
                     event(new NowPlayingUpdated($nowPlaying, $this->stationId));
-                    
+
                     // Store current song ID for next comparison
                     $this->cacheService->put(
                         CacheService::NAMESPACE_RADIO,
@@ -90,7 +90,7 @@ class AzuraCastService
                         CacheService::TTL_REALTIME * 2
                     );
                 }
-                
+
                 return $nowPlaying;
             }
         );
@@ -398,9 +398,33 @@ class AzuraCastService
         // Handle paginated response format (with 'items' key) or plain array
         $items = $this->extractItems($data);
 
-        return collect($items)
-            ->filter(fn ($item) => is_array($item))
-            ->map(fn ($item) => SongDTO::fromApi($item));
+                return collect($items)
+                    ->filter(fn ($item) => is_array($item))
+                    ->map(fn ($item) => SongDTO::fromApi($item));
+            } catch (AzuraCastException $e) {
+                // Fallback: Use the requestable songs endpoint (public)
+                Log::info('Files endpoint not accessible, falling back to requestable songs', [
+                    'station_id' => $this->stationId,
+                    'query' => $query,
+                    'error' => $e->getMessage(),
+                ]);
+
+                try {
+                    $result = $this->getRequestableSongs($limit, 1, $query);
+
+                    return $result['songs'] ?? collect();
+                } catch (\Exception $fallbackException) {
+                    Log::warning('Failed to search library from both endpoints', [
+                        'station_id' => $this->stationId,
+                        'query' => $query,
+                        'error' => $fallbackException->getMessage(),
+                    ]);
+
+                    // Return empty collection on complete failure
+                    return collect();
+                }
+            }
+        });
     }
 
     /**

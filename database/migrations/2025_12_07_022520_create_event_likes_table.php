@@ -32,7 +32,7 @@ return new class extends Migration
         // Only supported in PostgreSQL and SQLite 3.8.0+
         // For MySQL/MariaDB/SQL Server, uniqueness must be enforced at application level
         $driver = DB::connection()->getDriverName();
-        
+
         // Only attempt to create filtered index on databases that support it
         if (in_array($driver, ['pgsql', 'sqlite'])) {
             try {
@@ -40,7 +40,7 @@ return new class extends Migration
             } catch (\Illuminate\Database\QueryException $e) {
                 // Fallback: catch any syntax errors in case database version doesn't support filtered indexes
                 $errorMessage = strtolower($e->getMessage());
-                
+
                 if (str_contains($errorMessage, 'syntax error') || str_contains($errorMessage, "near 'where'")) {
                     Log::info("Skipped filtered index creation for event_likes table - not supported on this {$driver} version");
                 } else {

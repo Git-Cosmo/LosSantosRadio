@@ -19,7 +19,7 @@ return new class extends Migration
                 'group' => 'appearance',
                 'description' => 'Active site theme overlay (none, christmas, newyear)',
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]
         );
     }

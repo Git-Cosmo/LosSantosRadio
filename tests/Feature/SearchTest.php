@@ -3,12 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Event;
-use App\Models\FreeGame;
-use App\Models\GameDeal;
 use App\Models\News;
 use App\Models\Poll;
-use App\Models\User;
-use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -103,7 +99,7 @@ class SearchTest extends TestCase
         $response->assertJsonStructure([
             'results' => [],
         ]);
-        
+
         // Results should be an array (empty or with items)
         $data = $response->json();
         $this->assertIsArray($data['results']);
@@ -122,12 +118,12 @@ class SearchTest extends TestCase
 
         $response->assertStatus(200);
         $data = $response->json();
-        
+
         // Results should be an array
         $this->assertIsArray($data['results']);
-        
+
         // If there are results, they should have proper structure
-        if (!empty($data['results'])) {
+        if (! empty($data['results'])) {
             $firstResult = $data['results'][0];
             $this->assertArrayHasKey('type', $firstResult);
             $this->assertArrayHasKey('title', $firstResult);

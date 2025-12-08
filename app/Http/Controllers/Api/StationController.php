@@ -18,6 +18,33 @@ class StationController extends Controller
     ) {}
 
     /**
+     * Get station playlists with schedules.
+     *
+     * API endpoint: GET /api/station/{stationId}/playlists
+     *
+     * Returns playlists with their schedule items for display on the schedule page.
+     */
+    public function playlists(int $stationId): JsonResponse
+    {
+        try {
+            $playlists = $this->azuraCast->getPlaylists();
+            $data = $playlists->map(fn ($playlist) => $playlist->toArray())->values()->all();
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+                'meta' => [
+                    'total' => $playlists->count(),
+                ],
+            ]);
+        } catch (AzuraCastException $e) {
+            return response()->json([
+                'message' => 'Unable to fetch playlists.',
+            ], 503);
+        }
+    }
+
+    /**
      * Get list of requestable songs.
      */
     public function requestableList(Request $request, int $stationId): JsonResponse

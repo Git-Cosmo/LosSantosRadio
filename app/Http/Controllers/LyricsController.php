@@ -27,7 +27,7 @@ class LyricsController extends Controller
         // Check if user can view lyrics
         $canView = $this->lyricsService->canViewLyrics($userId, $sessionId);
 
-        if (!$canView['can_view']) {
+        if (! $canView['can_view']) {
             return response()->json([
                 'success' => false,
                 'message' => 'You have reached the free lyrics limit.',
@@ -44,11 +44,11 @@ class LyricsController extends Controller
         $lyric = $this->lyricsService->getLyrics($songId, $title, $artist);
 
         // Track view for guests
-        if (!$userId) {
+        if (! $userId) {
             $this->lyricsService->trackGuestView($sessionId, $songId);
         }
 
-        if (!$lyric || !$lyric->hasLyrics()) {
+        if (! $lyric || ! $lyric->hasLyrics()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Lyrics not found for this song.',

@@ -12,13 +12,14 @@ class ServiceProviderTest extends TestCase
 {
     // RefreshDatabase is needed because RequestLimitService accesses the database in its constructor
     use RefreshDatabase;
+
     /**
      * Test that AzuraCastService can be resolved from the container.
      */
     public function test_azuracast_service_can_be_resolved(): void
     {
         $service = $this->app->make(AzuraCastService::class);
-        
+
         $this->assertInstanceOf(AzuraCastService::class, $service);
     }
 
@@ -29,7 +30,7 @@ class ServiceProviderTest extends TestCase
     {
         $service1 = $this->app->make(AzuraCastService::class);
         $service2 = $this->app->make(AzuraCastService::class);
-        
+
         $this->assertSame($service1, $service2);
     }
 
@@ -40,7 +41,7 @@ class ServiceProviderTest extends TestCase
     public function test_azuracast_service_is_functional(): void
     {
         $service = $this->app->make(AzuraCastService::class);
-        
+
         // The isConfigured method should work without errors if dependencies are injected
         // This is a behavior test rather than testing internal implementation
         $this->assertIsBool($service->isConfigured());
@@ -52,7 +53,7 @@ class ServiceProviderTest extends TestCase
     public function test_icecast_service_can_be_resolved(): void
     {
         $service = $this->app->make(IcecastService::class);
-        
+
         $this->assertInstanceOf(IcecastService::class, $service);
     }
 
@@ -62,7 +63,7 @@ class ServiceProviderTest extends TestCase
     public function test_request_limit_service_can_be_resolved(): void
     {
         $service = $this->app->make(RequestLimitService::class);
-        
+
         $this->assertInstanceOf(RequestLimitService::class, $service);
     }
 }

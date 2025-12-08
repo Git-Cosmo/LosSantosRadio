@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Radio Server Service
- * 
+ *
  * Manages Icecast and Shoutcast radio servers with full CRUD operations.
  * Supports Docker container orchestration on remote hosts.
  */
@@ -66,9 +66,9 @@ class RadioServerService
     {
         try {
             $url = $server->stream_url;
-            
+
             $response = Http::timeout(5)->get($url);
-            
+
             if ($response->successful() || $response->status() === 302) {
                 return [
                     'success' => true,
@@ -100,7 +100,7 @@ class RadioServerService
      */
     public function startDockerContainer(RadioServer $server): array
     {
-        if (!$server->docker_container_name) {
+        if (! $server->docker_container_name) {
             return [
                 'success' => false,
                 'message' => 'No Docker container configured',
@@ -109,15 +109,16 @@ class RadioServerService
 
         try {
             $dockerHost = $server->docker_host ?: config('services.docker.default_host');
-            
+
             // Build docker run command
             $command = $this->buildDockerRunCommand($server);
-            
+
             // Execute via SSH or Docker API
             $result = $this->executeDockerCommand($dockerHost, $command);
-            
+
             if ($result['success']) {
                 $server->markAsRunning();
+
                 return [
                     'success' => true,
                     'message' => 'Docker container started successfully',
@@ -125,6 +126,7 @@ class RadioServerService
             }
 
             $server->markAsError($result['message'] ?? 'Unknown error');
+
             return $result;
         } catch (\Exception $e) {
             Log::error('Failed to start Docker container', [
@@ -133,7 +135,7 @@ class RadioServerService
             ]);
 
             $server->markAsError($e->getMessage());
-            
+
             return [
                 'success' => false,
                 'message' => "Failed to start container: {$e->getMessage()}",
@@ -146,7 +148,7 @@ class RadioServerService
      */
     public function stopDockerContainer(RadioServer $server): array
     {
-        if (!$server->docker_container_name) {
+        if (! $server->docker_container_name) {
             return [
                 'success' => false,
                 'message' => 'No Docker container configured',
@@ -155,13 +157,14 @@ class RadioServerService
 
         try {
             $dockerHost = $server->docker_host ?: config('services.docker.default_host');
-            
+
             $command = "docker stop {$server->docker_container_name}";
-            
+
             $result = $this->executeDockerCommand($dockerHost, $command);
-            
+
             if ($result['success']) {
                 $server->markAsStopped();
+
                 return [
                     'success' => true,
                     'message' => 'Docker container stopped successfully',
@@ -174,7 +177,7 @@ class RadioServerService
                 'server_id' => $server->id,
                 'error' => $e->getMessage(),
             ]);
-            
+
             return [
                 'success' => false,
                 'message' => "Failed to stop container: {$e->getMessage()}",
@@ -188,8 +191,8 @@ class RadioServerService
     public function restartDockerContainer(RadioServer $server): array
     {
         $stopResult = $this->stopDockerContainer($server);
-        
-        if (!$stopResult['success']) {
+
+        if (! $stopResult['success']) {
             return $stopResult;
         }
 
@@ -199,12 +202,12 @@ class RadioServerService
         while ($attempt < $maxAttempts) {
             sleep(1);
             $status = $this->getServerStatus($server);
-            if (!$status['running']) {
+            if (! $status['running']) {
                 break;
             }
             $attempt++;
         }
-        
+
         return $this->startDockerContainer($server);
     }
 
@@ -213,7 +216,7 @@ class RadioServerService
      */
     public function getServerStatus(RadioServer $server): array
     {
-        if (!$server->docker_container_name) {
+        if (! $server->docker_container_name) {
             return [
                 'running' => false,
                 'message' => 'No Docker container configured',
@@ -222,13 +225,14 @@ class RadioServerService
 
         try {
             $dockerHost = $server->docker_host ?: config('services.docker.default_host');
-            
+
             $command = "docker ps --filter name={$server->docker_container_name} --format '{{.Status}}'";
-            
+
             $result = $this->executeDockerCommand($dockerHost, $command);
-            
-            if ($result['success'] && !empty($result['output'])) {
+
+            if ($result['success'] && ! empty($result['output'])) {
                 $server->markAsRunning();
+
                 return [
                     'running' => true,
                     'status' => $result['output'],
@@ -236,6 +240,7 @@ class RadioServerService
             }
 
             $server->markAsStopped();
+
             return [
                 'running' => false,
                 'status' => 'Container not running',
@@ -260,9 +265,9 @@ class RadioServerService
     {
         $image = $server->docker_image ?: $this->getDefaultImage($server->type);
         $containerName = $server->docker_container_name;
-        
+
         $command = "docker run -d --name {$containerName}";
-        
+
         // Add port mappings
         if ($server->docker_ports) {
             foreach ($server->docker_ports as $hostPort => $containerPort) {
@@ -271,16 +276,16 @@ class RadioServerService
         } else {
             $command .= " -p {$server->port}:8000";
         }
-        
+
         // Add environment variables
         if ($server->docker_env) {
             foreach ($server->docker_env as $key => $value) {
                 $command .= " -e {$key}='{$value}'";
             }
         }
-        
+
         $command .= " {$image}";
-        
+
         return $command;
     }
 
@@ -294,15 +299,15 @@ class RadioServerService
             // Use escapeshellcmd to prevent command injection
             // Note: In production, consider using Docker SDK for PHP instead
             $safeCommand = escapeshellcmd($command);
-            exec($safeCommand . ' 2>&1', $output, $returnCode);
-            
+            exec($safeCommand.' 2>&1', $output, $returnCode);
+
             return [
                 'success' => $returnCode === 0,
                 'output' => implode("\n", $output),
                 'message' => $returnCode === 0 ? 'Command executed successfully' : 'Command failed',
             ];
         }
-        
+
         // For remote Docker, use SSH or Docker API
         // This is a placeholder - implement based on your infrastructure
         // Consider using Docker SDK for PHP (https://github.com/docker-php/docker-php)
@@ -317,7 +322,7 @@ class RadioServerService
      */
     protected function getDefaultImage(string $type): string
     {
-        return match($type) {
+        return match ($type) {
             'icecast' => 'moul/icecast:latest',
             'shoutcast' => 'mbentley/shoutcast:latest',
             default => 'moul/icecast:latest',
