@@ -1410,60 +1410,43 @@
             display: none !important;
         }
 
-        /* Footer Enhancement */
+        /* Footer Enhancement - Compact & Modern */
         .footer {
-            background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            background: var(--color-bg-secondary);
             border-top: 1px solid var(--color-border);
-            padding: 2rem 1.5rem;
+            padding: 1.5rem 1rem;
+            margin-top: auto;
         }
 
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
-            text-align: center;
         }
 
-        .footer-main {
-            margin-bottom: 1.5rem;
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 1rem;
         }
 
-        .footer-brand {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 0.5rem;
+        .footer-section {
+            text-align: left;
         }
 
-        .footer-logo {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--color-accent), #a855f7);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-        }
-
-        .footer-brand-name {
-            font-size: 1.25rem;
+        .footer-section h4 {
+            font-size: 0.875rem;
             font-weight: 600;
             color: var(--color-text-primary);
-        }
-
-        .footer-tagline {
-            color: var(--color-text-secondary);
-            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .footer-links {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         .footer-links a {
@@ -1475,48 +1458,108 @@
 
         .footer-links a:hover {
             color: var(--color-accent);
-            text-decoration: none;
         }
 
-        .footer-legal {
+        .footer-brand {
             display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--color-accent), #a855f7);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .footer-brand-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .footer-tagline {
+            color: var(--color-text-secondary);
+            font-size: 0.8125rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-bottom {
             padding-top: 1rem;
             border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
         }
 
-        .footer-legal a {
+        .footer-copyright {
+            color: var(--color-text-muted);
+            font-size: 0.8125rem;
+        }
+
+        .footer-legal-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-legal-links a {
             color: var(--color-text-muted);
             font-size: 0.8125rem;
             text-decoration: none;
             transition: color 0.2s ease;
         }
 
-        .footer-legal a:hover {
+        .footer-legal-links a:hover {
             color: var(--color-accent);
-            text-decoration: underline;
         }
 
-        .footer-bottom {
-            padding-top: 1rem;
-            border-top: 1px solid var(--color-border);
+        /* Footer Mobile Responsive */
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-legal-links {
+                justify-content: center;
+            }
         }
 
-        .footer-bottom p {
-            color: var(--color-text-muted);
-            font-size: 0.8125rem;
-            margin-bottom: 0.5rem;
-        }
+        @media (max-width: 480px) {
+            .footer {
+                padding: 1rem;
+            }
 
-        .footer-disclaimer {
-            font-size: 0.75rem !important;
-            color: var(--color-text-muted);
-            max-width: 600px;
-            margin: 0 auto;
-            opacity: 0.8;
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+
+            .footer-section {
+                text-align: center;
+            }
+
+            .footer-brand {
+                justify-content: center;
+            }
+
+            .footer-links {
+                align-items: center;
+            }
         }
 
         /* Cookie Consent Banner */
@@ -1990,35 +2033,65 @@
 
     <footer class="footer">
         <div class="footer-content">
-            <div class="footer-main">
-                <div class="footer-brand">
-                    <div class="footer-logo">
-                        <i class="fas fa-radio"></i>
+            <div class="footer-grid">
+                {{-- Brand Section --}}
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <div class="footer-logo">
+                            <i class="fas fa-radio"></i>
+                        </div>
+                        <span class="footer-brand-name">LSR</span>
                     </div>
-                    <span class="footer-brand-name">Los Santos Radio</span>
+                    <p class="footer-tagline">24/7 Online Radio & Gaming Hub</p>
                 </div>
-                <p class="footer-tagline">Your 24/7 online radio station</p>
+
+                {{-- Quick Links --}}
+                <div class="footer-section">
+                    <h4>Explore</h4>
+                    <div class="footer-links">
+                        <a href="{{ route('home') }}">Home</a>
+                        <a href="{{ route('schedule') }}">Schedule</a>
+                        <a href="{{ route('requests.index') }}">Request Songs</a>
+                        <a href="{{ route('news.index') }}">News</a>
+                    </div>
+                </div>
+
+                {{-- Community --}}
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <div class="footer-links">
+                        <a href="{{ route('events.index') }}">Events</a>
+                        <a href="{{ route('games.index') }}">Games</a>
+                        <a href="{{ route('videos.index') }}">Videos</a>
+                        <a href="{{ route('dj.index') }}">DJ Profiles</a>
+                    </div>
+                </div>
+
+                {{-- Connect --}}
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="footer-links">
+                        @if(config('services.discord.invite_url'))
+                            <a href="{{ config('services.discord.invite_url') }}" target="_blank" rel="noopener">
+                                <i class="fab fa-discord"></i> Discord
+                            </a>
+                        @endif
+                        <a href="{{ route('about') }}">About Us</a>
+                        <a href="{{ route('contact') }}">Contact</a>
+                    </div>
+                </div>
             </div>
 
-            <div class="footer-links">
-                <a href="{{ route('home') }}">Home</a>
-                <a href="{{ route('schedule') }}">Schedule</a>
-                <a href="{{ route('requests.index') }}">Request</a>
-                <a href="{{ route('news.index') }}">News</a>
-            </div>
-
-            <div class="footer-legal">
-                <a href="{{ route('legal.terms') }}">Terms of Service</a>
-                <a href="{{ route('legal.privacy') }}">Privacy Policy</a>
-                <a href="{{ route('legal.cookies') }}">Cookie Policy</a>
-            </div>
-
+            {{-- Bottom Bar --}}
             <div class="footer-bottom">
-                <p>&copy; {{ date('Y') }} Los Santos Radio. All rights reserved. Powered by AzuraCast.</p>
-                <p class="footer-disclaimer">
-                    This website is an independent project and is not affiliated with, endorsed by, or connected to
-                    Rockstar Games, Take-Two Interactive, or any video game franchise.
-                </p>
+                <div class="footer-copyright">
+                    &copy; {{ date('Y') }} Los Santos Radio. Powered by AzuraCast.
+                </div>
+                <div class="footer-legal-links">
+                    <a href="{{ route('legal.terms') }}">Terms</a>
+                    <a href="{{ route('legal.privacy') }}">Privacy</a>
+                    <a href="{{ route('legal.cookies') }}">Cookies</a>
+                </div>
             </div>
         </div>
     </footer>
@@ -2937,6 +3010,14 @@
             });
         }
     </script>
+
+    {{-- Theme Overlay Loader --}}
+    @php
+        $activeTheme = \App\Models\Setting::get('site_theme', 'none');
+    @endphp
+    @if($activeTheme && $activeTheme !== 'none')
+        <script src="{{ asset('themes/' . $activeTheme . '.js') }}" defer></script>
+    @endif
 
     @stack('scripts')
 </body>

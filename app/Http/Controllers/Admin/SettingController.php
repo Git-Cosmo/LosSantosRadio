@@ -81,4 +81,25 @@ class SettingController extends Controller
         return redirect()->route('admin.settings.index')
             ->with('success', 'Setting deleted successfully.');
     }
+
+    public function theme(): View
+    {
+        $activeTheme = Setting::get('site_theme', 'none');
+
+        return view('admin.theme', [
+            'activeTheme' => $activeTheme,
+        ]);
+    }
+
+    public function updateTheme(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'theme' => 'required|in:none,christmas,newyear',
+        ]);
+
+        Setting::set('site_theme', $validated['theme']);
+
+        return redirect()->route('admin.theme')
+            ->with('success', 'Theme updated successfully. Changes are now live!');
+    }
 }
