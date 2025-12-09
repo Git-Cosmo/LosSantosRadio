@@ -1994,6 +1994,9 @@
                         </a>
                     </div>
                 </div>
+                <a href="{{ route('media.index') }}" class="nav-link {{ request()->routeIs('media.*') ? 'active' : '' }}">
+                    <i class="fas fa-download"></i> Downloads
+                </a>
             </nav>
 
             <div class="user-menu">
