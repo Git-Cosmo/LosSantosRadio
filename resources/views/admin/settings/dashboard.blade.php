@@ -36,7 +36,7 @@
                         </label>
                         <input type="text" 
                                name="settings[site_name]" 
-                               value="{{ $settings['site_name'] ?? 'Los Santos Radio' }}" 
+                               value="{{ $settings['site_name'] ?? '' }}" 
                                class="form-input">
                     </div>
 
@@ -77,7 +77,7 @@
                             <span class="label-desc">Apply festive overlays site-wide</span>
                         </label>
                         <select name="settings[site_theme]" class="form-select">
-                            <option value="none" {{ ($settings['site_theme'] ?? 'none') === 'none' ? 'selected' : '' }}>
+                            <option value="none" {{ ($settings['site_theme'] ?? '') === 'none' ? 'selected' : '' }}>
                                 No Theme
                             </option>
                             <option value="christmas" {{ ($settings['site_theme'] ?? '') === 'christmas' ? 'selected' : '' }}>
@@ -105,7 +105,7 @@
                             <input type="checkbox" 
                                    name="settings[enable_comments]" 
                                    value="1"
-                                   {{ ($settings['enable_comments'] ?? true) ? 'checked' : '' }}>
+                                   {{ ($settings['enable_comments'] ?? false) ? 'checked' : '' }}>
                             <span class="checkbox-custom"></span>
                             <div class="checkbox-text">
                                 <span class="label-text">Enable Comments</span>
@@ -120,7 +120,7 @@
                             <input type="checkbox" 
                                    name="settings[enable_song_requests]" 
                                    value="1"
-                                   {{ ($settings['enable_song_requests'] ?? true) ? 'checked' : '' }}>
+                                   {{ ($settings['enable_song_requests'] ?? false) ? 'checked' : '' }}>
                             <span class="checkbox-custom"></span>
                             <div class="checkbox-text">
                                 <span class="label-text">Enable Song Requests</span>
@@ -135,7 +135,7 @@
                             <input type="checkbox" 
                                    name="settings[enable_polls]" 
                                    value="1"
-                                   {{ ($settings['enable_polls'] ?? true) ? 'checked' : '' }}>
+                                   {{ ($settings['enable_polls'] ?? false) ? 'checked' : '' }}>
                             <span class="checkbox-custom"></span>
                             <div class="checkbox-text">
                                 <span class="label-text">Enable Polls</span>
@@ -176,7 +176,7 @@
                         </label>
                         <input type="number" 
                                name="settings[default_station_id]" 
-                               value="{{ $settings['default_station_id'] ?? 1 }}" 
+                               value="{{ $settings['default_station_id'] ?? '' }}" 
                                class="form-input">
                     </div>
 
@@ -187,7 +187,7 @@
                         </label>
                         <input type="number" 
                                name="settings[listener_update_interval]" 
-                               value="{{ $settings['listener_update_interval'] ?? 15 }}" 
+                               value="{{ $settings['listener_update_interval'] ?? '' }}" 
                                class="form-input"
                                min="5"
                                max="60">
@@ -210,7 +210,7 @@
                         </label>
                         <input type="number" 
                                name="settings[guest_request_limit]" 
-                               value="{{ $settings['guest_request_limit'] ?? 3 }}" 
+                               value="{{ $settings['guest_request_limit'] ?? '' }}" 
                                class="form-input"
                                min="0"
                                max="20">
@@ -223,7 +223,7 @@
                         </label>
                         <input type="number" 
                                name="settings[user_request_limit]" 
-                               value="{{ $settings['user_request_limit'] ?? 10 }}" 
+                               value="{{ $settings['user_request_limit'] ?? '' }}" 
                                class="form-input"
                                min="1"
                                max="50">
@@ -236,7 +236,7 @@
                         </label>
                         <input type="number" 
                                name="settings[guest_lyrics_limit]" 
-                               value="{{ $settings['guest_lyrics_limit'] ?? 4 }}" 
+                               value="{{ $settings['guest_lyrics_limit'] ?? '' }}" 
                                class="form-input"
                                min="0"
                                max="20">

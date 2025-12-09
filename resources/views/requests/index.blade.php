@@ -81,7 +81,6 @@
                                                 @if($canRequest['allowed'])
                                                     <button class="btn btn-primary request-btn"
                                                             onclick="requestSong({{ Js::from($song->id) }}, {{ Js::from($song->title) }}, {{ Js::from($song->artist) }})"
-                                                            {{ !$canRequest['allowed'] ? 'disabled' : '' }}
                                                             style="box-shadow: 0 2px 8px rgba(88, 166, 255, 0.3);">
                                                         <i class="fas fa-plus"></i> Request
                                                     </button>
@@ -235,6 +234,8 @@
     <script>
         function requestSong(songId, title, artist) {
             const btn = event.target.closest('button');
+            if (!btn) return;
+            
             const originalHTML = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Requesting...';

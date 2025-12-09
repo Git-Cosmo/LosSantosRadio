@@ -10,9 +10,50 @@ use Illuminate\View\View;
 
 class SettingController extends Controller
 {
+    /**
+     * Boolean settings that should be converted from checkbox values.
+     */
+    private const BOOLEAN_SETTINGS = [
+        'enable_comments',
+        'enable_song_requests',
+        'enable_polls',
+        'maintenance_mode',
+    ];
+
+    /**
+     * Numeric settings that should be converted to integers.
+     */
+    private const NUMERIC_SETTINGS = [
+        'default_station_id',
+        'listener_update_interval',
+        'guest_request_limit',
+        'user_request_limit',
+        'guest_lyrics_limit',
+    ];
+
+    /**
+     * Default values for settings.
+     */
+    private const DEFAULT_SETTINGS = [
+        'site_name' => 'Los Santos Radio',
+        'site_theme' => 'none',
+        'enable_comments' => true,
+        'enable_song_requests' => true,
+        'enable_polls' => true,
+        'maintenance_mode' => false,
+        'default_station_id' => 1,
+        'listener_update_interval' => 15,
+        'guest_request_limit' => 3,
+        'user_request_limit' => 10,
+        'guest_lyrics_limit' => 4,
+    ];
+
     public function dashboard(): View
     {
-        $settings = Setting::allAsArray();
+        $settings = array_merge(
+            self::DEFAULT_SETTINGS,
+            Setting::allAsArray()
+        );
 
         return view('admin.settings.dashboard', [
             'settings' => $settings,
@@ -28,12 +69,12 @@ class SettingController extends Controller
 
         foreach ($validated['settings'] as $key => $value) {
             // Handle checkbox values (convert to boolean)
-            if (in_array($key, ['enable_comments', 'enable_song_requests', 'enable_polls', 'maintenance_mode'])) {
+            if (in_array($key, self::BOOLEAN_SETTINGS)) {
                 $value = (bool) $value;
             }
 
             // Handle numeric values
-            if (in_array($key, ['default_station_id', 'listener_update_interval', 'guest_request_limit', 'user_request_limit', 'guest_lyrics_limit'])) {
+            if (in_array($key, self::NUMERIC_SETTINGS)) {
                 $value = (int) $value;
             }
 
