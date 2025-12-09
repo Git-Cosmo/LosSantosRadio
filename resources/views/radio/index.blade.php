@@ -694,7 +694,7 @@
                             <div style="flex: 1; min-width: 0;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                     <span class="badge badge-{{ $event->event_type === 'live_show' ? 'primary' : ($event->event_type === 'contest' ? 'warning' : 'gray') }}" style="font-size: 0.75rem;">
-                                        <i class="fas fa-{{ $event->event_type === 'live_show' ? 'microphone' : ($event->event_type === 'contest' ? 'trophy' : 'calendar') }}" style="font-size: 0.625rem; margin-right: 0.25rem;"></i>
+                                        <i class="fas fa-{{ $event->event_type === 'live_show' ? 'microphone' : ($event->event_type === 'contest' ? 'trophy' : 'calendar') }}" style="font-size: 0.625rem; margin-right: 0.25rem;" aria-hidden="true"></i>
                                         {{ ucfirst(str_replace('_', ' ', $event->event_type)) }}
                                     </span>
                                 </div>
@@ -718,7 +718,7 @@
                                 </div>
                             </div>
                             <div style="flex-shrink: 0; display: flex; align-items: center;">
-                                <i class="fas fa-chevron-right" style="color: var(--color-text-muted); font-size: 1.25rem; transition: all 0.2s;"></i>
+                                <i class="fas fa-chevron-right" style="color: var(--color-text-muted); font-size: 1.25rem; transition: all 0.2s;" aria-hidden="true"></i>
                             </div>
                         </div>
                     </a>

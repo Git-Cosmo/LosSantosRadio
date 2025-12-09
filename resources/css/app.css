@@ -136,26 +136,19 @@
 }
 
 /* Hover effect for media/category cards */
-.hover-card {
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border: 2px solid transparent;
-}
-
-.hover-card:hover {
-    border-color: var(--color-accent);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(88, 166, 255, 0.3);
-}
-
-/* Hover effect for media items */
+.hover-card,
 .hover-card-lift {
     transition: all 0.3s ease;
     cursor: pointer;
     border: 2px solid transparent;
 }
 
+.hover-card:hover,
 .hover-card-lift:hover {
     border-color: var(--color-accent);
     transform: translateY(-4px);
+}
+
+.hover-card:hover {
+    box-shadow: 0 8px 24px rgba(88, 166, 255, 0.3);
 }

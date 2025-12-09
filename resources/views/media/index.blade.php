@@ -7,7 +7,7 @@
         
         <div style="position: relative; z-index: 1; text-align: center; max-width: 800px; margin: 0 auto;">
             <div style="display: inline-flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding: 0.5rem 1.5rem; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); border-radius: 50px;">
-                <i class="fas fa-download" style="font-size: 1.5rem; color: white;"></i>
+                <i class="fas fa-download" style="font-size: 1.5rem; color: white;" aria-hidden="true"></i>
                 <span style="color: white; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 1px;">Media Downloads</span>
             </div>
             <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: white; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">
@@ -23,11 +23,12 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         @foreach($categories as $category)
         <a href="{{ route('media.category', $category->slug) }}" 
+           aria-label="{{ $category->name }} category"
            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl hover-card">
-            <div class="text-5xl mb-4 text-center">{{ $category->icon }}</div>
+            <div class="text-5xl mb-4 text-center" aria-hidden="true">{{ $category->icon }}</div>
             <h3 class="text-xl font-bold mb-2 text-center" style="color: var(--color-text-primary);">{{ $category->name }}</h3>
             <p class="text-gray-600 dark:text-gray-400 text-sm text-center">
-                <i class="fas fa-file-download" style="margin-right: 0.25rem; color: var(--color-accent);"></i>
+                <i class="fas fa-file-download" style="margin-right: 0.25rem; color: var(--color-accent);" aria-hidden="true"></i>
                 {{ $category->media_items_count }} {{ Str::plural('item', $category->media_items_count) }}
             </p>
         </a>
@@ -38,7 +39,7 @@
     <section class="mb-12">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
             <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--color-text-primary); display: flex; align-items: center; gap: 0.75rem;">
-                <i class="fas fa-star" style="color: #fbbf24;"></i>
+                <i class="fas fa-star" style="color: #fbbf24;" aria-hidden="true"></i>
                 Featured Content
             </h2>
         </div>
@@ -46,16 +47,16 @@
             @foreach($featured as $item)
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover-card-lift">
                 @if($item->getFirstMediaUrl('images'))
-                <div style="width: 100%; height: 160px; background: url('{{ $item->getFirstMediaUrl('images') }}') center/cover; position: relative;">
+                <div style="width: 100%; height: 160px; background-image: url('{{ addslashes($item->getFirstMediaUrl('images')) }}'); background-position: center; background-size: cover; position: relative;">
                     <div style="position: absolute; top: 0.75rem; right: 0.75rem;">
                         <span class="badge badge-warning" style="backdrop-filter: blur(10px); font-weight: 600;">
-                            <i class="fas fa-star"></i> Featured
+                            <i class="fas fa-star" aria-hidden="true"></i> Featured
                         </span>
                     </div>
                 </div>
                 @else
                 <div style="width: 100%; height: 160px; background: linear-gradient(135deg, var(--color-accent) 0%, #a855f7 100%); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-file-download" style="font-size: 3rem; color: rgba(255,255,255,0.3);"></i>
+                    <i class="fas fa-file-download" style="font-size: 3rem; color: rgba(255,255,255,0.3);" aria-hidden="true"></i>
                 </div>
                 @endif
                 <div class="p-6">
@@ -90,7 +91,7 @@
     <section class="mb-12">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
             <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--color-text-primary); display: flex; align-items: center; gap: 0.75rem;">
-                <i class="fas fa-fire" style="color: #ef4444;"></i>
+                <i class="fas fa-fire" style="color: #ef4444;" aria-hidden="true"></i>
                 Popular Downloads
             </h2>
         </div>
@@ -115,7 +116,7 @@
     <section>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
             <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--color-text-primary); display: flex; align-items: center; gap: 0.75rem;">
-                <i class="fas fa-clock" style="color: var(--color-accent);"></i>
+                <i class="fas fa-clock" style="color: var(--color-accent);" aria-hidden="true"></i>
                 Recently Added
             </h2>
         </div>
