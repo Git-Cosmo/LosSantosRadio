@@ -4,9 +4,6 @@
 @import './theme.css';
 @import './layout.css';
 
-/* Modals and overlays */
-@import './lyrics-modal.css';
-
 /* Component styles */
 @import './components/audio-player.css';
 @import './components/floating-background.css';

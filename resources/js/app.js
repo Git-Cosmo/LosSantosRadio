@@ -6,7 +6,6 @@ import './modules/search-modal';
 import './modules/radio-player';
 import './modules/ui-helpers';
 import { initializeNowPlaying, cleanup as cleanupWebSocket } from './modules/websocket-player';
-import { initializeLyricsModal, showLyrics } from './modules/lyrics-modal';
 
 // Import quick win feature modules
 import { initializeKeyboardShortcuts } from './modules/keyboard-shortcuts';
@@ -47,7 +46,6 @@ window.createScrollToTop = createScrollToTop;
 window.addEntranceAnimations = addEntranceAnimations;
 window.showToast = showToast;
 window.initializeNowPlaying = initializeNowPlaying;
-window.showLyrics = showLyrics;
 
 // Make quick win features available globally
 window.getFavorites = getFavorites;
@@ -75,9 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
             handleNowPlayingUpdate(e.detail);
         });
     }
-
-    // Initialize lyrics modal
-    initializeLyricsModal();
 
     // Initialize quick win features
     initializeKeyboardShortcuts();
