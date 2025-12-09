@@ -202,10 +202,10 @@
                         <div class="card-body space-y-2">
                             <a href="{{ route('radio.player') }}" class="block p-2 rounded hover:bg-bg-secondary transition-colors">🎵 Listen Live</a>
                             <a href="{{ route('requests.index') }}" class="block p-2 rounded hover:bg-bg-secondary transition-colors">🎼 Request a Song</a>
-                            <a href="{{ route('songs.index') }}" class="block p-2 rounded hover:bg-bg-secondary transition-colors">📀 Song Library</a>
-                            <a href="{{ route('schedule.index') }}" class="block p-2 rounded hover:bg-bg-secondary transition-colors">📅 Show Schedule</a>
+                            <a href="{{ route('songs') }}" class="block p-2 rounded hover:bg-bg-secondary transition-colors">📀 Song Library</a>
+                            <a href="{{ route('schedule') }}" class="block p-2 rounded hover:bg-bg-secondary transition-colors">📅 Show Schedule</a>
                             <a href="{{ route('djs.index') }}" class="block p-2 rounded hover:bg-bg-secondary transition-colors">🎙️ Our DJs</a>
-                            <a href="{{ route('leaderboard.index') }}" class="block p-2 rounded hover:bg-bg-secondary transition-colors">🏆 Leaderboard</a>
+                            <a href="{{ route('leaderboard') }}" class="block p-2 rounded hover:bg-bg-secondary transition-colors">🏆 Leaderboard</a>
                         </div>
                     </div>
 
