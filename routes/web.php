@@ -130,12 +130,18 @@ Route::prefix('videos')->name('videos.')->group(function () {
 Route::prefix('media')->name('media.')->group(function () {
     Route::get('/', [\App\Http\Controllers\MediaController::class, 'index'])->name('index');
     Route::get('/search', [\App\Http\Controllers\MediaController::class, 'search'])->middleware('throttle:30,1')->name('search');
+    Route::get('/favorites', [\App\Http\Controllers\MediaItemFavoriteController::class, 'index'])->name('favorites');
     Route::get('/upload', [\App\Http\Controllers\MediaController::class, 'upload'])->name('upload');
     Route::post('/upload', [\App\Http\Controllers\MediaController::class, 'store'])->middleware('throttle:5,1')->name('store');
     Route::get('/{category}', [\App\Http\Controllers\MediaController::class, 'category'])->name('category');
     Route::get('/{category}/{subcategory}', [\App\Http\Controllers\MediaController::class, 'subcategory'])->name('subcategory');
     Route::get('/{category}/{subcategory}/{slug}', [\App\Http\Controllers\MediaController::class, 'show'])->name('show');
     Route::get('/{category}/{subcategory}/{slug}/download', [\App\Http\Controllers\MediaController::class, 'download'])->middleware('throttle:10,1')->name('download');
+    
+    // Ratings and favorites (auth required)
+    Route::post('/{category}/{subcategory}/{mediaItem}/rate', [\App\Http\Controllers\MediaItemRatingController::class, 'store'])->middleware('auth')->name('rate');
+    Route::delete('/{category}/{subcategory}/{mediaItem}/rate', [\App\Http\Controllers\MediaItemRatingController::class, 'destroy'])->middleware('auth')->name('rate.destroy');
+    Route::post('/{category}/{subcategory}/{mediaItem}/favorite', [\App\Http\Controllers\MediaItemFavoriteController::class, 'toggle'])->middleware('auth')->name('favorite.toggle');
 });
 
 // DJ/Presenter System

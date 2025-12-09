@@ -193,4 +193,70 @@ class MediaItemsController extends Controller
             }),
         ]);
     }
+
+    /**
+     * Get trending media items (most downloads in last 7 days).
+     */
+    public function trending(): JsonResponse
+    {
+        $items = MediaItem::published()
+            ->whereHas('downloadRecords', function ($query) {
+                $query->where('downloaded_at', '>=', now()->subDays(7));
+            })
+            ->withCount(['downloadRecords as recent_downloads' => function ($query) {
+                $query->where('downloaded_at', '>=', now()->subDays(7));
+            }])
+            ->with(['category', 'subcategory'])
+            ->orderByDesc('recent_downloads')
+            ->take(10)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $items->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title,
+                    'slug' => $item->slug,
+                    'downloads_count' => $item->downloads_count,
+                    'recent_downloads' => $item->recent_downloads,
+                    'rating' => $item->rating,
+                    'category' => $item->category->name,
+                    'subcategory' => $item->subcategory->name,
+                    'url' => route('media.show', [
+                        $item->category->slug,
+                        $item->subcategory->slug,
+                        $item->slug,
+                    ]),
+                ];
+            }),
+        ]);
+    }
+
+    /**
+     * Get media hub statistics.
+     */
+    public function stats(): JsonResponse
+    {
+        $stats = [
+            'total_items' => MediaItem::published()->count(),
+            'total_downloads' => MediaItem::published()->sum('downloads_count'),
+            'total_categories' => \App\Models\MediaCategory::active()->count(),
+            'total_uploads_today' => MediaItem::whereDate('created_at', today())->count(),
+            'top_rated' => MediaItem::published()
+                ->where('ratings_count', '>', 0)
+                ->orderByDesc('rating')
+                ->take(5)
+                ->get(['id', 'title', 'slug', 'rating', 'ratings_count']),
+            'most_downloaded' => MediaItem::published()
+                ->orderByDesc('downloads_count')
+                ->take(5)
+                ->get(['id', 'title', 'slug', 'downloads_count']),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => $stats,
+        ]);
+    }
 }

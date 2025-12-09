@@ -87,6 +87,8 @@ Route::prefix('media-items')->name('api.media-items.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\MediaItemsController::class, 'index'])->name('index');
     Route::get('/categories', [\App\Http\Controllers\Api\MediaItemsController::class, 'categories'])->name('categories');
     Route::get('/featured', [\App\Http\Controllers\Api\MediaItemsController::class, 'featured'])->name('featured');
+    Route::get('/trending', [\App\Http\Controllers\Api\MediaItemsController::class, 'trending'])->name('trending');
+    Route::get('/stats', [\App\Http\Controllers\Api\MediaItemsController::class, 'stats'])->name('stats');
     Route::get('/{slug}', [\App\Http\Controllers\Api\MediaItemsController::class, 'show'])->name('show');
 });
 

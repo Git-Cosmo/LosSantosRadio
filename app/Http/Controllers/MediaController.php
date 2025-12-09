@@ -220,6 +220,19 @@ class MediaController extends Controller
         // Increment downloads
         $mediaItem->incrementDownloads();
 
+        // Track download in history
+        \App\Models\MediaItemDownload::create([
+            'media_item_id' => $mediaItem->id,
+            'user_id' => Auth::id(),
+            'ip_address' => request()->ip(),
+            'downloaded_at' => now(),
+        ]);
+
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($mediaItem)
+            ->log('downloaded media item');
+
         return response()->download($media->getPath(), $media->file_name);
     }
 
