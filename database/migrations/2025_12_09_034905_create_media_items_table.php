@@ -34,8 +34,8 @@ return new class extends Migration
             $table->softDeletes();
             
             // Indexes for efficient querying
-            $table->index(['media_category_id', 'media_subcategory_id', 'is_active']);
-            $table->index(['is_featured', 'is_approved', 'is_active']);
+            $table->index(['media_category_id', 'media_subcategory_id', 'is_active'], 'media_items_cat_subcat_active_idx');
+            $table->index(['is_featured', 'is_approved', 'is_active'], 'media_items_featured_approved_active_idx');
             $table->index('downloads_count');
             $table->index('views_count');
             $table->index('rating');
