@@ -49,7 +49,7 @@
                 </h2>
             </div>
             <div class="card-body" style="padding: 1.5rem;">
-                <div class="grid grid-cols-3" style="gap: 1.5rem;">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style="gap: 1.5rem;">
                     @foreach($featuredEvents as $event)
                         <div class="event-featured-card">
                             @if($event->image)
@@ -108,7 +108,7 @@
         </div>
     @endif
 
-    <div class="grid" style="grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr]" style="gap: 1.5rem;">
         <div>
             @if($ongoingEvents->count() > 0)
                 <div class="card" style="margin-bottom: 1.5rem; border: 2px solid var(--color-success); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);">

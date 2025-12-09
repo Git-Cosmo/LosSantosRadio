@@ -110,3 +110,46 @@
 .event-category-card:hover {
     transform: translateX(4px);
 }
+
+/* View All link hover effect */
+.view-all-link {
+    transition: all 0.2s ease;
+}
+
+.view-all-link:hover {
+    color: white !important;
+}
+
+/* Hover effect for event items on homepage */
+.event-item {
+    display: block;
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.event-item:hover {
+    background: var(--color-bg-secondary);
+    transform: translateX(4px);
+}
+
+/* Hover effect for media/category cards */
+.hover-card,
+.hover-card-lift {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.hover-card:hover,
+.hover-card-lift:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-4px);
+}
+
+/* Category cards get extra emphasis with box-shadow */
+.hover-card:hover {
+    box-shadow: 0 8px 24px rgba(88, 166, 255, 0.3);
+}

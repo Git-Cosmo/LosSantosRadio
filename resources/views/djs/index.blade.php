@@ -22,7 +22,7 @@
                 </h2>
             </div>
             <div class="card-body">
-                <div class="grid grid-cols-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style="gap: 1.5rem;">
                     @foreach($featuredDjs as $dj)
                         <div class="card" style="border-color: var(--color-accent);">
                             <div style="height: 150px; background: linear-gradient(135deg, var(--color-accent), #a855f7); display: flex; align-items: center; justify-content: center;">
@@ -55,7 +55,7 @@
         </div>
     @endif
 
-    <div class="grid" style="grid-template-columns: 2fr 1fr;">
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr]" style="gap: 1.5rem;">
         <div>
             <div class="card">
                 <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">

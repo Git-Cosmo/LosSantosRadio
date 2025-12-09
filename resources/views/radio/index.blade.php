@@ -283,7 +283,7 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-3" style="grid-template-columns: 2fr 1fr;">
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr]" style="gap: 1.5rem;">
         <!-- Main Content -->
         <div>
             <!-- Enhanced Now Playing Card -->
@@ -677,37 +677,48 @@
             <!-- Upcoming Events Section -->
             @if($upcomingEvents->isNotEmpty())
             <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--color-accent) 0%, #8b5cf6 100%); border: none;">
+                    <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between; color: white;">
                         <span><i class="fas fa-calendar-alt"></i> Upcoming Events</span>
-                        <a href="{{ route('events.index') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
+                        <a href="{{ route('events.index') }}" class="text-sm view-all-link" style="color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 600;">View All →</a>
                     </h2>
                 </div>
                 <div class="card-body" style="padding: 0;">
                     @foreach($upcomingEvents as $event)
-                    <a href="{{ route('events.show', $event->slug) }}" class="event-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
-                        <div style="display: flex; gap: 1rem;">
-                            <div style="background: var(--color-accent); color: white; border-radius: 8px; padding: 0.5rem; text-align: center; min-width: 60px; height: 60px; display: flex; flex-direction: column; justify-content: center; flex-shrink: 0;">
-                                <div style="font-size: 1.25rem; font-weight: 700; line-height: 1;">{{ $event->starts_at->format('d') }}</div>
-                                <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.9;">{{ $event->starts_at->format('M') }}</div>
+                    <a href="{{ route('events.show', $event->slug) }}" class="event-item">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <div style="background: linear-gradient(135deg, var(--color-accent) 0%, #8b5cf6 100%); color: white; border-radius: 12px; padding: 0.75rem; text-align: center; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);">
+                                <div style="font-size: 1.5rem; font-weight: 700; line-height: 1;">{{ $event->starts_at->format('d') }}</div>
+                                <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.9; font-weight: 600; letter-spacing: 0.5px;">{{ $event->starts_at->format('M') }}</div>
                             </div>
                             <div style="flex: 1; min-width: 0;">
-                                <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($event->title, 50) }}</h3>
-                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">
-                                    <i class="far fa-clock"></i>
-                                    <span>{{ $event->starts_at->format('M j, Y g:i A') }}</span>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span class="badge badge-{{ $event->event_type === 'live_show' ? 'primary' : ($event->event_type === 'contest' ? 'warning' : 'gray') }}" style="font-size: 0.75rem;">
+                                        <i class="fas fa-{{ $event->event_type === 'live_show' ? 'microphone' : ($event->event_type === 'contest' ? 'trophy' : 'calendar') }}" style="font-size: 0.625rem; margin-right: 0.25rem;" aria-hidden="true"></i>
+                                        {{ ucfirst(str_replace('_', ' ', $event->event_type)) }}
+                                    </span>
                                 </div>
-                                @if($event->location)
-                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>{{ Str::limit($event->location, 30) }}</span>
+                                <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1rem; line-height: 1.3;">{{ Str::limit($event->title, 60) }}</h3>
+                                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
+                                        <i class="far fa-clock" style="color: var(--color-accent);"></i>
+                                        <span>{{ $event->starts_at->format('M j, g:i A') }}</span>
+                                    </div>
+                                    @if($event->location)
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
+                                        <i class="fas fa-map-marker-alt" style="color: var(--color-accent);"></i>
+                                        <span>{{ Str::limit($event->location, 30) }}</span>
+                                    </div>
+                                    @endif
+                                    @php($likesCount = $event->likesCount())
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
+                                        <i class="fas fa-heart" style="color: #ef4444;"></i>
+                                        <span>{{ $likesCount }} {{ Str::plural('like', $likesCount) }}</span>
+                                    </div>
                                 </div>
-                                @endif
-                                @php($likesCount = $event->likesCount())
-                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
-                                    <i class="fas fa-heart" style="color: #ef4444;"></i>
-                                    <span>{{ $likesCount }} {{ Str::plural('like', $likesCount) }}</span>
-                                </div>
+                            </div>
+                            <div style="flex-shrink: 0; display: flex; align-items: center;">
+                                <i class="fas fa-chevron-right" style="color: var(--color-text-muted); font-size: 1.25rem; transition: all 0.2s;" aria-hidden="true"></i>
                             </div>
                         </div>
                     </a>
