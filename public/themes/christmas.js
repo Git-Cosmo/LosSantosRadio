@@ -144,14 +144,16 @@
                     display: flex;
                     justify-content: space-around;
                     align-items: flex-start;
+                    padding: 5px 0;
                     animation: fadeIn 0.5s ease-in;
                 }
 
                 .christmas-light {
-                    width: 8px;
-                    height: 8px;
+                    width: 12px;
+                    height: 12px;
                     border-radius: 50%;
                     animation: twinkle 2s ease-in-out infinite;
+                    box-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
                 }
 
                 .christmas-light:nth-child(odd) {
@@ -180,19 +182,19 @@
             // Add string lights
             const lights = document.createElement('div');
             lights.className = 'christmas-lights';
-            lights.innerHTML = Array(20).fill(0).map((_, i) => {
-                const colors = ['#ef4444', '#10b981', '#3b82f6', '#f59e0b'];
+            lights.innerHTML = Array(30).fill(0).map((_, i) => {
+                const colors = ['#ef4444', '#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
                 const color = colors[i % colors.length];
-                return `<div class="christmas-light" style="background: ${color};"></div>`;
+                return `<div class="christmas-light" style="background: ${color}; color: ${color};"></div>`;
             }).join('');
             document.body.appendChild(lights);
 
-            // Add corner decorations
+            // Add corner decorations - positioned to avoid header/footer overlap
             const decorations = [
-                { emoji: '🎄', top: '80px', left: '20px' },
-                { emoji: '⭐', top: '80px', right: '20px' },
-                { emoji: '🎁', bottom: '100px', left: '20px' },
-                { emoji: '🔔', bottom: '100px', right: '20px' }
+                { emoji: '🎄', top: '100px', left: '30px' },
+                { emoji: '⭐', top: '100px', right: '30px' },
+                { emoji: '🎁', bottom: '120px', left: '30px' },
+                { emoji: '🔔', bottom: '120px', right: '30px' }
             ];
 
             decorations.forEach(dec => {

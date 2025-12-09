@@ -286,7 +286,7 @@
             <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
                 Need to add or edit individual settings?
             </p>
-            <a href="{{ route('admin.settings.index') }}" class="btn btn-secondary">
+            <a href="{{ route('admin.settings.advanced') }}" class="btn btn-secondary">
                 <i class="fas fa-cog"></i> Advanced Settings (Key-Value Editor)
             </a>
         </div>
