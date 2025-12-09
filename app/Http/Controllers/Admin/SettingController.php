@@ -64,13 +64,25 @@ class SettingController extends Controller
     {
         $validated = $request->validate([
             'settings' => 'required|array',
-            'settings.*' => 'nullable',
+            'settings.site_name' => 'nullable|string|max:255',
+            'settings.site_description' => 'nullable|string|max:1000',
+            'settings.contact_email' => 'nullable|email',
+            'settings.site_theme' => 'nullable|in:none,christmas,newyear',
+            'settings.default_station_id' => 'nullable|integer|min:1',
+            'settings.listener_update_interval' => 'nullable|integer|min:5|max:60',
+            'settings.guest_request_limit' => 'nullable|integer|min:0|max:20',
+            'settings.user_request_limit' => 'nullable|integer|min:1|max:50',
+            'settings.guest_lyrics_limit' => 'nullable|integer|min:0|max:20',
+            'settings.enable_comments' => 'nullable|boolean',
+            'settings.enable_song_requests' => 'nullable|boolean',
+            'settings.enable_polls' => 'nullable|boolean',
+            'settings.maintenance_mode' => 'nullable|boolean',
         ]);
 
         foreach ($validated['settings'] as $key => $value) {
             // Handle checkbox values (convert to boolean)
             if (in_array($key, self::BOOLEAN_SETTINGS)) {
-                $value = (bool) $value;
+                $value = $value === '1' || $value === 1 || $value === true;
             }
 
             // Handle numeric values

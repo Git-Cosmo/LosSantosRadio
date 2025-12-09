@@ -80,7 +80,7 @@
                                             <td style="padding: 1rem; text-align: right;">
                                                 @if($canRequest['allowed'])
                                                     <button class="btn btn-primary request-btn"
-                                                            onclick="requestSong({{ Js::from($song->id) }}, {{ Js::from($song->title) }}, {{ Js::from($song->artist) }})"
+                                                            onclick="requestSong(event, {{ Js::from($song->id) }}, {{ Js::from($song->title) }}, {{ Js::from($song->artist) }})"
                                                             style="box-shadow: 0 2px 8px rgba(88, 166, 255, 0.3);">
                                                         <i class="fas fa-plus"></i> Request
                                                     </button>
@@ -232,7 +232,7 @@
 
     @push('scripts')
     <script>
-        function requestSong(songId, title, artist) {
+        function requestSong(event, songId, title, artist) {
             const btn = event.target.closest('button');
             if (!btn) return;
             

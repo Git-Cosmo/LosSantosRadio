@@ -18,6 +18,18 @@
         </div>
     @endif
 
+    @if($errors->any())
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Please correct the following errors:</strong>
+            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form action="{{ route('admin.settings.update-all') }}" method="POST" id="settingsForm">
         @csrf
         @method('PUT')
@@ -36,8 +48,11 @@
                         </label>
                         <input type="text" 
                                name="settings[site_name]" 
-                               value="{{ $settings['site_name'] ?? '' }}" 
-                               class="form-input">
+                               value="{{ old('settings.site_name', $settings['site_name'] ?? '') }}" 
+                               class="form-input @error('settings.site_name') is-invalid @enderror">
+                        @error('settings.site_name')
+                            <span class="error-message" style="color: var(--color-error); font-size: 0.875rem; margin-top: 0.25rem; display: block;">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="setting-item">
@@ -46,8 +61,11 @@
                             <span class="label-desc">Short description for SEO</span>
                         </label>
                         <textarea name="settings[site_description]" 
-                                  class="form-input" 
-                                  rows="3">{{ $settings['site_description'] ?? '' }}</textarea>
+                                  class="form-input @error('settings.site_description') is-invalid @enderror" 
+                                  rows="3">{{ old('settings.site_description', $settings['site_description'] ?? '') }}</textarea>
+                        @error('settings.site_description')
+                            <span class="error-message" style="color: var(--color-error); font-size: 0.875rem; margin-top: 0.25rem; display: block;">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="setting-item">
@@ -57,8 +75,11 @@
                         </label>
                         <input type="email" 
                                name="settings[contact_email]" 
-                               value="{{ $settings['contact_email'] ?? '' }}" 
-                               class="form-input">
+                               value="{{ old('settings.contact_email', $settings['contact_email'] ?? '') }}" 
+                               class="form-input @error('settings.contact_email') is-invalid @enderror">
+                        @error('settings.contact_email')
+                            <span class="error-message" style="color: var(--color-error); font-size: 0.875rem; margin-top: 0.25rem; display: block;">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -292,6 +313,16 @@
         .setting-item.checkbox-item:hover {
             background: var(--color-bg-hover);
             border-color: var(--color-accent);
+        }
+
+        .form-input.is-invalid {
+            border-color: var(--color-error, #ef4444);
+        }
+
+        .error-message {
+            color: var(--color-error, #ef4444);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
         }
 
         .setting-label {
