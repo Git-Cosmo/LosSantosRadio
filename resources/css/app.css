@@ -1,5 +1,11 @@
 @import 'tailwindcss';
+
+/* Component CSS */
 @import './lyrics-modal.css';
+@import './layout.css';
+@import './radio-player.css';
+@import './audio-player.css';
+@import './games.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
