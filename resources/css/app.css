@@ -6,6 +6,7 @@
 @import './radio-player.css';
 @import './audio-player.css';
 @import './coming-soon.css';
+@import './home.css';
 
 /* Feature-specific CSS */
 @import './games.css';

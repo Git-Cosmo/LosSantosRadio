@@ -31,8 +31,65 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Media**: Spatie Laravel Media Library with Intervention Image
 - **Sitemap**: Spatie Laravel Sitemap (auto-generated every 6 hours)
 - **Lyrics**: Genius API integration with guest limits and monetization flow
+- **Build Tool**: Vite 7 with hot reload support
+- **CSS Architecture**: Modular CSS organization with 36+ feature-specific stylesheets
+- **Frontend Assets**: All CSS/JS externalized to resources/ directory for maintainability
+
+## 📂 Frontend Architecture
+
+### CSS Organization
+
+All CSS has been extracted from Blade templates into modular CSS files located in `resources/css/`:
+
+- **Core Styles** (`layout.css`, `audio-player.css`, `radio-player.css`, `home.css`): Main layout and player components
+- **Feature Styles** (`games.css`, `songs.css`, `news-index.css`, `polls-show.css`, etc.): Page-specific styles
+- **Component Styles** (`quick-stats.css`, `floating-bg.css`): Reusable component styles
+- **Admin Styles** (`admin-layout.css`, `admin-auth.css`, etc.): Admin panel styles  
+- **Error Pages** (`error-404.css`, `error-503.css`, etc.): Error page styles
+
+All CSS modules are imported via `resources/css/app.css` and built with Vite.
+
+### JavaScript Organization
+
+JavaScript modules are organized in `resources/js/modules/`:
+
+- `radio-player.js` - Radio player controls and state management
+- `websocket-player.js` - Real-time now playing updates via Laravel Reverb
+- `lyrics-modal.js` - Lyrics modal functionality
+- `toast-notifications.js` - Toast notification system
+- `search-modal.js` - Global search functionality
+- `keyboard-shortcuts.js` - Keyboard navigation
+- `ui-helpers.js` - Common UI utilities
+
+All modules are imported via `resources/js/app.js` and bundled with Vite.
+
+### Updating Frontend Assets
+
+```bash
+# Development (with hot reload)
+npm run dev
+
+# Production build
+npm run build
+```
+
+Vite automatically compiles all CSS and JavaScript assets. All frontend code is located in `resources/css/` and `resources/js/` directories - no inline styles or scripts in Blade templates.
 
 ## 📦 Features
+
+### New vBulletin-Inspired Homepage
+
+The homepage features a modern, community-focused layout inspired by vBulletin/vAdvanced:
+
+- **Center Content Area**: Showcases now playing info, latest news, upcoming events, and hot game deals
+- **Right Sidebar**: Community stats, active polls, free games, quick links, and Discord integration
+- **Responsive Design**: Adapts seamlessly from desktop to mobile with collapsing sidebars
+- **Aggregated Content**: Pulls data from all major features (News, Events, Polls, Games, Radio)
+- **Real-time Updates**: Live listener count and now playing information
+- **Quick Navigation**: Easy access to all major sections of the site
+
+Homepage route: `/` (main landing page)
+Radio player route: `/radio` (full player interface)
 
 ### Radio Experience
 - **Enhanced Audio Player** - Feature-rich embedded player with:
