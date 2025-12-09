@@ -685,7 +685,7 @@
                 </div>
                 <div class="card-body" style="padding: 0;">
                     @foreach($upcomingEvents as $event)
-                    <a href="{{ route('events.show', $event->slug) }}" class="event-item" style="display: block; padding: 1.25rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.background='var(--color-bg-secondary)'; this.style.transform='translateX(4px)'" onmouseout="this.style.background='transparent'; this.style.transform='translateX(0)'">
+                    <a href="{{ route('events.show', $event->slug) }}" class="event-item">
                         <div style="display: flex; gap: 1rem; align-items: center;">
                             <div style="background: linear-gradient(135deg, var(--color-accent) 0%, #8b5cf6 100%); color: white; border-radius: 12px; padding: 0.75rem; text-align: center; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);">
                                 <div style="font-size: 1.5rem; font-weight: 700; line-height: 1;">{{ $event->starts_at->format('d') }}</div>

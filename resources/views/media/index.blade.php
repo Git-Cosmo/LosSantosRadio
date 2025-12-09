@@ -23,10 +23,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         @foreach($categories as $category)
         <a href="{{ route('media.category', $category->slug) }}" 
-           class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-all hover:transform hover:scale-105 hover:-translate-y-1 cursor-pointer"
-           style="border: 2px solid transparent; transition: all 0.3s ease;"
-           onmouseover="this.style.borderColor='var(--color-accent)'; this.style.boxShadow='0 8px 24px rgba(88, 166, 255, 0.3)'"
-           onmouseout="this.style.borderColor='transparent'; this.style.boxShadow=''">
+           class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl hover-card">
             <div class="text-5xl mb-4 text-center">{{ $category->icon }}</div>
             <h3 class="text-xl font-bold mb-2 text-center" style="color: var(--color-text-primary);">{{ $category->name }}</h3>
             <p class="text-gray-600 dark:text-gray-400 text-sm text-center">
@@ -47,10 +44,7 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($featured as $item)
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1"
-                 style="border: 2px solid transparent;"
-                 onmouseover="this.style.borderColor='var(--color-accent)'"
-                 onmouseout="this.style.borderColor='transparent'">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover-card-lift">
                 @if($item->getFirstMediaUrl('images'))
                 <div style="width: 100%; height: 160px; background: url('{{ $item->getFirstMediaUrl('images') }}') center/cover; position: relative;">
                     <div style="position: absolute; top: 0.75rem; right: 0.75rem;">
@@ -103,10 +97,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($popular as $item)
             <a href="{{ route('media.show', [$item->category->slug, $item->subcategory->slug, $item->slug]) }}"
-               class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 hover:shadow-xl transition-all"
-               style="border: 2px solid transparent; text-decoration: none; cursor: pointer;"
-               onmouseover="this.style.borderColor='var(--color-accent)'; this.style.transform='translateY(-4px)'"
-               onmouseout="this.style.borderColor='transparent'; this.style.transform='translateY(0)'">
+               class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 hover-card-lift"
+               style="text-decoration: none;">
                 <h3 class="font-bold mb-2" style="color: var(--color-text-primary); font-size: 0.9375rem;">{{ Str::limit($item->title, 40) }}</h3>
                 <p class="text-xs mb-3" style="color: var(--color-text-muted);">{{ $item->category->name }}</p>
                 <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.75rem; color: var(--color-text-muted);">
@@ -130,10 +122,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @foreach($recent as $item)
             <a href="{{ route('media.show', [$item->category->slug, $item->subcategory->slug, $item->slug]) }}"
-               class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 hover:shadow-xl transition-all"
-               style="border: 2px solid transparent; text-decoration: none; cursor: pointer;"
-               onmouseover="this.style.borderColor='var(--color-accent)'; this.style.transform='translateY(-4px)'"
-               onmouseout="this.style.borderColor='transparent'; this.style.transform='translateY(0)'">
+               class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 hover-card-lift"
+               style="text-decoration: none;">
                 <h3 class="font-bold mb-2" style="color: var(--color-text-primary); font-size: 0.9375rem;">{{ Str::limit($item->title, 40) }}</h3>
                 <p class="text-xs mb-3" style="color: var(--color-text-muted);">{{ $item->subcategory->name }}</p>
                 <div style="font-size: 0.75rem; color: var(--color-text-muted);">
