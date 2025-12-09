@@ -1,5 +1,46 @@
 @import 'tailwindcss';
+
+/* Theme and base styles - loaded first */
+@import './theme.css';
+@import './layout.css';
+
+/* Modals and overlays */
 @import './lyrics-modal.css';
+
+/* Component styles */
+@import './components/audio-player.css';
+@import './components/floating-background.css';
+@import './components/quick-stats.css';
+
+/* Page-specific styles */
+@import './pages/radio.css';
+@import './pages/games.css';
+@import './pages/errors.css';
+@import './pages/legal.css';
+@import './pages/coming-soon.css';
+@import './pages/welcome.css';
+@import './pages/favorites.css';
+@import './pages/news.css';
+@import './pages/news-show.css';
+@import './pages/videos.css';
+@import './pages/videos-ylyl.css';
+@import './pages/videos-clips.css';
+@import './pages/requests.css';
+@import './pages/messages.css';
+@import './pages/search.css';
+@import './pages/stations.css';
+@import './pages/analytics.css';
+@import './pages/schedule.css';
+@import './pages/poll-show.css';
+@import './pages/dj-schedule.css';
+@import './pages/songs.css';
+
+/* Admin pages */
+@import './pages/admin-layout.css';
+@import './pages/admin-theme.css';
+@import './pages/admin-media.css';
+@import './pages/admin-settings.css';
+@import './pages/admin-login.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

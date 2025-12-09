@@ -83,13 +83,5 @@
         </div>
     </div>
 
-    <style>
-        .deal-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .deal-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-        }
-    </style>
+    
 </x-layouts.app>

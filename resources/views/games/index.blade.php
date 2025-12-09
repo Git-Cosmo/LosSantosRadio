@@ -156,28 +156,5 @@
         </div>
     </div>
 
-    <style>
-        .search-input:focus {
-            border-color: var(--color-accent) !important;
-            outline: none;
-        }
-        
-        .view-all-link:hover {
-            transform: translateX(4px);
-        }
-        
-        .game-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .game-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            border-color: var(--color-accent) !important;
-        }
-        
-        .game-card:hover img {
-            transform: scale(1.08);
-        }
-    </style>
+    
 </x-layouts.app>

@@ -343,95 +343,9 @@
         </div>
     </div>
 
-    @push('scripts')
-    <script>
-        /**
-         * Request a song via the AzuraCast API.
-         * 
-         * @param {number|string} songId - The song ID to request
-         * @param {string} title - The song title (for display)
-         * @param {string} artist - The song artist (for display)
-         * @param {HTMLElement} btn - The button element that was clicked
-         */
-        function requestSong(songId, title, artist, btn) {
-            btn.disabled = true;
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
 
-            fetch('{{ route('requests.store') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': window.csrfToken,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    song_id: songId,
-                    song_title: title,
-                    song_artist: artist
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Request failed with status ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    btn.innerHTML = '<i class="fas fa-check"></i> Requested';
-                    btn.classList.remove('btn-primary');
-                    btn.classList.add('btn-secondary');
-                    showToast('success', data.message || 'Song request submitted!');
-                } else {
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
-                    showToast('error', data.error || 'Failed to request song');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                btn.innerHTML = originalHtml;
-                btn.disabled = false;
-                showToast('error', 'An error occurred. Please try again.');
-            });
-        }
-    </script>
-    @endpush
+    
 
-    <style>
-        .song-row {
-            transition: background-color 0.2s ease;
-        }
-
-        .song-row:hover {
-            background-color: var(--color-bg-hover);
-        }
-
-        .song-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .pagination-btn:not(.active):not(.disabled):hover {
-            background: var(--color-bg-hover) !important;
-        }
-
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr !important;
-            }
-
-            .song-table th:nth-child(3),
-            .song-table td:nth-child(3),
-            .song-table th:nth-child(4),
-            .song-table td:nth-child(4) {
-                display: none;
-            }
-
-            .song-grid {
-                grid-template-columns: 1fr !important;
-            }
-        }
-    </style>
+    @vite('resources/js/modules/songs.js')
 </x-layouts.app>

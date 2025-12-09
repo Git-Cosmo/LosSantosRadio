@@ -68,16 +68,5 @@
         </div>
     </div>
 
-    <style>
-        .video-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .video-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-        }
-        .video-card:hover .video-overlay {
-            opacity: 1 !important;
-        }
-    </style>
+    
 </x-layouts.app>

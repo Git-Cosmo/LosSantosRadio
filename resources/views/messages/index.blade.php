@@ -75,10 +75,5 @@
         </div>
     </div>
 
-    <style>
-        .message-item:hover {
-            background: var(--color-bg-hover) !important;
-            transform: translateX(5px);
-        }
-    </style>
+    
 </x-layouts.app>

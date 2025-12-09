@@ -97,9 +97,5 @@
         </div>
     </div>
 
-    <style>
-        .search-result:hover {
-            background: var(--color-bg-tertiary);
-        }
-    </style>
+    
 </x-layouts.app>

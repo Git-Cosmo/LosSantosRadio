@@ -69,11 +69,7 @@
         </div>
     </div>
 
-    @push('scripts')
-    <script>
-        // Scroll to bottom of messages
-        const container = document.getElementById('messages-container');
-        container.scrollTop = container.scrollHeight;
-    </script>
-    @endpush
+    
+
+    @vite('resources/js/modules/message-show.js')
 </x-layouts.app>

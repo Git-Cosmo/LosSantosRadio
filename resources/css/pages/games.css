@@ -1,0 +1,27 @@
+/* Games Pages Styles */
+
+/* Search Input */
+.search-input:focus {
+    border-color: var(--color-accent) !important;
+    outline: none;
+}
+
+/* Deal Card Hover Effects */
+.deal-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.deal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(88, 166, 255, 0.3);
+}
+
+/* Game Card Hover Effects */
+.game-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(88, 166, 255, 0.3);
+}
