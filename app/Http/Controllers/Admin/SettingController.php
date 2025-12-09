@@ -10,6 +10,43 @@ use Illuminate\View\View;
 
 class SettingController extends Controller
 {
+    public function dashboard(): View
+    {
+        $settings = Setting::allAsArray();
+
+        return view('admin.settings.dashboard', [
+            'settings' => $settings,
+        ]);
+    }
+
+    public function updateAll(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'settings' => 'required|array',
+            'settings.*' => 'nullable',
+        ]);
+
+        foreach ($validated['settings'] as $key => $value) {
+            // Handle checkbox values (convert to boolean)
+            if (in_array($key, ['enable_comments', 'enable_song_requests', 'enable_polls', 'maintenance_mode'])) {
+                $value = (bool) $value;
+            }
+
+            // Handle numeric values
+            if (in_array($key, ['default_station_id', 'listener_update_interval', 'guest_request_limit', 'user_request_limit', 'guest_lyrics_limit'])) {
+                $value = (int) $value;
+            }
+
+            Setting::set($key, $value);
+        }
+
+        // Clear all settings cache
+        Setting::clearCache();
+
+        return redirect()->route('admin.settings.dashboard')
+            ->with('success', 'Settings updated successfully!');
+    }
+
     public function index(Request $request): View
     {
         $query = Setting::query();

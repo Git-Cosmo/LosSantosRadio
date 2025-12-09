@@ -338,6 +338,8 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
     });
 
     // Settings
+    Route::get('/settings/dashboard', [SettingController::class, 'dashboard'])->name('settings.dashboard');
+    Route::put('/settings/update-all', [SettingController::class, 'updateAll'])->name('settings.update-all');
     Route::resource('settings', SettingController::class)->except(['show']);
 
     // Theme Management
