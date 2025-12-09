@@ -7,6 +7,8 @@ use App\Models\Event;
 use App\Models\FreeGame;
 use App\Models\Game;
 use App\Models\GameDeal;
+use App\Models\MediaCategory;
+use App\Models\MediaItem;
 use App\Models\News;
 use App\Models\Poll;
 use App\Models\Video;
@@ -38,6 +40,7 @@ class SitemapController extends Controller
         $urls = array_merge($urls, $this->getFreeGameUrls());
         $urls = array_merge($urls, $this->getGameDealUrls());
         $urls = array_merge($urls, $this->getVideoUrls());
+        $urls = array_merge($urls, $this->getMediaUrls());
 
         $content = view('sitemap.index', ['urls' => $urls])->render();
 
@@ -335,6 +338,55 @@ class SitemapController extends Controller
                     'lastmod' => $video->updated_at->format('c'),
                     'changefreq' => 'weekly',
                     'priority' => '0.5',
+                ];
+            });
+
+        return $urls;
+    }
+
+    /**
+     * Get media hub URLs.
+     */
+    protected function getMediaUrls(): array
+    {
+        $urls = [];
+
+        // Media hub index
+        $urls[] = [
+            'loc' => route('media.index'),
+            'lastmod' => now()->format('c'),
+            'changefreq' => 'daily',
+            'priority' => '0.8',
+        ];
+
+        // Media categories
+        MediaCategory::where('is_active', true)
+            ->get()
+            ->each(function ($category) use (&$urls) {
+                $urls[] = [
+                    'loc' => route('media.category', $category->slug),
+                    'lastmod' => now()->format('c'),
+                    'changefreq' => 'daily',
+                    'priority' => '0.7',
+                ];
+            });
+
+        // Published media items
+        MediaItem::published()
+            ->with(['category', 'subcategory'])
+            ->latest('published_at')
+            ->take(self::MAX_ITEMS_PER_TYPE)
+            ->get()
+            ->each(function ($item) use (&$urls) {
+                $urls[] = [
+                    'loc' => route('media.show', [
+                        'category' => $item->category->slug,
+                        'subcategory' => $item->subcategory->slug,
+                        'slug' => $item->slug,
+                    ]),
+                    'lastmod' => $item->updated_at->format('c'),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.6',
                 ];
             });
 

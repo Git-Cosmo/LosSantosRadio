@@ -213,6 +213,29 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Media Content Automation APIs
+    |--------------------------------------------------------------------------
+    |
+    | API keys for automated content import in the media hub. These are
+    | optional and only needed if you want to automatically populate the
+    | media hub with mods, maps, and other content from various sources.
+    |
+    */
+
+    'curseforge' => [
+        'api_key' => env('CURSEFORGE_API_KEY'),
+    ],
+
+    'steam' => [
+        'api_key' => env('STEAM_API_KEY'),
+    ],
+
+    'nexusmods' => [
+        'api_key' => env('NEXUSMODS_API_KEY'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Docker Configuration
     |--------------------------------------------------------------------------
     |

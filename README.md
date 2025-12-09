@@ -181,8 +181,64 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Embedded Players** - Watch videos directly on the site
 - **Reddit Integration** - Automatically fetch videos from r/funnyvideos and r/LivestreamFail
 
+### Media Hub (GameBanana-style)
+- **Comprehensive Mods & Content Platform** - Full-featured content sharing system for gaming mods, maps, and enhancements
+- **8 Game Categories Pre-configured**:
+  - **Counter-Strike 2** - Maps, Skins, HUD Mods, Sound Mods, Server Plugins
+  - **Minecraft** - Mods, Texture Packs, Maps, Data Packs, Skins, Server Plugins
+  - **GTA V** - Scripts, Vehicles, Maps, Weapons, Peds, Graphics Mods
+  - **Skyrim** - Gameplay Mods, Quests, Graphics & Visuals, Armor & Weapons, Followers, Utilities
+  - **Cyberpunk 2077** - Gameplay Mods, Graphics, Clothing & Armor, Vehicles, Weapons, Utilities
+  - **Starfield** - Gameplay Mods, Ship Mods, Outpost Mods, Graphics, UI Improvements, Weapons & Armor
+  - **Baldur's Gate 3** - Class Mods, Companions, Gameplay, Visual Mods, Quality of Life, Equipment
+  - **Terraria** - Content Mods, Quality of Life, Texture Packs, Tools
+- **45+ Subcategories** - Organized by content type for easy browsing
+- **User Upload System** - Authenticated users can upload mods and content:
+  - File upload support (up to 100MB)
+  - Image thumbnails (up to 5MB)
+  - Version tracking
+  - Approval workflow for quality control
+- **Browse & Discover**:
+  - Browse by game category
+  - Filter by subcategory (maps, skins, mods, etc.)
+  - Featured content showcase
+  - Popular items by downloads
+  - Latest uploads
+  - Advanced search with Laravel Scout
+- **Download System**:
+  - **Public Viewing** - All visitors can browse and view content details
+  - **Auth-Gated Downloads** - Must be logged in to download files
+  - Download counter tracking
+  - View counter tracking
+- **Spatie Media Library Integration**:
+  - Multiple file collections (files, images, screenshots)
+  - Automatic file size formatting
+  - Image optimization
+  - Media management in admin panel
+- **Ratings & Reviews** - Community rating system (ready for implementation)
+- **Admin Management**:
+  - Full CRUD for media items
+  - Category and subcategory management
+  - Approval/rejection workflow
+  - Bulk actions
+  - Featured content selection
+- **Automated Content Import**:
+  - **CurseForge Integration** - Auto-import popular Minecraft mods
+  - **Steam Workshop Integration** - Import trending CS2 maps and items
+  - **GTA5-Mods.com Scraping** - RSS feed import for GTA V mods
+  - **Nexus Mods Integration** - Import trending Skyrim mods
+  - CLI command: `php artisan media:import --source=all`
+  - Configurable via optional API keys
+  - Automatic duplicate detection
+  - Smart subcategory assignment
+- **SEO Optimized**:
+  - Included in sitemap generation
+  - SEO-friendly URL structure: `/media/{game}/{type}/{item}`
+  - Searchable via global search
+  - Meta tags ready for implementation
+
 ### Search System
-- **Global Search** - **Fixed and fully functional** - Search across news, events, polls, games, videos, DJ profiles, and deals
+- **Global Search** - **Fixed and fully functional** - Search across news, events, polls, games, videos, DJ profiles, deals, and media items
 - **Laravel Scout Integration** - All content types use Scout's Searchable trait for enhanced search relevance:
   - News articles indexed by title and content
   - Events indexed by title, description, location, and type
@@ -191,6 +247,7 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
   - Game deals indexed by title with pricing and scoring data
   - Videos indexed by title, description, category, platform, and author
   - DJ profiles indexed by stage name and bio
+  - **Media items** indexed by title, description, content, category, subcategory, and uploader
 - **Search API** - JSON API endpoint at `/api/search` with proper response format:
   - Returns `success` flag and `results` array
   - Each result includes `id`, `type`, `title`, `url`, `description`, `date`, and `date_formatted`
@@ -208,6 +265,15 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 
 ### Admin Panel
 - **Admin Panel** - Overview of stats, activity, and requests
+- **Analytics Dashboard** - **NEW!** Comprehensive visitor tracking and statistics:
+  - Real-time online user count
+  - Session analytics (guests vs authenticated users)
+  - Device type breakdown (mobile, tablet, desktop)
+  - Top countries by visitor count
+  - Browser statistics
+  - Configurable date ranges (7, 30, 60, 90 days)
+  - Privacy-first with IP anonymization
+  - Automatic cleanup of old data
 - **User Management** - View, edit, and manage user accounts
 - **Song Requests** - Manage the request queue, mark played/rejected
 - **News Management** - Create and publish news articles with **integrated RSS scraping controls**:
@@ -219,6 +285,15 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **DJ Profile Management** - Add DJs and manage schedules
 - **Games Management** - Manage free games and deals, sync from Reddit/CheapShark
 - **Videos Management** - Manage YLYL and clips, sync from Reddit
+- **Media Hub Management** - **NEW!** Complete content moderation system:
+  - **Media Items CRUD** - Full control over uploaded content
+  - **Approval Workflow** - Review and approve/reject user submissions
+  - **Category Management** - Create and organize game categories
+  - **Subcategory Management** - Define content types per game
+  - **Bulk Actions** - Efficient content moderation
+  - **Featured Content** - Highlight quality submissions
+  - **Download/View Statistics** - Track content popularity
+  - **Automated Import** - One-click import from CurseForge, Steam Workshop, Nexus Mods, GTA5-Mods
 - **Media Library** - Upload, organize, and manage media files with image optimization
 - **Discord Bot Panel** - Monitor and manage Discord integration
 - **Settings Dashboard** - **NEW!** Modern, user-friendly settings interface at `/admin/settings/dashboard`:
@@ -351,6 +426,7 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
   - Free game offers
   - Game deals
   - Videos (YLYL and clips)
+  - **Media hub** - Categories and content items (up to 1000)
 - **Robots.txt** - Dynamic generation with proper allow/disallow rules
 - **Canonical URLs** - Prevent duplicate content issues
 - **Search Engine Friendly** - Clean URLs and proper HTML semantics
@@ -406,9 +482,22 @@ php artisan db:seed --class=EventSeeder
 
 # Seed entertaining polls (6 gaming polls, including 2 odd ones)
 php artisan db:seed --class=PollSeeder
+
+# Seed media categories (8 games with 45+ subcategories)
+php artisan db:seed --class=MediaCategorySeeder
 ```
 
-7. **Build frontend assets:**
+7. **Optional: Import media content from external sources:**
+```bash
+# Import popular mods and content from various sources
+# Requires API keys in .env (optional, see configuration section)
+php artisan media:import
+
+# Import from specific source
+php artisan media:import --source=minecraft --limit=50
+```
+
+8. **Build frontend assets:**
 ```bash
 npm run build
 ```
@@ -689,12 +778,45 @@ SCOUT_QUEUE=false
 # Activity Logging
 ACTIVITY_LOGGER_ENABLED=true
 
+# Media Hub Content Import APIs (optional)
+# CurseForge API (for Minecraft mods)
+CURSEFORGE_API_KEY=
+
+# Steam API (for CS2 workshop items)
+STEAM_API_KEY=
+
+# Nexus Mods API (for Skyrim mods)
+NEXUSMODS_API_KEY=
+
 # Sentry Error Monitoring (optional)
 SENTRY_LARAVEL_DSN=
 SENTRY_TRACES_SAMPLE_RATE=0.1
 ```
 
 **📝 Note:** For a complete list of all available environment variables with detailed explanations and examples, see [.env.example](.env.example).
+
+### Media Content Automation
+
+The media hub can automatically import popular mods and content from various free sources:
+
+**Supported Sources:**
+- **CurseForge** - Popular Minecraft mods (requires API key from https://docs.curseforge.com/)
+- **Steam Workshop** - Trending CS2 maps and items (requires API key from https://steamcommunity.com/dev/apikey)
+- **GTA5-Mods.com** - Latest GTA V mods via RSS (no API key required)
+- **Nexus Mods** - Trending Skyrim mods (requires API key from https://www.nexusmods.com/users/myaccount?tab=api)
+
+**Usage:**
+```bash
+# Import from all configured sources (20 items each)
+php artisan media:import
+
+# Import from specific source with custom limit
+php artisan media:import --source=minecraft --limit=50
+
+# Available sources: minecraft, cs2, gta5, skyrim, all
+```
+
+All API keys are optional. The import command will skip sources without configured keys. You can schedule this command to run periodically for automated content updates.
 
 ### Discord Bot Admin Controls
 
