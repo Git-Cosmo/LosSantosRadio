@@ -122,12 +122,33 @@ class SearchTest extends TestCase
         // Results should be an array
         $this->assertIsArray($data['results']);
 
+        // Response should have success field
+        $this->assertArrayHasKey('success', $data);
+        $this->assertTrue($data['success']);
+
         // If there are results, they should have proper structure
         if (! empty($data['results'])) {
             $firstResult = $data['results'][0];
+            $this->assertArrayHasKey('id', $firstResult);
             $this->assertArrayHasKey('type', $firstResult);
             $this->assertArrayHasKey('title', $firstResult);
             $this->assertArrayHasKey('url', $firstResult);
+            $this->assertArrayHasKey('date', $firstResult);
+            $this->assertArrayHasKey('date_formatted', $firstResult);
         }
+    }
+
+    public function test_search_api_returns_success_field(): void
+    {
+        $response = $this->getJson('/api/search?q=test');
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'results',
+        ]);
+
+        $data = $response->json();
+        $this->assertTrue($data['success']);
     }
 }
