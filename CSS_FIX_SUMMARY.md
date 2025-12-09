@@ -54,7 +54,7 @@ This test will fail if the `@vite` directive is removed again, preventing this i
 ## Verification
 ✅ `@vite` directive added to layout
 ✅ Frontend assets built successfully
-✅ Unit tests passing (35 tests, 112 assertions)
+✅ Unit tests passing
 ✅ Vite test added and passing
 ✅ Documentation updated
 
