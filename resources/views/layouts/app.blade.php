@@ -1951,9 +1951,20 @@
                 <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Home
                 </a>
-                <a href="{{ route('schedule') }}" class="nav-link {{ request()->routeIs('schedule') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-alt"></i> Schedule
-                </a>
+                <!-- Radio Dropdown -->
+                <div class="nav-dropdown" x-data="{ open: false }">
+                    <button @click="open = !open" class="nav-link nav-dropdown-toggle {{ request()->routeIs('schedule') || request()->routeIs('requests.*') ? 'active' : '' }}">
+                        <i class="fas fa-radio"></i> Radio <i class="fas fa-chevron-down" style="font-size: 0.625rem; margin-left: 0.25rem;"></i>
+                    </button>
+                    <div x-show="open" @click.away="open = false" class="nav-dropdown-menu" x-cloak>
+                        <a href="{{ route('schedule') }}" class="nav-dropdown-item {{ request()->routeIs('schedule') ? 'active' : '' }}">
+                            <i class="fas fa-calendar-alt"></i> Schedule
+                        </a>
+                        <a href="{{ route('requests.index') }}" class="nav-dropdown-item {{ request()->routeIs('requests.*') ? 'active' : '' }}">
+                            <i class="fas fa-music"></i> Requests
+                        </a>
+                    </div>
+                </div>
                 <a href="{{ route('news.index') }}" class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}">
                     <i class="fas fa-newspaper"></i> News
                 </a>
@@ -1963,12 +1974,9 @@
                 <a href="{{ route('polls.index') }}" class="nav-link {{ request()->routeIs('polls.*') ? 'active' : '' }}">
                     <i class="fas fa-poll"></i> Polls
                 </a>
-                <a href="{{ route('requests.index') }}" class="nav-link {{ request()->routeIs('requests.*') ? 'active' : '' }}">
-                    <i class="fas fa-music"></i> Request
-                </a>
                 <!-- Games Dropdown -->
                 <div class="nav-dropdown" x-data="{ open: false }">
-                    <button @click="open = !open" class="nav-link nav-dropdown-toggle {{ request()->routeIs('games.*') ? 'active' : '' }}">
+                    <button @click="open = !open" class="nav-link nav-dropdown-toggle {{ request()->routeIs('games.*') || request()->routeIs('media.*') ? 'active' : '' }}">
                         <i class="fas fa-gamepad"></i> Games <i class="fas fa-chevron-down" style="font-size: 0.625rem; margin-left: 0.25rem;"></i>
                     </button>
                     <div x-show="open" @click.away="open = false" class="nav-dropdown-menu" x-cloak>
@@ -1977,6 +1985,9 @@
                         </a>
                         <a href="{{ route('games.deals') }}" class="nav-dropdown-item {{ request()->routeIs('games.deals') ? 'active' : '' }}">
                             <i class="fas fa-tags"></i> Game Deals
+                        </a>
+                        <a href="{{ route('media.index') }}" class="nav-dropdown-item {{ request()->routeIs('media.*') ? 'active' : '' }}">
+                            <i class="fas fa-download"></i> Downloads
                         </a>
                     </div>
                 </div>
@@ -1994,9 +2005,6 @@
                         </a>
                     </div>
                 </div>
-                <a href="{{ route('media.index') }}" class="nav-link {{ request()->routeIs('media.*') ? 'active' : '' }}">
-                    <i class="fas fa-download" aria-hidden="true"></i> Downloads
-                </a>
             </nav>
 
             <div class="user-menu">
