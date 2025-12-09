@@ -202,6 +202,73 @@ class MediaItemController extends Controller
     }
 
     /**
+     * Bulk approve media items.
+     */
+    public function bulkApprove(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:media_items,id',
+        ]);
+
+        $count = MediaItem::whereIn('id', $validated['ids'])
+            ->update([
+                'is_approved' => true,
+                'published_at' => now(),
+            ]);
+
+        activity()
+            ->causedBy(auth()->user())
+            ->log("bulk approved {$count} media items");
+
+        return back()->with('success', "Successfully approved {$count} media items.");
+    }
+
+    /**
+     * Bulk reject (delete) media items.
+     */
+    public function bulkReject(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:media_items,id',
+        ]);
+
+        $count = MediaItem::whereIn('id', $validated['ids'])->count();
+        
+        MediaItem::whereIn('id', $validated['ids'])->delete();
+
+        activity()
+            ->causedBy(auth()->user())
+            ->log("bulk rejected {$count} media items");
+
+        return back()->with('success', "Successfully rejected {$count} media items.");
+    }
+
+    /**
+     * Bulk feature/unfeature media items.
+     */
+    public function bulkFeature(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:media_items,id',
+            'featured' => 'required|boolean',
+        ]);
+
+        $count = MediaItem::whereIn('id', $validated['ids'])
+            ->update(['is_featured' => $validated['featured']]);
+
+        $action = $validated['featured'] ? 'featured' : 'unfeatured';
+
+        activity()
+            ->causedBy(auth()->user())
+            ->log("bulk {$action} {$count} media items");
+
+        return back()->with('success', "Successfully {$action} {$count} media items.");
+    }
+
+    /**
      * Format bytes to human-readable format.
      */
     private function formatBytes(int $bytes): string

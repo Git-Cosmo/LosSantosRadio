@@ -129,13 +129,13 @@ Route::prefix('videos')->name('videos.')->group(function () {
 // Media/Mods Hub (GameBanana-style)
 Route::prefix('media')->name('media.')->group(function () {
     Route::get('/', [\App\Http\Controllers\MediaController::class, 'index'])->name('index');
-    Route::get('/search', [\App\Http\Controllers\MediaController::class, 'search'])->name('search');
+    Route::get('/search', [\App\Http\Controllers\MediaController::class, 'search'])->middleware('throttle:30,1')->name('search');
     Route::get('/upload', [\App\Http\Controllers\MediaController::class, 'upload'])->name('upload');
-    Route::post('/upload', [\App\Http\Controllers\MediaController::class, 'store'])->name('store');
+    Route::post('/upload', [\App\Http\Controllers\MediaController::class, 'store'])->middleware('throttle:5,1')->name('store');
     Route::get('/{category}', [\App\Http\Controllers\MediaController::class, 'category'])->name('category');
     Route::get('/{category}/{subcategory}', [\App\Http\Controllers\MediaController::class, 'subcategory'])->name('subcategory');
     Route::get('/{category}/{subcategory}/{slug}', [\App\Http\Controllers\MediaController::class, 'show'])->name('show');
-    Route::get('/{category}/{subcategory}/{slug}/download', [\App\Http\Controllers\MediaController::class, 'download'])->name('download');
+    Route::get('/{category}/{subcategory}/{slug}/download', [\App\Http\Controllers\MediaController::class, 'download'])->middleware('throttle:10,1')->name('download');
 });
 
 // DJ/Presenter System
@@ -422,6 +422,11 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::put('/items/{mediaItem}', [\App\Http\Controllers\Admin\MediaItemController::class, 'update'])->name('items.update');
         Route::delete('/items/{mediaItem}', [\App\Http\Controllers\Admin\MediaItemController::class, 'destroy'])->name('items.destroy');
         Route::post('/items/{mediaItem}/toggle-approval', [\App\Http\Controllers\Admin\MediaItemController::class, 'toggleApproval'])->name('items.toggle-approval');
+        
+        // Bulk actions
+        Route::post('/items/bulk-approve', [\App\Http\Controllers\Admin\MediaItemController::class, 'bulkApprove'])->name('items.bulk-approve');
+        Route::post('/items/bulk-reject', [\App\Http\Controllers\Admin\MediaItemController::class, 'bulkReject'])->name('items.bulk-reject');
+        Route::post('/items/bulk-feature', [\App\Http\Controllers\Admin\MediaItemController::class, 'bulkFeature'])->name('items.bulk-feature');
         
         // Categories CRUD
         Route::get('/categories', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'index'])->name('categories.index');

@@ -218,6 +218,28 @@ class SearchController extends Controller
 
         $results = array_merge($results, $djs->toArray());
 
+        // Search Media Items using Scout
+        $mediaItems = \App\Models\MediaItem::search($query)
+            ->query(function ($builder) {
+                $builder->where('is_approved', true)
+                    ->where('is_active', true);
+            })
+            ->take($limit)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'type' => 'media',
+                    'title' => $item->title,
+                    'url' => route('media.show', [$item->category->slug, $item->subcategory->slug, $item->slug]),
+                    'description' => \Str::limit(strip_tags($item->description ?? ''), 150),
+                    'date' => $item->published_at?->diffForHumans() ?? 'Unknown',
+                    'date_formatted' => $item->published_at?->format('M d, Y') ?? 'Unknown',
+                ];
+            });
+
+        $results = array_merge($results, $mediaItems->toArray());
+
         // Return limited results
         return array_slice($results, 0, $limit * 2);
     }

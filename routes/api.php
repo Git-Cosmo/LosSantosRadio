@@ -81,3 +81,17 @@ Route::middleware(['web', 'auth'])->prefix('media')->name('api.media.')->group(f
     Route::post('/', [MediaController::class, 'upload'])->name('upload');
     Route::delete('/{media}', [MediaController::class, 'destroy'])->name('destroy');
 });
+
+// Media Items API (public access)
+Route::prefix('media-items')->name('api.media-items.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\MediaItemsController::class, 'index'])->name('index');
+    Route::get('/categories', [\App\Http\Controllers\Api\MediaItemsController::class, 'categories'])->name('categories');
+    Route::get('/featured', [\App\Http\Controllers\Api\MediaItemsController::class, 'featured'])->name('featured');
+    Route::get('/{slug}', [\App\Http\Controllers\Api\MediaItemsController::class, 'show'])->name('show');
+});
+
+// Analytics API (public, cached)
+Route::prefix('analytics')->name('api.analytics.')->middleware('throttle:30,1')->group(function () {
+    Route::get('/stats', [\App\Http\Controllers\Api\AnalyticsController::class, 'stats'])->name('stats');
+    Route::get('/online', [\App\Http\Controllers\Api\AnalyticsController::class, 'online'])->name('online');
+});
