@@ -4,7 +4,7 @@
             <h1>⚙️ Advanced Settings</h1>
             <p style="color: var(--color-text-secondary); margin-top: 0.5rem; font-size: 0.9375rem;">
                 Key-value settings editor for power users. Most users should use the 
-                <a href="{{ route('admin.settings.dashboard') }}" style="color: var(--color-accent); font-weight: 600;">
+                <a href="{{ route('admin.settings.index') }}" style="color: var(--color-accent); font-weight: 600;">
                     <i class="fas fa-tachometer-alt"></i> Settings Dashboard
                 </a> instead.
             </p>
@@ -43,19 +43,19 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $typeColors = [
+                            'string' => 'primary',
+                            'integer' => 'success',
+                            'boolean' => 'warning',
+                            'json' => 'primary',
+                        ];
+                    @endphp
                     @forelse($settings as $setting)
                         <tr>
                             <td><code>{{ $setting->key }}</code></td>
                             <td>{{ Str::limit($setting->value, 50) }}</td>
                             <td>
-                                @php
-                                    $typeColors = [
-                                        'string' => 'primary',
-                                        'integer' => 'success',
-                                        'boolean' => 'warning',
-                                        'json' => 'primary',
-                                    ];
-                                @endphp
                                 <span class="badge badge-{{ $typeColors[$setting->type] ?? 'gray' }}">
                                     {{ ucfirst($setting->type) }}
                                 </span>

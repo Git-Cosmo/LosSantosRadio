@@ -4,7 +4,7 @@
             <h1>Settings</h1>
             <p style="color: var(--color-text-secondary); margin-top: 0.5rem; font-size: 0.9375rem;">
                 Advanced key-value settings editor. For a user-friendly interface, use the 
-                <a href="{{ route('admin.settings.dashboard') }}" style="color: var(--color-accent); font-weight: 600;">Settings Dashboard</a>.
+                <a href="{{ route('admin.settings.index') }}" style="color: var(--color-accent); font-weight: 600;">Settings Dashboard</a>.
             </p>
         </div>
         <a href="{{ route('admin.settings.create') }}" class="btn btn-primary">

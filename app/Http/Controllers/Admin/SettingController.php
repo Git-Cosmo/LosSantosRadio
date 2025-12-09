@@ -96,7 +96,7 @@ class SettingController extends Controller
         // Clear all settings cache
         Setting::clearCache();
 
-        return redirect()->route('admin.settings.dashboard')
+        return redirect()->route('admin.settings.index')
             ->with('success', 'Settings updated successfully!');
     }
 

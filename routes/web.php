@@ -339,7 +339,6 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
 
     // Settings - Dashboard is now primary interface
     Route::get('/settings', [SettingController::class, 'dashboard'])->name('settings.index');
-    Route::get('/settings/dashboard', [SettingController::class, 'dashboard'])->name('settings.dashboard');
     Route::put('/settings/update-all', [SettingController::class, 'updateAll'])->name('settings.update-all');
     
     // Advanced settings (key-value editor) - for power users
