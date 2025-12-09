@@ -13,7 +13,7 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 ## 🛠️ Tech Stack
 
 - **Backend**: Laravel 12
-- **Frontend**: Tailwind CSS, Alpine.js, Blade Templates
+- **Frontend**: Tailwind CSS 4, Alpine.js, Blade Templates, Vite 7
 - **Radio Integration**: AzuraCast API
 - **Streaming**: Icecast / Shoutcast (multi-server support with Docker orchestration)
 - **Real-time**: Laravel Reverb (WebSocket) for instant now playing updates
@@ -31,6 +31,47 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Media**: Spatie Laravel Media Library with Intervention Image
 - **Sitemap**: Spatie Laravel Sitemap (auto-generated every 6 hours)
 - **Lyrics**: Genius API integration with guest limits and monetization flow
+
+### Frontend Architecture
+
+Los Santos Radio uses a modular CSS and JavaScript architecture for maintainability and performance:
+
+#### CSS Organization
+- **Modular CSS**: 32 CSS files organized by purpose in `resources/css/`
+  - `theme.css` - Core color variables and theme definitions (light/dark mode)
+  - `layout.css` - Main layout styles (header, footer, navigation)
+  - `components/` - Reusable component styles (audio player, floating background, quick stats, sidebar)
+  - `pages/` - Page-specific styles organized by route (radio, games, news, events, etc.)
+- **Build Process**: Vite compiles all CSS into a single optimized bundle
+  - Production build: ~136KB CSS (24.5KB gzipped)
+  - All inline styles extracted from Blade templates
+  - CSS imports managed centrally in `app.css`
+
+#### JavaScript Organization
+- **Core Modules**: Essential functionality in `resources/js/modules/`
+  - `radio-player.js` - Radio playback and now playing functionality
+  - `websocket-player.js` - Real-time WebSocket updates with polling fallback
+  - `lyrics-modal.js` - Lyrics modal with guest limit enforcement
+  - `search-modal.js` - Global search functionality
+  - `favorites.js` - Favorite songs management
+  - `keyboard-shortcuts.js` - Global keyboard shortcuts
+  - `ui-helpers.js` - Toast notifications and UI utilities
+- **Page-specific Modules**: Loaded per-page with Vite directives
+  - 14 page-specific modules for enhanced functionality
+  - Examples: `songs.js`, `event-show.js`, `poll-show.js`, `analytics.js`
+- **Build Process**: Vite bundles and optimizes JavaScript
+  - Production build: ~122KB JS (39.7KB gzipped)
+  - Dynamic imports for page-specific functionality
+  - All inline scripts extracted (Alpine.js components intentionally kept inline)
+
+#### Development Workflow
+```bash
+npm install              # Install dependencies
+npm run dev              # Start Vite dev server with hot reload
+npm run build            # Build for production
+```
+
+All styles and scripts are compiled through Vite for optimal performance and developer experience.
 
 ## 📦 Features
 

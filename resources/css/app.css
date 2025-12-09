@@ -11,6 +11,7 @@
 @import './components/audio-player.css';
 @import './components/floating-background.css';
 @import './components/quick-stats.css';
+@import './components/sidebar.css';
 
 /* Page-specific styles */
 @import './pages/radio.css';
