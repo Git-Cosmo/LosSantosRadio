@@ -25,10 +25,8 @@
                         name="search" 
                         value="{{ $filters['search'] ?? '' }}"
                         placeholder="Search for games..." 
-                        class="form-input"
+                        class="form-input search-input"
                         style="width: 100%; padding: 1rem 1rem 1rem 3.5rem; font-size: 1rem; border-radius: 12px; border: 2px solid var(--color-border); transition: all 0.3s ease;"
-                        onfocus="this.style.borderColor='var(--color-accent)'"
-                        onblur="this.style.borderColor='var(--color-border)'"
                     >
                 </div>
                 <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem; border-radius: 12px; white-space: nowrap;">
@@ -47,7 +45,7 @@
                         </span>
                         Hot Deals
                     </h2>
-                    <a href="{{ route('games.deals') }}" style="color: var(--color-accent); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; text-decoration: none; transition: all 0.2s ease;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='translateX(0)'">
+                    <a href="{{ route('games.deals') }}" class="view-all-link" style="color: var(--color-accent); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; text-decoration: none; transition: all 0.2s ease;">
                         View All <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -104,7 +102,7 @@
                         </span>
                         Free Games
                     </h2>
-                    <a href="{{ route('games.free') }}" style="color: var(--color-accent); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; text-decoration: none; transition: all 0.2s ease;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='translateX(0)'">
+                    <a href="{{ route('games.free') }}" class="view-all-link" style="color: var(--color-accent); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; text-decoration: none; transition: all 0.2s ease;">
                         View All <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -159,14 +157,25 @@
     </div>
 
     <style>
+        .search-input:focus {
+            border-color: var(--color-accent) !important;
+            outline: none;
+        }
+        
+        .view-all-link:hover {
+            transform: translateX(4px);
+        }
+        
         .game-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        
         .game-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             border-color: var(--color-accent) !important;
         }
+        
         .game-card:hover img {
             transform: scale(1.08);
         }
