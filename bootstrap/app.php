@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Add Coming Soon middleware to web routes
         $middleware->web(append: [
             ComingSoonMiddleware::class,
+            \App\Http\Middleware\TrackAnalytics::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
