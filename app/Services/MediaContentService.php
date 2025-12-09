@@ -67,12 +67,12 @@ class MediaContentService
                 ],
             ]);
 
-            if (!$response->successful()) {
-                Log::error('CurseForge API request failed', ['status' => $response->status()]);
+            if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
+                Log::error('CurseForge API request failed', ['status' => $response->getStatusCode()]);
                 return 0;
             }
 
-            $data = $response->json();
+            $data = json_decode($response->getBody()->getContents(), true);
             $imported = 0;
 
             foreach ($data['data'] ?? [] as $mod) {
@@ -131,11 +131,11 @@ class MediaContentService
                 ],
             ]);
 
-            if (!$response->successful()) {
+            if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
                 return 0;
             }
 
-            $data = $response->json();
+            $data = json_decode($response->getBody()->getContents(), true);
             $imported = 0;
 
             foreach ($data['response']['publishedfiledetails'] ?? [] as $item) {
@@ -186,11 +186,11 @@ class MediaContentService
             // GTA5-Mods.com has RSS feeds
             $response = $this->httpClient->get('https://www.gta5-mods.com/rss/all');
 
-            if (!$response->successful()) {
+            if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
                 return 0;
             }
 
-            $xml = simplexml_load_string($response->body());
+            $xml = simplexml_load_string($response->getBody()->getContents());
             $imported = 0;
             $count = 0;
 
@@ -265,11 +265,11 @@ class MediaContentService
                 ],
             ]);
 
-            if (!$response->successful()) {
+            if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
                 return 0;
             }
 
-            $mods = $response->json();
+            $mods = json_decode($response->getBody()->getContents(), true);
             $imported = 0;
 
             foreach ($mods as $mod) {
