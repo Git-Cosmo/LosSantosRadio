@@ -61,15 +61,4 @@
                 </div>
             @endif
         </div>
-    </div>
-
-    <style>
-        .game-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .game-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-        }
-    </style>
-</x-layouts.app>
+    </div></x-layouts.app>

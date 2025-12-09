@@ -39,8 +39,11 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Main radio page
+// Main homepage (new vBulletin-style)
 Route::get('/', [RadioController::class, 'index'])->name('home');
+
+// Radio player page
+Route::get('/radio', [RadioController::class, 'player'])->name('radio.player');
 
 // Favorites page
 Route::get('/favorites', [RadioController::class, 'favorites'])->name('favorites');

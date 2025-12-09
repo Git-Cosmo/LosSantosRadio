@@ -1,5 +1,56 @@
 @import 'tailwindcss';
+
+/* Core Component CSS */
 @import './lyrics-modal.css';
+@import './layout.css';
+@import './radio-player.css';
+@import './audio-player.css';
+@import './coming-soon.css';
+@import './home.css';
+
+/* Feature-specific CSS */
+@import './games.css';
+@import './game-deals.css';
+@import './free-games.css';
+@import './songs.css';
+@import './song-requests.css';
+@import './news-index.css';
+@import './news-show.css';
+@import './polls-show.css';
+@import './schedule.css';
+@import './dj-schedule.css';
+@import './favorites.css';
+@import './messages.css';
+@import './analytics.css';
+@import './stations.css';
+@import './search.css';
+
+/* Videos CSS */
+@import './videos.css';
+@import './videos-ylyl.css';
+@import './videos-clips.css';
+
+/* Component CSS */
+@import './quick-stats.css';
+@import './floating-bg.css';
+
+/* Admin CSS */
+@import './admin-layout.css';
+@import './admin-auth.css';
+@import './admin-theme.css';
+@import './admin-media.css';
+@import './admin-settings.css';
+
+/* Error Pages CSS */
+@import './error-403.css';
+@import './error-404.css';
+@import './error-419.css';
+@import './error-429.css';
+@import './error-500.css';
+@import './error-503.css';
+
+/* Legal Pages CSS */
+@import './legal.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

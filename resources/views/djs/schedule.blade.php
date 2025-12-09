@@ -91,13 +91,4 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <style>
-        @media (max-width: 768px) {
-            .card-body > div[style*="grid-template-columns: repeat(7"] {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-        }
-    </style>
-</x-layouts.app>
+    </div></x-layouts.app>
