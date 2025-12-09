@@ -154,8 +154,8 @@
     <!-- Alpine.js for theme toggle -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Styles -->
-    
+    <!-- Styles and Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     {{-- Floating Background Effects - Subtle gamer feel --}}
