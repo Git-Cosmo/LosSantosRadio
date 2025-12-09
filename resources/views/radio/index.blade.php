@@ -494,6 +494,213 @@
                     </div>
                 </div>
             @endif
+
+            <!-- Additional Homepage Content -->
+            @if($recentNews->isNotEmpty() || $upcomingEvents->isNotEmpty() || $activePolls->isNotEmpty() || $topGameDeals->isNotEmpty() || $freeGames->isNotEmpty())
+            <div style="margin-top: 2rem;">
+                <div class="homepage-content-grid">
+                    <!-- Recent News Section -->
+                    @if($recentNews->isNotEmpty())
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
+                                <span><i class="fas fa-newspaper"></i> Latest News</span>
+                                <a href="{{ route('news.index') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
+                            </h2>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            @foreach($recentNews as $newsItem)
+                            <a href="{{ route('news.show', $newsItem->slug) }}" class="news-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
+                                @if($newsItem->getFirstMediaUrl('featured'))
+                                <img src="{{ $newsItem->getFirstMediaUrl('featured') }}" alt="{{ $newsItem->title }}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 0.75rem;">
+                                @endif
+                                <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($newsItem->title, 60) }}</h3>
+                                <p style="color: var(--color-text-muted); font-size: 0.8125rem; margin-bottom: 0.5rem;">{{ Str::limit($newsItem->excerpt, 100) }}</p>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
+                                    <i class="far fa-clock"></i>
+                                    <span>{{ $newsItem->published_at?->diffForHumans() ?? $newsItem->created_at->diffForHumans() }}</span>
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Upcoming Events Section -->
+                    @if($upcomingEvents->isNotEmpty())
+                    <div class="card">
+                        <div class="card-header" style="background: linear-gradient(135deg, var(--color-accent) 0%, #8b5cf6 100%); border: none;">
+                            <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between; color: white;">
+                                <span><i class="fas fa-calendar-alt"></i> Upcoming Events</span>
+                                <a href="{{ route('events.index') }}" class="text-sm view-all-link" style="color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 600;">View All →</a>
+                            </h2>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            @foreach($upcomingEvents as $event)
+                            <a href="{{ route('events.show', $event->slug) }}" class="event-item">
+                                <div style="display: flex; gap: 1rem; align-items: center;">
+                                    <div style="background: linear-gradient(135deg, var(--color-accent) 0%, #8b5cf6 100%); color: white; border-radius: 12px; padding: 0.75rem; text-align: center; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);">
+                                        <div style="font-size: 1.5rem; font-weight: 700; line-height: 1;">{{ $event->starts_at->format('d') }}</div>
+                                        <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.9; font-weight: 600; letter-spacing: 0.5px;">{{ $event->starts_at->format('M') }}</div>
+                                    </div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <span class="badge badge-{{ $event->event_type === 'live_show' ? 'primary' : ($event->event_type === 'contest' ? 'warning' : 'gray') }}" style="font-size: 0.75rem;">
+                                                <i class="fas fa-{{ $event->event_type === 'live_show' ? 'microphone' : ($event->event_type === 'contest' ? 'trophy' : 'calendar') }}" style="font-size: 0.625rem; margin-right: 0.25rem;" aria-hidden="true"></i>
+                                                {{ ucfirst(str_replace('_', ' ', $event->event_type)) }}
+                                            </span>
+                                        </div>
+                                        <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1rem; line-height: 1.3;">{{ Str::limit($event->title, 60) }}</h3>
+                                        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
+                                                <i class="far fa-clock" style="color: var(--color-accent);"></i>
+                                                <span>{{ $event->starts_at->format('M j, g:i A') }}</span>
+                                            </div>
+                                            @if($event->location)
+                                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
+                                                <i class="fas fa-map-marker-alt" style="color: var(--color-accent);"></i>
+                                                <span>{{ Str::limit($event->location, 30) }}</span>
+                                            </div>
+                                            @endif
+                                            @php($likesCount = $event->likesCount())
+                                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
+                                                <i class="fas fa-heart" style="color: #ef4444;"></i>
+                                                <span>{{ $likesCount }} {{ Str::plural('like', $likesCount) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="flex-shrink: 0; display: flex; align-items: center;">
+                                        <i class="fas fa-chevron-right" style="color: var(--color-text-muted); font-size: 1.25rem; transition: all 0.2s;" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Active Polls Section -->
+                    @if($activePolls->isNotEmpty())
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
+                                <span><i class="fas fa-poll"></i> Community Polls</span>
+                                <a href="{{ route('polls.index') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
+                            </h2>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            @foreach($activePolls as $poll)
+                            <a href="{{ route('polls.show', $poll->slug) }}" class="poll-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
+                                <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.75rem; font-size: 0.9375rem;">{{ Str::limit($poll->question, 70) }}</h3>
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.75rem; color: var(--color-text-muted);">
+                                        <i class="fas fa-users"></i> {{ $poll->totalVotes() }} votes
+                                    </span>
+                                    @if($poll->ends_at)
+                                    <span style="font-size: 0.75rem; color: var(--color-text-muted);">
+                                        <i class="far fa-clock"></i> Ends {{ $poll->ends_at->diffForHumans() }}
+                                    </span>
+                                    @endif
+                                </div>
+                                <div style="background: var(--color-bg-tertiary); height: 4px; border-radius: 2px; overflow: hidden;">
+                                    <div style="background: var(--color-accent); height: 100%; width: {{ $poll->totalVotes() > 0 ? min(100, ($poll->totalVotes() / 100) * 100) : 10 }}%; transition: width 0.3s;"></div>
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Top Game Deals Section -->
+                    @if($topGameDeals->isNotEmpty())
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
+                                <span><i class="fas fa-tags" style="color: #f59e0b;" aria-hidden="true"></i> Hot Game Deals</span>
+                                <a href="{{ route('games.deals') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
+                            </h2>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            @foreach($topGameDeals as $deal)
+                            <a href="{{ route('games.deals.show', $deal) }}" class="deal-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
+                                <div style="display: flex; gap: 1rem; align-items: center;">
+                                    @if($deal->thumb)
+                                    <img src="{{ $deal->thumb }}" alt="{{ $deal->title }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--color-bg); flex-shrink: 0;">
+                                    @endif
+                                    <div style="flex: 1; min-width: 0;">
+                                        <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($deal->title, 50) }}</h3>
+                                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                                            <span style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+                                                -{{ $deal->savings_percent }}%
+                                            </span>
+                                            <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+                                                <span style="font-size: 1.125rem; font-weight: 700; color: #22c55e;">${{ number_format($deal->sale_price, 2) }}</span>
+                                                <span style="font-size: 0.875rem; text-decoration: line-through; color: var(--color-text-muted);">${{ number_format($deal->normal_price, 2) }}</span>
+                                            </div>
+                                        </div>
+                                        @if($deal->metacritic_score)
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
+                                            <i class="fas fa-star" style="color: #f59e0b;" aria-hidden="true"></i>
+                                            <span>Metacritic: {{ $deal->metacritic_score }}</span>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Free Games Section -->
+                    @if($freeGames->isNotEmpty())
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
+                                <span><i class="fas fa-gift" style="color: #22c55e;" aria-hidden="true"></i> Free Games</span>
+                                <a href="{{ route('games.free') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
+                            </h2>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            @foreach($freeGames as $game)
+                            <a href="{{ route('games.free.show', $game) }}" class="game-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
+                                <div style="display: flex; gap: 1rem; align-items: center;">
+                                    @if($game->image_url)
+                                    <img src="{{ $game->image_url }}" alt="{{ $game->title }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--color-bg); flex-shrink: 0;">
+                                    @endif
+                                    <div style="flex: 1; min-width: 0;">
+                                        <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($game->title, 50) }}</h3>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <span style="background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+                                                FREE
+                                            </span>
+                                            <span style="font-size: 0.75rem; color: var(--color-text-muted); padding: 0.25rem 0.5rem; background: var(--color-bg-tertiary); border-radius: 12px;">
+                                                @if($game->store === 'Epic Games')
+                                                    <i class="fas fa-gamepad" aria-hidden="true"></i>
+                                                @elseif($game->store === 'Steam')
+                                                    <i class="fab fa-steam" aria-hidden="true"></i>
+                                                @else
+                                                    <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                                                @endif
+                                                {{ $game->store }}
+                                            </span>
+                                        </div>
+                                        @if($game->expires_at)
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
+                                            <i class="far fa-clock" aria-hidden="true"></i>
+                                            <span>Ends {{ $game->expires_at->diffForHumans() }}</span>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
         </div>
 
         <!-- Sidebar -->
@@ -642,213 +849,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Additional Homepage Content -->
-    @if($recentNews->isNotEmpty() || $upcomingEvents->isNotEmpty() || $activePolls->isNotEmpty() || $topGameDeals->isNotEmpty() || $freeGames->isNotEmpty())
-    <div style="margin-top: 2rem;">
-        <div class="homepage-content-grid">
-            <!-- Recent News Section -->
-            @if($recentNews->isNotEmpty())
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span><i class="fas fa-newspaper"></i> Latest News</span>
-                        <a href="{{ route('news.index') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
-                    </h2>
-                </div>
-                <div class="card-body" style="padding: 0;">
-                    @foreach($recentNews as $newsItem)
-                    <a href="{{ route('news.show', $newsItem->slug) }}" class="news-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
-                        @if($newsItem->getFirstMediaUrl('featured'))
-                        <img src="{{ $newsItem->getFirstMediaUrl('featured') }}" alt="{{ $newsItem->title }}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 0.75rem;">
-                        @endif
-                        <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($newsItem->title, 60) }}</h3>
-                        <p style="color: var(--color-text-muted); font-size: 0.8125rem; margin-bottom: 0.5rem;">{{ Str::limit($newsItem->excerpt, 100) }}</p>
-                        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
-                            <i class="far fa-clock"></i>
-                            <span>{{ $newsItem->published_at?->diffForHumans() ?? $newsItem->created_at->diffForHumans() }}</span>
-                        </div>
-                    </a>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-
-            <!-- Upcoming Events Section -->
-            @if($upcomingEvents->isNotEmpty())
-            <div class="card">
-                <div class="card-header" style="background: linear-gradient(135deg, var(--color-accent) 0%, #8b5cf6 100%); border: none;">
-                    <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between; color: white;">
-                        <span><i class="fas fa-calendar-alt"></i> Upcoming Events</span>
-                        <a href="{{ route('events.index') }}" class="text-sm view-all-link" style="color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 600;">View All →</a>
-                    </h2>
-                </div>
-                <div class="card-body" style="padding: 0;">
-                    @foreach($upcomingEvents as $event)
-                    <a href="{{ route('events.show', $event->slug) }}" class="event-item">
-                        <div style="display: flex; gap: 1rem; align-items: center;">
-                            <div style="background: linear-gradient(135deg, var(--color-accent) 0%, #8b5cf6 100%); color: white; border-radius: 12px; padding: 0.75rem; text-align: center; min-width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);">
-                                <div style="font-size: 1.5rem; font-weight: 700; line-height: 1;">{{ $event->starts_at->format('d') }}</div>
-                                <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.9; font-weight: 600; letter-spacing: 0.5px;">{{ $event->starts_at->format('M') }}</div>
-                            </div>
-                            <div style="flex: 1; min-width: 0;">
-                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                    <span class="badge badge-{{ $event->event_type === 'live_show' ? 'primary' : ($event->event_type === 'contest' ? 'warning' : 'gray') }}" style="font-size: 0.75rem;">
-                                        <i class="fas fa-{{ $event->event_type === 'live_show' ? 'microphone' : ($event->event_type === 'contest' ? 'trophy' : 'calendar') }}" style="font-size: 0.625rem; margin-right: 0.25rem;" aria-hidden="true"></i>
-                                        {{ ucfirst(str_replace('_', ' ', $event->event_type)) }}
-                                    </span>
-                                </div>
-                                <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1rem; line-height: 1.3;">{{ Str::limit($event->title, 60) }}</h3>
-                                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
-                                        <i class="far fa-clock" style="color: var(--color-accent);"></i>
-                                        <span>{{ $event->starts_at->format('M j, g:i A') }}</span>
-                                    </div>
-                                    @if($event->location)
-                                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
-                                        <i class="fas fa-map-marker-alt" style="color: var(--color-accent);"></i>
-                                        <span>{{ Str::limit($event->location, 30) }}</span>
-                                    </div>
-                                    @endif
-                                    @php($likesCount = $event->likesCount())
-                                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
-                                        <i class="fas fa-heart" style="color: #ef4444;"></i>
-                                        <span>{{ $likesCount }} {{ Str::plural('like', $likesCount) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="flex-shrink: 0; display: flex; align-items: center;">
-                                <i class="fas fa-chevron-right" style="color: var(--color-text-muted); font-size: 1.25rem; transition: all 0.2s;" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </a>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-
-            <!-- Active Polls Section -->
-            @if($activePolls->isNotEmpty())
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span><i class="fas fa-poll"></i> Community Polls</span>
-                        <a href="{{ route('polls.index') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
-                    </h2>
-                </div>
-                <div class="card-body" style="padding: 0;">
-                    @foreach($activePolls as $poll)
-                    <a href="{{ route('polls.show', $poll->slug) }}" class="poll-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
-                        <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.75rem; font-size: 0.9375rem;">{{ Str::limit($poll->question, 70) }}</h3>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="font-size: 0.75rem; color: var(--color-text-muted);">
-                                <i class="fas fa-users"></i> {{ $poll->totalVotes() }} votes
-                            </span>
-                            @if($poll->ends_at)
-                            <span style="font-size: 0.75rem; color: var(--color-text-muted);">
-                                <i class="far fa-clock"></i> Ends {{ $poll->ends_at->diffForHumans() }}
-                            </span>
-                            @endif
-                        </div>
-                        <div style="background: var(--color-bg-tertiary); height: 4px; border-radius: 2px; overflow: hidden;">
-                            <div style="background: var(--color-accent); height: 100%; width: {{ $poll->totalVotes() > 0 ? min(100, ($poll->totalVotes() / 100) * 100) : 10 }}%; transition: width 0.3s;"></div>
-                        </div>
-                    </a>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-
-            <!-- Top Game Deals Section -->
-            @if($topGameDeals->isNotEmpty())
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span><i class="fas fa-tags" style="color: #f59e0b;" aria-hidden="true"></i> Hot Game Deals</span>
-                        <a href="{{ route('games.deals') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
-                    </h2>
-                </div>
-                <div class="card-body" style="padding: 0;">
-                    @foreach($topGameDeals as $deal)
-                    <a href="{{ route('games.deals.show', $deal) }}" class="deal-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
-                        <div style="display: flex; gap: 1rem; align-items: center;">
-                            @if($deal->thumb)
-                            <img src="{{ $deal->thumb }}" alt="{{ $deal->title }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--color-bg); flex-shrink: 0;">
-                            @endif
-                            <div style="flex: 1; min-width: 0;">
-                                <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($deal->title, 50) }}</h3>
-                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                                    <span style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
-                                        -{{ $deal->savings_percent }}%
-                                    </span>
-                                    <div style="display: flex; align-items: baseline; gap: 0.5rem;">
-                                        <span style="font-size: 1.125rem; font-weight: 700; color: #22c55e;">${{ number_format($deal->sale_price, 2) }}</span>
-                                        <span style="font-size: 0.875rem; text-decoration: line-through; color: var(--color-text-muted);">${{ number_format($deal->normal_price, 2) }}</span>
-                                    </div>
-                                </div>
-                                @if($deal->metacritic_score)
-                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
-                                    <i class="fas fa-star" style="color: #f59e0b;" aria-hidden="true"></i>
-                                    <span>Metacritic: {{ $deal->metacritic_score }}</span>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                    </a>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-
-            <!-- Free Games Section -->
-            @if($freeGames->isNotEmpty())
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span><i class="fas fa-gift" style="color: #22c55e;" aria-hidden="true"></i> Free Games</span>
-                        <a href="{{ route('games.free') }}" class="text-sm" style="color: var(--color-accent); text-decoration: none;">View All →</a>
-                    </h2>
-                </div>
-                <div class="card-body" style="padding: 0;">
-                    @foreach($freeGames as $game)
-                    <a href="{{ route('games.free.show', $game) }}" class="game-item" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-border); text-decoration: none; transition: background 0.2s;">
-                        <div style="display: flex; gap: 1rem; align-items: center;">
-                            @if($game->image_url)
-                            <img src="{{ $game->image_url }}" alt="{{ $game->title }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--color-bg); flex-shrink: 0;">
-                            @endif
-                            <div style="flex: 1; min-width: 0;">
-                                <h3 style="color: var(--color-text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9375rem;">{{ Str::limit($game->title, 50) }}</h3>
-                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                    <span style="background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
-                                        FREE
-                                    </span>
-                                    <span style="font-size: 0.75rem; color: var(--color-text-muted); padding: 0.25rem 0.5rem; background: var(--color-bg-tertiary); border-radius: 12px;">
-                                        @if($game->store === 'Epic Games')
-                                            <i class="fas fa-gamepad" aria-hidden="true"></i>
-                                        @elseif($game->store === 'Steam')
-                                            <i class="fab fa-steam" aria-hidden="true"></i>
-                                        @else
-                                            <i class="fas fa-shopping-cart" aria-hidden="true"></i>
-                                        @endif
-                                        {{ $game->store }}
-                                    </span>
-                                </div>
-                                @if($game->expires_at)
-                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-muted);">
-                                    <i class="far fa-clock" aria-hidden="true"></i>
-                                    <span>Ends {{ $game->expires_at->diffForHumans() }}</span>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                    </a>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-        </div>
-    </div>
-    @endif
 
     @push('scripts')
     <script>
