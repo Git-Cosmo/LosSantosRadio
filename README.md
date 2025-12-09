@@ -529,6 +529,8 @@ Radio player route: `/radio` (full player interface)
 
 ## 🚀 Installation
 
+> **⚠️ Important**: After cloning or pulling changes, you **must** run `npm install && npm run build` to compile frontend assets. Without this step, the site will load without any styling. See [DEPLOYMENT_NOTES.md](DEPLOYMENT_NOTES.md) for details.
+
 1. **Clone the repository:**
 ```bash
 git clone https://github.com/Git-Cosmo/LosSantosRadio.git
