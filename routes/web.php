@@ -126,6 +126,18 @@ Route::prefix('videos')->name('videos.')->group(function () {
     Route::get('/{video}', [\App\Http\Controllers\VideosController::class, 'show'])->name('show');
 });
 
+// Media/Mods Hub (GameBanana-style)
+Route::prefix('media')->name('media.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\MediaController::class, 'index'])->name('index');
+    Route::get('/search', [\App\Http\Controllers\MediaController::class, 'search'])->name('search');
+    Route::get('/upload', [\App\Http\Controllers\MediaController::class, 'upload'])->name('upload');
+    Route::post('/upload', [\App\Http\Controllers\MediaController::class, 'store'])->name('store');
+    Route::get('/{category}', [\App\Http\Controllers\MediaController::class, 'category'])->name('category');
+    Route::get('/{category}/{subcategory}', [\App\Http\Controllers\MediaController::class, 'subcategory'])->name('subcategory');
+    Route::get('/{category}/{subcategory}/{slug}', [\App\Http\Controllers\MediaController::class, 'show'])->name('show');
+    Route::get('/{category}/{subcategory}/{slug}/download', [\App\Http\Controllers\MediaController::class, 'download'])->name('download');
+});
+
 // DJ/Presenter System
 Route::prefix('djs')->name('djs.')->group(function () {
     Route::get('/', [DjController::class, 'index'])->name('index');
@@ -295,6 +307,9 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Analytics
+    Route::get('/analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics.index');
+
     // Users
     Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
 
@@ -395,6 +410,32 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::put('/{video}', [\App\Http\Controllers\Admin\VideosController::class, 'update'])->name('update');
         Route::delete('/{video}', [\App\Http\Controllers\Admin\VideosController::class, 'destroy'])->name('destroy');
         Route::post('/sync', [\App\Http\Controllers\Admin\VideosController::class, 'sync'])->name('sync');
+    });
+
+    // Media Admin (Mods/Content Hub)
+    Route::prefix('media')->name('media.')->group(function () {
+        // Media Items CRUD
+        Route::get('/items', [\App\Http\Controllers\Admin\MediaItemController::class, 'index'])->name('items.index');
+        Route::get('/items/create', [\App\Http\Controllers\Admin\MediaItemController::class, 'create'])->name('items.create');
+        Route::post('/items', [\App\Http\Controllers\Admin\MediaItemController::class, 'store'])->name('items.store');
+        Route::get('/items/{mediaItem}/edit', [\App\Http\Controllers\Admin\MediaItemController::class, 'edit'])->name('items.edit');
+        Route::put('/items/{mediaItem}', [\App\Http\Controllers\Admin\MediaItemController::class, 'update'])->name('items.update');
+        Route::delete('/items/{mediaItem}', [\App\Http\Controllers\Admin\MediaItemController::class, 'destroy'])->name('items.destroy');
+        Route::post('/items/{mediaItem}/toggle-approval', [\App\Http\Controllers\Admin\MediaItemController::class, 'toggleApproval'])->name('items.toggle-approval');
+        
+        // Categories CRUD
+        Route::get('/categories', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'index'])->name('categories.index');
+        Route::get('/categories/create', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'create'])->name('categories.create');
+        Route::post('/categories', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'store'])->name('categories.store');
+        Route::get('/categories/{category}/edit', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/categories/{category}', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{category}', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('/categories/{category}/subcategories', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'subcategories'])->name('categories.subcategories');
+        
+        // Subcategories management
+        Route::post('/categories/{category}/subcategories', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'storeSubcategory'])->name('subcategories.store');
+        Route::put('/subcategories/{subcategory}', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'updateSubcategory'])->name('subcategories.update');
+        Route::delete('/subcategories/{subcategory}', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'destroySubcategory'])->name('subcategories.destroy');
     });
 
     // Discord Admin
