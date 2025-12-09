@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <div class="grid" style="grid-template-columns: 2fr 1fr;">
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr]" style="gap: 1.5rem;">
         <div>
             @if($activePolls->count() > 0)
                 <div class="card" style="margin-bottom: 1.5rem;">
