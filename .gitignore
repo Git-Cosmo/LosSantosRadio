@@ -30,3 +30,4 @@ database/database.sqlite
 .backup
 laravel_test
 *.pid
+public/build/
