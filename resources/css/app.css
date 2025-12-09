@@ -111,6 +111,15 @@
     transform: translateX(4px);
 }
 
+/* View All link hover effect */
+.view-all-link {
+    transition: all 0.2s ease;
+}
+
+.view-all-link:hover {
+    color: white !important;
+}
+
 /* Hover effect for event items on homepage */
 .event-item {
     display: block;

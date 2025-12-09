@@ -680,7 +680,7 @@
                 <div class="card-header" style="background: linear-gradient(135deg, var(--color-accent) 0%, #8b5cf6 100%); border: none;">
                     <h2 class="card-title" style="display: flex; align-items: center; justify-content: space-between; color: white;">
                         <span><i class="fas fa-calendar-alt"></i> Upcoming Events</span>
-                        <a href="{{ route('events.index') }}" class="text-sm" style="color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.9)'">View All →</a>
+                        <a href="{{ route('events.index') }}" class="text-sm view-all-link" style="color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 600;">View All →</a>
                     </h2>
                 </div>
                 <div class="card-body" style="padding: 0;">
