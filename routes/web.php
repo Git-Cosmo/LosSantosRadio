@@ -337,10 +337,17 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::get('/{radioServer}/status', [\App\Http\Controllers\Admin\RadioServersController::class, 'status'])->name('status');
     });
 
-    // Settings
-    Route::get('/settings/dashboard', [SettingController::class, 'dashboard'])->name('settings.dashboard');
+    // Settings - Dashboard is now primary interface
+    Route::get('/settings', [SettingController::class, 'dashboard'])->name('settings.index');
     Route::put('/settings/update-all', [SettingController::class, 'updateAll'])->name('settings.update-all');
-    Route::resource('settings', SettingController::class)->except(['show']);
+    
+    // Advanced settings (key-value editor) - for power users
+    Route::get('/settings/advanced', [SettingController::class, 'index'])->name('settings.advanced');
+    Route::get('/settings/create', [SettingController::class, 'create'])->name('settings.create');
+    Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
+    Route::get('/settings/{setting}/edit', [SettingController::class, 'edit'])->name('settings.edit');
+    Route::put('/settings/{setting}', [SettingController::class, 'update'])->name('settings.update');
+    Route::delete('/settings/{setting}', [SettingController::class, 'destroy'])->name('settings.destroy');
 
     // Theme Management
     Route::get('/theme', [SettingController::class, 'theme'])->name('theme');

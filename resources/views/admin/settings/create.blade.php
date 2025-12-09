@@ -1,7 +1,7 @@
 <x-admin.layouts.app title="Create Setting">
     <div class="admin-header">
         <h1>Create Setting</h1>
-        <a href="{{ route('admin.settings.index') }}" class="btn btn-secondary">
+        <a href="{{ route('admin.settings.advanced') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to Settings
         </a>
     </div>
@@ -55,7 +55,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Create Setting
                     </button>
-                    <a href="{{ route('admin.settings.index') }}" class="btn btn-secondary">Cancel</a>
+                    <a href="{{ route('admin.settings.advanced') }}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>

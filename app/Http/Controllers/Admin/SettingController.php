@@ -96,7 +96,7 @@ class SettingController extends Controller
         // Clear all settings cache
         Setting::clearCache();
 
-        return redirect()->route('admin.settings.dashboard')
+        return redirect()->route('admin.settings.index')
             ->with('success', 'Settings updated successfully!');
     }
 
@@ -115,7 +115,7 @@ class SettingController extends Controller
         $settings = $query->orderBy('group')->orderBy('key')->paginate(20);
         $groups = Setting::distinct()->pluck('group')->filter()->values();
 
-        return view('admin.settings.index', [
+        return view('admin.settings.advanced', [
             'settings' => $settings,
             'groups' => $groups,
         ]);
@@ -138,7 +138,7 @@ class SettingController extends Controller
 
         Setting::create($validated);
 
-        return redirect()->route('admin.settings.index')
+        return redirect()->route('admin.settings.advanced')
             ->with('success', 'Setting created successfully.');
     }
 
@@ -160,7 +160,7 @@ class SettingController extends Controller
 
         $setting->update($validated);
 
-        return redirect()->route('admin.settings.index')
+        return redirect()->route('admin.settings.advanced')
             ->with('success', 'Setting updated successfully.');
     }
 
@@ -168,7 +168,7 @@ class SettingController extends Controller
     {
         $setting->delete();
 
-        return redirect()->route('admin.settings.index')
+        return redirect()->route('admin.settings.advanced')
             ->with('success', 'Setting deleted successfully.');
     }
 
