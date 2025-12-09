@@ -190,7 +190,13 @@ class MediaContentService
                 return 0;
             }
 
-            $xml = simplexml_load_string($response->getBody()->getContents());
+            // Securely parse XML to prevent XXE attacks
+            $xml = $this->parseXmlSecurely($response->getBody()->getContents());
+            if (!$xml) {
+                Log::error('Failed to parse GTA5-Mods RSS feed');
+                return 0;
+            }
+            
             $imported = 0;
             $count = 0;
 
@@ -347,5 +353,54 @@ class MediaContentService
         Log::info('Media content import completed', $results);
 
         return $results;
+    }
+
+    /**
+     * Securely parse XML string to prevent XXE (XML External Entity) attacks.
+     * 
+     * Disables external entity loading and DTD processing to prevent malicious
+     * XML from reading local files or making network requests.
+     *
+     * @param string $xmlString The XML string to parse
+     * @return \SimpleXMLElement|false Parsed XML object or false on failure
+     */
+    private function parseXmlSecurely(string $xmlString)
+    {
+        // Store previous settings
+        $previousUseErrors = libxml_use_internal_errors(true);
+        $previousEntityLoader = libxml_disable_entity_loader(true);
+
+        try {
+            // Parse XML with secure options:
+            // LIBXML_NONET - Disable network access during load
+            // LIBXML_NOENT - Do not substitute entities
+            // LIBXML_DTDLOAD - Do not load external DTD
+            // LIBXML_DTDATTR - Do not default attributes from DTD
+            $xml = simplexml_load_string(
+                $xmlString,
+                'SimpleXMLElement',
+                LIBXML_NONET | LIBXML_NOCDATA
+            );
+
+            // Check for parsing errors
+            if ($xml === false) {
+                $errors = libxml_get_errors();
+                foreach ($errors as $error) {
+                    Log::warning('XML parsing error', [
+                        'level' => $error->level,
+                        'code' => $error->code,
+                        'message' => trim($error->message),
+                    ]);
+                }
+                libxml_clear_errors();
+                return false;
+            }
+
+            return $xml;
+        } finally {
+            // Restore previous settings
+            libxml_use_internal_errors($previousUseErrors);
+            libxml_disable_entity_loader($previousEntityLoader);
+        }
     }
 }
