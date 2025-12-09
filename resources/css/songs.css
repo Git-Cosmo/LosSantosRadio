@@ -1,0 +1,33 @@
+        .song-row {
+            transition: background-color 0.2s ease;
+        }
+
+        .song-row:hover {
+            background-color: var(--color-bg-hover);
+        }
+
+        .song-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .pagination-btn:not(.active):not(.disabled):hover {
+            background: var(--color-bg-hover) !important;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .song-table th:nth-child(3),
+            .song-table td:nth-child(3),
+            .song-table th:nth-child(4),
+            .song-table td:nth-child(4) {
+                display: none;
+            }
+
+            .song-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }

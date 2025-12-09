@@ -309,30 +309,5 @@
                 setTimeout(() => toast.remove(), 300);
             }, 4000);
         }
-    </script>
-    <style>
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-        .song-row:hover {
-            background-color: var(--color-bg-hover);
-            transform: translateX(4px);
-        }
-        .history-item:hover {
-            background: var(--color-bg-hover) !important;
-            transform: translateX(4px);
-        }
-        
-        @media (max-width: 1024px) {
-            .grid {
-                grid-template-columns: 1fr !important;
-            }
-        }
-    </style>
-    @endpush
+    </script>    @endpush
 </x-layouts.app>

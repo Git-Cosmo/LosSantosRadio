@@ -216,22 +216,5 @@
             // For now, redirect to home page
             window.location.href = '{{ route('home') }}';
         }
-    </script>
-    <style>
-        .station-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        @media (max-width: 768px) {
-            .stations-grid {
-                grid-template-columns: 1fr !important;
-            }
-
-            .station-card:hover {
-                transform: none;
-            }
-        }
-    </style>
-    @endpush
+    </script>    @endpush
 </x-layouts.app>

@@ -166,12 +166,5 @@
                 }
             });
         }
-    </script>
-    <style>
-        .poll-option:hover {
-            border-color: var(--color-accent) !important;
-            transform: translateX(5px);
-        }
-    </style>
-    @endpush
+    </script>    @endpush
 </x-layouts.app>
