@@ -47,7 +47,7 @@
             @foreach($featured as $item)
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover-card-lift">
                 @if($item->getFirstMediaUrl('images'))
-                <div style="width: 100%; height: 160px; background-image: url('{{ addslashes($item->getFirstMediaUrl('images')) }}'); background-position: center; background-size: cover; position: relative;">
+                <div style="width: 100%; height: 160px; background-image: url('{{ e($item->getFirstMediaUrl('images')) }}'); background-position: center; background-size: cover; position: relative;">
                     <div style="position: absolute; top: 0.75rem; right: 0.75rem;">
                         <span class="badge badge-warning" style="backdrop-filter: blur(10px); font-weight: 600;">
                             <i class="fas fa-star" aria-hidden="true"></i> Featured

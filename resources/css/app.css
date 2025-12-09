@@ -149,6 +149,7 @@
     transform: translateY(-4px);
 }
 
+/* Category cards get extra emphasis with box-shadow */
 .hover-card:hover {
     box-shadow: 0 8px 24px rgba(88, 166, 255, 0.3);
 }
