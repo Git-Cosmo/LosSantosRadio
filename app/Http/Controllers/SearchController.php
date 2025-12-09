@@ -48,12 +48,12 @@ class SearchController extends Controller
         $query = $validated['q'] ?? null;
 
         if (! $query || strlen($query) < 2) {
-            return response()->json(['results' => []]);
+            return response()->json(['success' => true, 'results' => []]);
         }
 
         $results = $this->performSearch($query, 10);
 
-        return response()->json(['results' => $results]);
+        return response()->json(['success' => true, 'results' => $results]);
     }
 
     /**
@@ -71,11 +71,13 @@ class SearchController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
+                    'id' => $item->id,
                     'type' => 'news',
                     'title' => $item->title,
                     'url' => route('news.show', $item->slug),
                     'description' => \Str::limit(strip_tags($item->content), 150),
                     'date' => $item->created_at->diffForHumans(),
+                    'date_formatted' => $item->created_at->format('M d, Y'),
                 ];
             });
 
@@ -88,11 +90,13 @@ class SearchController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
+                    'id' => $item->id,
                     'type' => 'event',
                     'title' => $item->title,
                     'url' => route('events.show', $item->slug),
                     'description' => \Str::limit(strip_tags($item->description ?? ''), 150),
                     'date' => $item->starts_at?->format('M d, Y') ?? 'TBD',
+                    'date_formatted' => $item->starts_at?->format('M d, Y') ?? 'TBD',
                 ];
             });
 
@@ -105,11 +109,13 @@ class SearchController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
+                    'id' => $item->id,
                     'type' => 'poll',
                     'title' => $item->question,
                     'url' => route('polls.show', $item->slug),
                     'description' => \Str::limit(strip_tags($item->description ?? ''), 150),
                     'date' => $item->created_at->diffForHumans(),
+                    'date_formatted' => $item->created_at->format('M d, Y'),
                 ];
             });
 
@@ -122,11 +128,13 @@ class SearchController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
+                    'id' => $item->id,
                     'type' => 'free_game',
                     'title' => $item->title,
                     'url' => route('games.free.show', $item),
                     'description' => \Str::limit($item->description ?? '', 150),
                     'date' => $item->created_at->diffForHumans(),
+                    'date_formatted' => $item->created_at->format('M d, Y'),
                 ];
             });
 
@@ -139,11 +147,13 @@ class SearchController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
+                    'id' => $item->id,
                     'type' => 'deal',
                     'title' => $item->title,
                     'url' => route('games.deals.show', $item),
                     'description' => "{$item->formatted_savings} - \${$item->sale_price}",
                     'date' => $item->updated_at->diffForHumans(),
+                    'date_formatted' => $item->updated_at->format('M d, Y'),
                 ];
             });
 
@@ -155,11 +165,13 @@ class SearchController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
+                    'id' => $item->id,
                     'type' => 'game',
                     'title' => $item->title,
                     'url' => route('games.show', $item->slug),
                     'description' => \Str::limit(strip_tags($item->description ?? ''), 150),
                     'date' => $item->release_date?->format('M d, Y') ?? 'TBD',
+                    'date_formatted' => $item->release_date?->format('M d, Y') ?? 'TBD',
                 ];
             });
 
@@ -172,11 +184,13 @@ class SearchController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
+                    'id' => $item->id,
                     'type' => 'video',
                     'title' => $item->title,
                     'url' => route('videos.show', $item),
                     'description' => \Str::limit($item->description ?? '', 150),
                     'date' => $item->posted_at?->diffForHumans() ?? 'Unknown',
+                    'date_formatted' => $item->posted_at?->format('M d, Y') ?? 'Unknown',
                 ];
             });
 
@@ -192,11 +206,13 @@ class SearchController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
+                    'id' => $item->id,
                     'type' => 'dj',
                     'title' => $item->stage_name,
                     'url' => route('djs.show', $item),
                     'description' => \Str::limit($item->bio ?? '', 150),
                     'date' => $item->updated_at->diffForHumans(),
+                    'date_formatted' => $item->updated_at->format('M d, Y'),
                 ];
             });
 

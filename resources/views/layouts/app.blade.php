@@ -3059,7 +3059,7 @@
         }
         $allowedThemes = ['christmas', 'newyear'];
     @endphp
-    @if($activeTheme && in_array($activeTheme, $allowedThemes, true))
+    @if($activeTheme && $activeTheme !== 'none' && in_array($activeTheme, $allowedThemes, true))
         <script src="{{ asset('themes/' . $activeTheme . '.js') }}" defer></script>
     @endif
 

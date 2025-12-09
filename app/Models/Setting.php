@@ -138,6 +138,7 @@ class Setting extends Model implements HasMedia
         foreach ($settings as $setting) {
             Cache::forget("settings.{$setting->key}");
         }
+        Cache::forget('settings.all');
     }
 
     /**

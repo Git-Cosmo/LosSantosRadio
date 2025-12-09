@@ -46,19 +46,20 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
   - External player link for popup window
   - Remembers volume settings and autoplay preference via localStorage
   - Fully responsive design optimized for mobile and tablet devices
-- **Redesigned Now Playing Widget** - Professional, balanced display with:
-  - Compact album artwork (180x180px) with enhanced 3D hover effects, shadows, and ambient glow
-  - Optimized sizing for better visual balance and space utilization
+- **Redesigned Now Playing Widget** - **Compact, professional display** with enhanced efficiency:
+  - **Compact album artwork (120x120px)** - Reduced from 180px for better space utilization while maintaining visual appeal
+  - Enhanced 3D hover effects with shadows and ambient glow
   - Animated audio visualizer with glowing effects and smooth bounce animations
   - Dynamic gradient text styling for song titles with multi-color shifting animation
+  - Tightened spacing and reduced padding for more efficient layout
   - Play indicator icon with pulsing gradient background
   - Artist display with icon and enhanced typography
   - Real-time listener count with pulsing animations
   - Enhanced progress bar with gradient, shimmer effect, and smooth transitions
   - Interactive rating buttons with ripple effects, hover animations, and active states
+  - Compact DJ/Host info section with streamlined text
   - Live/AutoDJ status indicator with animated glow and peak listener stats
-  - Floating background elements with smooth animations
-  - DJ/Host avatar with 360° rotation on hover
+  - Overall height reduced by ~30% for better content visibility
   - Backdrop blur effects for depth and modern aesthetics
 - **Schedule Display** - Dynamic playlist schedule showing:
   - Weekly schedule organized by day with today highlighted
@@ -78,10 +79,18 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Real-time Updates** - Auto-refresh of currently playing songs with smooth transitions
 - **Recently Played** - Song history with timestamps and album art displayed in sidebar
 - **Up Next in Sidebar** - Enhanced preview of the next song with album artwork, relocated to sidebar for better space utilization and accessibility
-- **Song Requests** - Browse the song library with a media grid layout and request tracks via modal
+- **Song Requests** - **Enhanced UI with modern design** - Browse the song library and request tracks:
+  - **Redesigned Request Page** - Professional layout with improved visual hierarchy
+  - Modern table design with album art thumbnails and enhanced typography
+  - **Enhanced Search** - Improved search functionality with better placeholder text
+  - **Visual Status Cards** - Color-coded status indicators (green for allowed, amber for limit reached)
+  - **Improved Queue Display** - Compact queue view with better organization
+  - **Better Mobile Support** - Fully responsive layout for all screen sizes
+  - **Animated Toast Notifications** - Modern success/error messages with smooth animations
   - **Enhanced Error Handling** - User-friendly messages for failed requests
   - Graceful handling of unavailable songs (404 errors)
   - Clear feedback for rate limits and service issues
+  - Auto-reload after successful request to update queue
 - **Live Stream Player** - Built-in audio player with prominent controls and volume management
 - **Song Ratings** - Modern upvote/downvote interface to shape the playlist
   - **Fixed API Endpoint** - Resolved 405 Method Not Allowed errors
@@ -173,7 +182,7 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Reddit Integration** - Automatically fetch videos from r/funnyvideos and r/LivestreamFail
 
 ### Search System
-- **Global Search** - Search across news, events, polls, games, videos, and deals
+- **Global Search** - **Fixed and fully functional** - Search across news, events, polls, games, videos, DJ profiles, and deals
 - **Laravel Scout Integration** - All content types use Scout's Searchable trait for enhanced search relevance:
   - News articles indexed by title and content
   - Events indexed by title, description, location, and type
@@ -181,10 +190,15 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
   - Free games indexed by title, description, platform, and store
   - Game deals indexed by title with pricing and scoring data
   - Videos indexed by title, description, category, platform, and author
-- **Search API** - JSON API endpoint for search functionality
+  - DJ profiles indexed by stage name and bio
+- **Search API** - JSON API endpoint at `/api/search` with proper response format:
+  - Returns `success` flag and `results` array
+  - Each result includes `id`, `type`, `title`, `url`, `description`, `date`, and `date_formatted`
+  - Supports pagination and result limiting
 - **Category Icons** - Visual distinction between result types
 - **Search Modal** - Click search icon in navbar to open modern search overlay
-- **Real-time Results** - Instant search suggestions as you type
+- **Real-time Results** - Instant search suggestions as you type with debouncing
+- **Keyboard Navigation** - Press ESC to close search modal
 
 ### DJ/Presenter System
 - **DJ Profiles** - Featured DJ pages with social links and genres
@@ -207,7 +221,19 @@ Los Santos Radio is designed to be a modern, polished, and interactive radio web
 - **Videos Management** - Manage YLYL and clips, sync from Reddit
 - **Media Library** - Upload, organize, and manage media files with image optimization
 - **Discord Bot Panel** - Monitor and manage Discord integration
-- **Settings** - Configure application settings
+- **Settings Dashboard** - **NEW!** Modern, user-friendly settings interface at `/admin/settings/dashboard`:
+  - **Grouped Settings Organization** - Settings organized into logical sections:
+    - General Settings (site name, description, contact email)
+    - Theme Settings (seasonal theme dropdown selector)
+    - Feature Toggles (comments, song requests, polls, maintenance mode) with modern checkboxes
+    - Radio Settings (station ID, update intervals)
+    - Rate Limits (guest/user request limits, lyrics view limits)
+  - **Modern UI** - Clean, intuitive interface with visual feedback
+  - **Batch Updates** - Save all settings changes at once with one click
+  - **Visual Checkboxes** - Modern toggle switches for boolean settings
+  - **Dropdown Selectors** - Easy theme selection with visual previews
+  - **Sticky Save Button** - Always accessible save button at bottom of page
+  - **Advanced Mode** - Link to traditional key-value editor for power users
 - **Activity Log** - Audit trail of admin actions
 - **RSS Feeds Management** - Manage RSS feeds for automatic news import from popular gaming sites
 - **Theme Management** - Control global appearance themes at `/admin/theme`:
