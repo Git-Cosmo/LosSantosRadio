@@ -37,9 +37,7 @@ class AnalyticsService
             $sessionId = $request->session()->getId();
             
             // Check if we already tracked this session recently (within 5 minutes)
-            $cacheKey = $this->cacheService->key(CacheService::NAMESPACE_SESSION, "tracked.{$sessionId}");
-            
-            if ($this->cacheService->has($cacheKey)) {
+            if ($this->cacheService->has(CacheService::NAMESPACE_SESSION, "tracked.{$sessionId}")) {
                 // Update last activity time only
                 $this->updateLastActivity($sessionId);
                 return;
@@ -74,7 +72,7 @@ class AnalyticsService
             ]);
 
             // Cache that we tracked this session (5 minutes)
-            $this->cacheService->put($cacheKey, true, 300);
+            $this->cacheService->put(CacheService::NAMESPACE_SESSION, "tracked.{$sessionId}", true, 300);
         } catch (\Exception $e) {
             Log::error('Analytics tracking failed', [
                 'error' => $e->getMessage(),
@@ -176,9 +174,7 @@ class AnalyticsService
      */
     public function getOnlineCount(): int
     {
-        $cacheKey = $this->cacheService->key(CacheService::NAMESPACE_SESSION, 'online_count');
-        
-        return $this->cacheService->remember($cacheKey, 60, function () {
+        return $this->cacheService->remember(CacheService::NAMESPACE_SESSION, 'online_count', 60, function () {
             return Analytic::active()->distinct('session_id')->count('session_id');
         });
     }
@@ -190,10 +186,8 @@ class AnalyticsService
     {
         $startDate = now()->subDays($days)->startOfDay();
         $endDate = now()->endOfDay();
-
-        $cacheKey = $this->cacheService->key(CacheService::NAMESPACE_SESSION, "stats.{$days}days");
         
-        return $this->cacheService->remember($cacheKey, CacheService::TTL_SHORT, function () use ($startDate, $endDate) {
+        return $this->cacheService->remember(CacheService::NAMESPACE_SESSION, "stats.{$days}days", CacheService::TTL_SHORT, function () use ($startDate, $endDate) {
             $analytics = Analytic::betweenDates($startDate, $endDate);
 
             return [
