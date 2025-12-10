@@ -718,6 +718,78 @@ php artisan serve
   - Created event_reminders table for managing event notification subscriptions
   - Proper foreign key constraints and indexes for optimal performance
 
+### New Homepage Feature - Modal Integration Showcase (December 10, 2025)
+
+A new demonstration homepage has been created to showcase all modal components and authentication flows. This page serves as a blueprint for the final homepage design and provides an interactive way to test all modal functionality.
+
+#### Route & Controller
+- **Route**: `/test` (temporary development route)
+- **Controller**: `App\Http\Controllers\HomeController`
+- **View**: `resources/views/home.blade.php`
+- **Named Route**: `test.home`
+
+#### Features Demonstrated
+- ✅ **Search Modal Integration** - Interactive Alpine.js-powered search modal
+  - Real-time search across news, events, games, and videos
+  - Debounced input for optimal performance
+  - ESC key support for closing
+  - API-driven results display
+  - Accessible keyboard navigation
+  
+- ✅ **Listen Modal Integration** - Multi-option streaming modal
+  - Popup player window option
+  - Stream URL copy functionality
+  - VLC/media player instructions
+  - Mobile app integration guide
+  - Smart speaker setup information
+  
+- ✅ **OAuth Login Flow** - Complete authentication demonstration
+  - Links to `/login` page with OAuth provider selection
+  - Supports Discord, Twitch, Steam, and Battle.net
+  - Clear provider identification with branded icons
+  - Guest vs. authenticated user flows
+
+#### Modal Component Showcase
+The new homepage includes a dedicated "Modal Components Showcase" section with three interactive cards:
+1. **Search Modal Card** - Demonstrates search functionality with feature list
+2. **Listen Modal Card** - Shows listening options with detailed features
+3. **OAuth Login Card** - Displays authentication providers and flow
+
+#### Homepage Content
+- Welcome hero section with gradient text and call-to-action buttons
+- Real-time "Now Playing" widget (when radio data available)
+- Latest news articles with excerpts
+- Upcoming events with dates and details
+- Community engagement footer
+
+#### Testing
+- **Test Suite**: `tests/Feature/HomeControllerTest.php`
+- Tests verify route functionality, view rendering, required variables, and content display
+- All tests passing with 19 assertions
+
+#### Usage
+```bash
+# Access the new homepage
+http://your-domain.com/test
+
+# Test modal functionality
+- Click "Try Search Modal" to open search
+- Click "How to Listen Modal" to see streaming options
+- Click "Sign In (OAuth)" to view login providers
+
+# The floating "How to Listen" button is always available in the bottom-left corner
+```
+
+#### Technical Implementation
+- Uses existing modal infrastructure from `layouts/app.blade.php`
+- Alpine.js for interactive components
+- Tailwind CSS for styling with custom gradients
+- Fully responsive design (mobile-first approach)
+- Graceful degradation when radio API is unavailable
+
+#### Future Integration
+This `/test` route serves as a development preview. Once finalized, the design patterns and modal integrations from this page can be incorporated into the main homepage at `/`.
+
 ### Backend Fixes & Enhancements
 - ✅ **Fixed RssFeed & Achievement Seeders** - Added proper console output messages for better visibility
 - ✅ **Fixed CheapShark API 403 Errors** - Integrated HttpClientService with rotating user agents (24 different browser user agents) to prevent API blocking
