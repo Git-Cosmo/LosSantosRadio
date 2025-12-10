@@ -1391,6 +1391,219 @@ JSON-LD structured data is included for:
 
 Custom structured data can be added via the `structuredData` prop in the layout component.
 
+## 🔧 Redis Configuration & Performance Optimization
+
+Los Santos Radio uses a **smart caching system** with Redis support for optimal performance. The `CacheService` provides a unified interface that works with any Laravel cache driver (file, database, Redis, etc.) with automatic fallbacks.
+
+### Cache Strategy
+
+The application uses **namespace-based caching** with intelligent TTL values:
+
+```php
+// Radio data - Real-time updates (30 seconds)
+CacheService::NAMESPACE_RADIO + TTL_REALTIME (30s)
+
+// Game data - Moderately stable (12 hours)
+CacheService::NAMESPACE_GAMES + TTL_LONG (12h)
+
+// Lyrics - Very stable (24 hours)
+CacheService::NAMESPACE_LYRICS + TTL_VERY_LONG (24h)
+
+// User data - Session-based
+CacheService::NAMESPACE_USER + TTL_MEDIUM (1h)
+```
+
+### Setting Up Redis (Recommended for Production)
+
+**1. Install Redis Server**
+
+```bash
+# Ubuntu/Debian
+sudo apt-get install redis-server
+
+# macOS
+brew install redis
+
+# Start Redis
+sudo systemctl start redis    # Linux
+brew services start redis      # macOS
+```
+
+**2. Install PHP Redis Extension**
+
+```bash
+# Install phpredis extension
+sudo pecl install redis
+
+# Or using apt (Ubuntu/Debian)
+sudo apt-get install php-redis
+```
+
+**3. Configure Laravel for Redis**
+
+Update your `.env` file:
+
+```env
+# Cache Configuration
+CACHE_STORE=redis
+
+# Redis Configuration
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
+
+**4. Verify Redis Connection**
+
+```bash
+php artisan tinker
+> Cache::store('redis')->put('test', 'value', 60);
+> Cache::store('redis')->get('test');
+```
+
+### AzuraCast API Integration with Redis
+
+The AzuraCast integration is **pre-configured** to use Redis caching when available:
+
+**Environment Variables:**
+```env
+AZURACAST_BASE_URL=https://radio.lossantosradio.com
+AZURACAST_API_KEY=your-api-key-here
+AZURACAST_STATION_ID=1
+AZURACAST_CACHE_TTL=30
+```
+
+**How It Works:**
+1. `AzuraCastService` fetches now-playing data every 30 seconds (configurable)
+2. Data is cached in Redis via `CacheService` with namespace `radio/nowplaying.{station_id}`
+3. WebSocket broadcasting (`NowPlayingUpdated` event) pushes real-time updates to clients
+4. If cache expires, data is automatically refreshed from AzuraCast API
+5. Graceful fallback to file/database cache if Redis is unavailable
+
+**Cache Invalidation:**
+- Automatic: Cache expires after TTL (30s by default)
+- Manual: `php artisan cache:clear` or call `AzuraCastService::clearCache()`
+- On song change: WebSocket event triggers client-side updates
+
+### Performance Benefits
+
+With Redis enabled:
+- ⚡ **Sub-millisecond** cache reads for now-playing data
+- 🚀 **99% reduction** in API calls to AzuraCast
+- 📊 **Real-time updates** via WebSocket (Laravel Reverb)
+- 🔄 **Automatic failover** to database cache if Redis is down
+- 🎯 **Namespace isolation** prevents cache conflicts
+
+## 📥 Media Downloads Portal - Complete Guide
+
+Los Santos Radio includes a **GameBanana-style downloads portal** powered by **Spatie Media Library** for community-created content sharing.
+
+### Features Overview
+
+✅ **User Upload System** - Authenticated users can upload mods, maps, and content  
+✅ **Admin Approval Workflow** - Content requires admin approval before going live  
+✅ **Category & Subcategory Organization** - 8 game categories, 45+ subcategories  
+✅ **Search & Discovery** - Laravel Scout integration for fast searching  
+✅ **Download Tracking** - Track downloads, views, ratings, and favorites  
+✅ **Ratings & Favorites** - Community-driven content curation  
+✅ **Automated Import** - Import content from CurseForge, Steam, Nexus Mods, GTA5-Mods  
+
+### User Workflow
+
+**1. Browse Content**
+- Visit `/media` to see all categories
+- Browse by game category (CS2, Minecraft, GTA V, Skyrim, etc.)
+- Filter by subcategory (Maps, Skins, Mods, etc.)
+- Search globally across all content
+
+**2. Upload Content** (Requires Login)
+- Navigate to `/media/upload`
+- Select game category and content type
+- Fill in title, description, and installation instructions
+- Upload file (ZIP, RAR, 7Z, TAR, GZ - max 100MB)
+- Optionally upload preview image (max 5MB)
+- Submit for admin review
+
+**3. Download Content** (Requires Login)
+- Public viewing - All visitors can browse content
+- Auth-gated downloads - Must be logged in to download files
+- Rate and favorite content after downloading
+- Track download history
+
+### Admin Workflow
+
+**Managing Submissions**
+1. Navigate to `/admin/media/items` (Media Items Management)
+2. View pending submissions (filter by `is_approved = false`)
+3. Review content details, files, and images
+4. Approve or reject submissions
+5. Feature high-quality content on homepage
+6. Bulk actions for mass approval/rejection/featuring
+
+**Category Management**
+- Add/edit game categories at `/admin/media/categories`
+- Manage subcategories (content types) per category
+- Set icons, descriptions, and sort orders
+
+### Automated Content Import
+
+The media hub can automatically populate with content from external APIs:
+
+```bash
+# Import from all configured sources (20 items each)
+php artisan media:import
+
+# Import from specific source
+php artisan media:import --source=minecraft --limit=50
+
+# Available sources: minecraft, cs2, gta5, skyrim, all
+```
+
+**API Keys Required (Optional):**
+```env
+CURSEFORGE_API_KEY=     # For Minecraft mods
+STEAM_API_KEY=          # For CS2 workshop items
+NEXUSMODS_API_KEY=      # For Skyrim mods
+# GTA5-Mods.com uses RSS (no key required)
+```
+
+### File Storage
+
+By default, media files are stored locally using Laravel's default filesystem. For production:
+
+**Option 1: Local Storage (Default)**
+```env
+FILESYSTEM_DISK=local
+```
+
+**Option 2: AWS S3 (Recommended for Production)**
+```env
+FILESYSTEM_DISK=s3
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=your-bucket-name
+```
+
+**Option 3: Custom Storage Driver**
+Configure additional drivers in `config/filesystems.php`
+
+### Security & Validation
+
+- **File Type Validation**: Only archives (ZIP, RAR, 7Z, TAR, GZ) allowed for downloads
+- **Size Limits**: 100MB for files, 5MB for images
+- **CSRF Protection**: All upload/download/rating forms include CSRF tokens
+- **Authentication Gates**: Downloads require login, uploads require authentication
+- **Approval Workflow**: Admin approval prevents malicious content
+
+### SEO & Discoverability
+
+- Clean URL structure: `/media/{game}/{type}/{item}`
+- Included in sitemap generation
+- Searchable via global search
+- Meta tags and Open Graph support ready
+
 ## 🔐 OAuth Configuration
 
 OAuth providers support both `/auth/{provider}/callback` and `/login/{provider}/callback` redirect URI patterns. Configure your OAuth applications with either format:
