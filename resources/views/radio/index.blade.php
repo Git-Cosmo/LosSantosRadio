@@ -283,9 +283,16 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr]" style="gap: 1.5rem;">
+    <div class="grid grid-cols-1 radio-grid" style="gap: 1.5rem;">
+        <style>
+            @media (min-width: 1024px) {
+                .radio-grid {
+                    grid-template-columns: 2fr 1fr !important;
+                }
+            }
+        </style>
         <!-- Main Content -->
-        <div style="min-width: 0;">
+        <div>
             <!-- Enhanced Now Playing Card -->
             <div class="card now-playing-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(88, 166, 255, 0.08) 100%); overflow: hidden; position: relative; border: 1px solid rgba(88, 166, 255, 0.2);">
                 <!-- Animated Background Overlay with Floating Elements -->
@@ -704,7 +711,7 @@
         </div>
 
         <!-- Sidebar -->
-        <div style="min-width: 0;">
+        <div>
             <!-- Up Next Section (Moved from main content) -->
             @if($nowPlaying && $nowPlaying->nextSong)
             <div class="card" style="margin-bottom: 1.5rem;">
