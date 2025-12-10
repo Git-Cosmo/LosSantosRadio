@@ -53,12 +53,12 @@
         <div style="display: flex; gap: 1rem; align-items: center;">
             <form method="GET" action="{{ route('media.subcategory', [$category->slug, $subcategory->slug]) }}" class="flex gap-2">
                 <select name="sort" 
-                        class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                        onchange="this.form.submit()">
+                        class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                     <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
                     <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Most Downloaded</option>
                     <option value="top-rated" {{ request('sort') == 'top-rated' ? 'selected' : '' }}>Top Rated</option>
                 </select>
+                <button type="submit" class="btn btn-secondary">Sort</button>
             </form>
             <a href="{{ route('media.upload') }}" class="btn btn-primary">
                 <i class="fas fa-upload"></i> Upload

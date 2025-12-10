@@ -15,8 +15,7 @@
                        class="flex-1 px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-blue-500"
                        autofocus>
                 <select name="category" 
-                        class="px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-blue-500"
-                        onchange="this.form.submit()">
+                        class="px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-blue-500">
                     <option value="">All Categories</option>
                     @foreach($categories as $cat)
                         <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>

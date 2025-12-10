@@ -142,7 +142,11 @@
                     </label>
                     <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors cursor-pointer"
                          id="file-dropzone"
-                         onclick="document.getElementById('file').click()">
+                         tabindex="0"
+                         role="button"
+                         aria-label="Click to upload or drag and drop file"
+                         onclick="document.getElementById('file').click()"
+                         onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); document.getElementById('file').click(); }">
                         <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-3"></i>
                         <p class="text-gray-600 dark:text-gray-400 mb-2">
                             Click to upload or drag and drop
@@ -180,7 +184,11 @@
                     </label>
                     <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors cursor-pointer"
                          id="image-dropzone"
-                         onclick="document.getElementById('image').click()">
+                         tabindex="0"
+                         role="button"
+                         aria-label="Upload preview image"
+                         onclick="document.getElementById('image').click()"
+                         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('image').click();}">
                         <i class="fas fa-image text-5xl text-gray-400 mb-3"></i>
                         <p class="text-gray-600 dark:text-gray-400 mb-2">
                             Click to upload or drag and drop
@@ -236,7 +244,7 @@
         // Subcategories data
         const subcategories = @json($categories->mapWithKeys(function($category) {
             return [$category->id => $category->subcategories];
-        }), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+        }));
 
         // Category change handler
         document.getElementById('media_category_id').addEventListener('change', function() {

@@ -156,6 +156,7 @@
                                     @for($i = 1; $i <= 5; $i++)
                                         <button type="button" 
                                                 onclick="setRating({{ $i }})"
+                                                aria-label="Rate {{ $i }} out of 5 stars"
                                                 class="rating-star text-4xl text-gray-300 hover:text-yellow-500 transition-colors"
                                                 data-rating="{{ $i }}">
                                             <i class="far fa-star"></i>
@@ -193,10 +194,10 @@
                         Download Now
                     </a>
                 @else
-                    <button onclick="alert('Please login to download')" class="btn btn-secondary w-full mb-3 flex items-center justify-center gap-2">
+                    <a href="{{ route('login') }}" class="btn btn-secondary w-full mb-3 flex items-center justify-center gap-2">
                         <i class="fas fa-lock"></i>
                         Login to Download
-                    </button>
+                    </a>
                 @endauth
                 
                 <div class="text-sm text-gray-600 dark:text-gray-400 space-y-2">
@@ -345,6 +346,7 @@
                 }
             } catch (error) {
                 console.error('Error toggling favorite:', error);
+                alert('Failed to update favorite. Please try again.');
             }
         }
         @endauth

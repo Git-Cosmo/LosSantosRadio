@@ -283,14 +283,7 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 radio-grid" style="gap: 1.5rem;">
-        <style>
-            @media (min-width: 1024px) {
-                .radio-grid {
-                    grid-template-columns: 2fr 1fr !important;
-                }
-            }
-        </style>
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
         <!-- Main Content -->
         <div>
             <!-- Enhanced Now Playing Card -->

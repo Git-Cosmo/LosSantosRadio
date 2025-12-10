@@ -1432,11 +1432,14 @@ brew services start redis      # macOS
 **2. Install PHP Redis Extension**
 
 ```bash
-# Install phpredis extension
-sudo pecl install redis
+# Install phpredis extension (may require sudo depending on your system)
+pecl install redis
 
 # Or using apt (Ubuntu/Debian)
 sudo apt-get install php-redis
+
+# After installation, you may need to add the extension to your php.ini:
+# extension=redis.so
 ```
 
 **3. Configure Laravel for Redis**
