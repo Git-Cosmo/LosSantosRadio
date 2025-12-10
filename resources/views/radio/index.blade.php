@@ -1,5 +1,5 @@
 <x-layouts.app>
-    @push('styles')
+    @push('head')
     <style>
         /* Enhanced Hover effect for album artwork */
         .now-playing-art {
@@ -274,6 +274,19 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Homepage Grid Layout */
+        .homepage-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .homepage-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
     </style>
     @endpush
 
@@ -283,7 +296,7 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
+    <div class="homepage-grid">
         <!-- Main Content -->
         <div>
             <!-- Enhanced Now Playing Card -->
