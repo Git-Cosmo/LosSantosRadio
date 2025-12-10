@@ -274,6 +274,19 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Homepage Grid Layout */
+        .homepage-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .homepage-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
     </style>
     @endpush
 
@@ -283,7 +296,16 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
+    <style>
+        @media (min-width: 1024px) {
+            .homepage-grid {
+                display: grid !important;
+                grid-template-columns: 2fr 1fr !important;
+            }
+        }
+    </style>
+
+    <div class="homepage-grid" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
         <!-- Main Content -->
         <div>
             <!-- Enhanced Now Playing Card -->
