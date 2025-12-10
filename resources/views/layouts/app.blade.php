@@ -161,144 +161,292 @@
     {{-- Floating Background Effects - Subtle gamer feel --}}
     <x-floating-background intensity="subtle" :icons="['music', 'headphones', 'radio', 'gamepad']" />
 
-    <header class="header">
-        <div class="header-content">
-            <a href="{{ route('home') }}" class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-radio" style="color: white;"></i>
-                </div>
-                <span>Los Santos Radio</span>
-            </a>
-
-            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">
-                <i class="fas fa-bars" id="mobile-menu-icon"></i>
-            </button>
-
-            <nav class="nav-links" id="nav-links">
-                <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
-                    <i class="fas fa-home"></i> Home
-                </a>
-                <!-- Radio Dropdown -->
-                <div class="nav-dropdown" x-data="{ open: false }">
-                    <button @click="open = !open" class="nav-link nav-dropdown-toggle {{ request()->routeIs('schedule') || request()->routeIs('requests.*') ? 'active' : '' }}">
-                        <i class="fas fa-radio"></i> Radio <i class="fas fa-chevron-down" style="font-size: 0.625rem; margin-left: 0.25rem;"></i>
-                    </button>
-                    <div x-show="open" @click.away="open = false" class="nav-dropdown-menu" x-cloak>
-                        <a href="{{ route('schedule') }}" class="nav-dropdown-item {{ request()->routeIs('schedule') ? 'active' : '' }}">
-                            <i class="fas fa-calendar-alt"></i> Schedule
-                        </a>
-                        <a href="{{ route('requests.index') }}" class="nav-dropdown-item {{ request()->routeIs('requests.*') ? 'active' : '' }}">
-                            <i class="fas fa-music"></i> Requests
-                        </a>
-                    </div>
-                </div>
-                <a href="{{ route('news.index') }}" class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}">
-                    <i class="fas fa-newspaper"></i> News
-                </a>
-                <a href="{{ route('events.index') }}" class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-check"></i> Events
-                </a>
-                <a href="{{ route('polls.index') }}" class="nav-link {{ request()->routeIs('polls.*') ? 'active' : '' }}">
-                    <i class="fas fa-poll"></i> Polls
-                </a>
-                <!-- Games Dropdown -->
-                <div class="nav-dropdown" x-data="{ open: false }">
-                    <button @click="open = !open" class="nav-link nav-dropdown-toggle {{ request()->routeIs('games.*') || request()->routeIs('media.*') ? 'active' : '' }}">
-                        <i class="fas fa-gamepad"></i> Games <i class="fas fa-chevron-down" style="font-size: 0.625rem; margin-left: 0.25rem;"></i>
-                    </button>
-                    <div x-show="open" @click.away="open = false" class="nav-dropdown-menu" x-cloak>
-                        <a href="{{ route('games.free') }}" class="nav-dropdown-item {{ request()->routeIs('games.free') ? 'active' : '' }}">
-                            <i class="fas fa-gift"></i> Free Games
-                        </a>
-                        <a href="{{ route('games.deals') }}" class="nav-dropdown-item {{ request()->routeIs('games.deals') ? 'active' : '' }}">
-                            <i class="fas fa-tags"></i> Game Deals
-                        </a>
-                        <a href="{{ route('media.index') }}" class="nav-dropdown-item {{ request()->routeIs('media.*') ? 'active' : '' }}">
-                            <i class="fas fa-download"></i> Downloads
-                        </a>
-                    </div>
-                </div>
-                <!-- Videos Dropdown -->
-                <div class="nav-dropdown" x-data="{ open: false }">
-                    <button @click="open = !open" class="nav-link nav-dropdown-toggle {{ request()->routeIs('videos.*') ? 'active' : '' }}">
-                        <i class="fas fa-video"></i> Videos <i class="fas fa-chevron-down" style="font-size: 0.625rem; margin-left: 0.25rem;"></i>
-                    </button>
-                    <div x-show="open" @click.away="open = false" class="nav-dropdown-menu" x-cloak>
-                        <a href="{{ route('videos.ylyl') }}" class="nav-dropdown-item {{ request()->routeIs('videos.ylyl') ? 'active' : '' }}">
-                            <i class="fas fa-laugh-squint"></i> YLYL
-                        </a>
-                        <a href="{{ route('videos.clips') }}" class="nav-dropdown-item {{ request()->routeIs('videos.clips') ? 'active' : '' }}">
-                            <i class="fas fa-tv"></i> Streamers Clips
-                        </a>
-                    </div>
-                </div>
-            </nav>
-
-            <div class="user-menu">
-                <!-- Search Button -->
-                <button @click="$dispatch('open-search-modal')" class="btn btn-secondary search-toggle" title="Search">
-                    <i class="fas fa-search" aria-hidden="true"></i>
-                </button>
-
-                <!-- Live Clock -->
-                <div class="live-clock" @click="toggleFormat()" title="Click to toggle 12/24 hour format" x-data="liveClock()" x-init="init()">
-                    <i class="fas fa-clock" aria-hidden="true"></i>
-                    <span class="live-clock-time" x-text="time"></span>
-                    <span class="live-clock-format" x-text="getFormatLabel()"></span>
-                </div>
-
-                <!-- Theme Toggle Button -->
-                <button @click="darkMode = !darkMode" class="btn btn-secondary theme-toggle" :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
-                    <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'" aria-hidden="true"></i>
-                </button>
-
-                @auth
-                    <!-- User Dropdown Menu -->
-                    <div class="nav-dropdown user-dropdown" x-data="{ open: false }">
-                        <button @click="open = !open" class="user-dropdown-toggle">
-                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="user-avatar">
-                            <span class="user-dropdown-name">{{ auth()->user()->name }}</span>
-                            <i class="fas fa-chevron-down user-dropdown-arrow" :class="{ 'rotated': open }"></i>
-                        </button>
-                        <div x-show="open" @click.away="open = false" class="nav-dropdown-menu user-dropdown-menu" x-cloak>
-                            <div class="user-dropdown-header">
-                                <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="user-dropdown-avatar">
-                                <div class="user-dropdown-info">
-                                    <span class="user-dropdown-fullname">{{ auth()->user()->name }}</span>
-                                    <span class="user-dropdown-level">Level {{ auth()->user()->level ?? 1 }}</span>
-                                </div>
-                            </div>
-                            <div class="user-dropdown-divider"></div>
-                            <a href="{{ route('messages.index') }}" class="nav-dropdown-item {{ request()->routeIs('messages.*') ? 'active' : '' }}">
-                                <i class="fas fa-envelope"></i> Messages
-                            </a>
-                            <a href="{{ route('profile.edit') }}" class="nav-dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
-                                <i class="fas fa-user-cog"></i> Settings
-                            </a>
-                            <a href="{{ route('profile.show', auth()->user()) }}" class="nav-dropdown-item">
-                                <i class="fas fa-user"></i> My Profile
-                            </a>
-                            @if(auth()->user()->hasAnyRole(['admin', 'staff']))
-                            <div class="user-dropdown-divider"></div>
-                            <a href="{{ route('admin.dashboard') }}" class="nav-dropdown-item admin-link">
-                                <i class="fas fa-shield-alt"></i> Admin Panel
-                            </a>
-                            @endif
-                            <div class="user-dropdown-divider"></div>
-                            <form action="{{ route('logout') }}" method="POST" class="logout-form">
-                                @csrf
-                                <button type="submit" class="nav-dropdown-item logout-btn">
-                                    <i class="fas fa-sign-out-alt"></i> Logout
-                                </button>
-                            </form>
+    <header class="sticky top-0 z-50 bg-gray-900/95 backdrop-blur-md border-b border-gray-800/50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="{{ route('home') }}" class="flex items-center space-x-3 group">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                        <div class="relative w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition duration-300">
+                            <i class="fas fa-radio text-white text-lg" aria-hidden="true"></i>
                         </div>
                     </div>
-                @endauth
-                @guest
-                    <a href="{{ route('login') }}" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    <span class="text-xl font-bold text-white tracking-tight">Los Santos Radio</span>
+                </a>
+
+                <!-- Mobile menu button -->
+                <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition duration-200" aria-label="Toggle navigation menu" x-data="{ mobileMenuOpen: false }">
+                    <svg class="h-6 w-6" :class="{ 'hidden': mobileMenuOpen, 'block': !mobileMenuOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <svg class="h-6 w-6" :class="{ 'block': mobileMenuOpen, 'hidden': !mobileMenuOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex lg:items-center lg:space-x-1">
+                    <a href="{{ route('home') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 {{ request()->routeIs('home') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                        <i class="fas fa-home mr-2" aria-hidden="true"></i>Home
                     </a>
-                @endguest
+                    
+                    <!-- Radio Dropdown -->
+                    <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                        <button @click="open = !open" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 inline-flex items-center {{ request()->routeIs('schedule') || request()->routeIs('requests.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                            <i class="fas fa-radio mr-2" aria-hidden="true"></i>Radio
+                            <svg class="ml-2 h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute left-0 mt-2 w-56 rounded-xl bg-gray-800/95 backdrop-blur-md shadow-xl ring-1 ring-gray-700/50 py-2">
+                            <a href="{{ route('schedule') }}" class="flex items-center px-4 py-3 text-sm transition duration-200 {{ request()->routeIs('schedule') ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border-l-4 border-blue-500' : 'text-gray-300 hover:bg-gray-700/50 hover:text-white' }}">
+                                <i class="fas fa-calendar-alt w-5 mr-3" aria-hidden="true"></i>Schedule
+                            </a>
+                            <a href="{{ route('requests.index') }}" class="flex items-center px-4 py-3 text-sm transition duration-200 {{ request()->routeIs('requests.*') ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border-l-4 border-blue-500' : 'text-gray-300 hover:bg-gray-700/50 hover:text-white' }}">
+                                <i class="fas fa-music w-5 mr-3" aria-hidden="true"></i>Requests
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('news.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 {{ request()->routeIs('news.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                        <i class="fas fa-newspaper mr-2" aria-hidden="true"></i>News
+                    </a>
+                    
+                    <a href="{{ route('events.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 {{ request()->routeIs('events.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                        <i class="fas fa-calendar-check mr-2" aria-hidden="true"></i>Events
+                    </a>
+                    
+                    <a href="{{ route('polls.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 {{ request()->routeIs('polls.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                        <i class="fas fa-poll mr-2" aria-hidden="true"></i>Polls
+                    </a>
+
+                    <!-- Games Dropdown -->
+                    <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                        <button @click="open = !open" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 inline-flex items-center {{ request()->routeIs('games.*') || request()->routeIs('media.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                            <i class="fas fa-gamepad mr-2" aria-hidden="true"></i>Games
+                            <svg class="ml-2 h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute left-0 mt-2 w-56 rounded-xl bg-gray-800/95 backdrop-blur-md shadow-xl ring-1 ring-gray-700/50 py-2">
+                            <a href="{{ route('games.free') }}" class="flex items-center px-4 py-3 text-sm transition duration-200 {{ request()->routeIs('games.free') ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border-l-4 border-blue-500' : 'text-gray-300 hover:bg-gray-700/50 hover:text-white' }}">
+                                <i class="fas fa-gift w-5 mr-3" aria-hidden="true"></i>Free Games
+                            </a>
+                            <a href="{{ route('games.deals') }}" class="flex items-center px-4 py-3 text-sm transition duration-200 {{ request()->routeIs('games.deals') ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border-l-4 border-blue-500' : 'text-gray-300 hover:bg-gray-700/50 hover:text-white' }}">
+                                <i class="fas fa-tags w-5 mr-3" aria-hidden="true"></i>Game Deals
+                            </a>
+                            <a href="{{ route('media.index') }}" class="flex items-center px-4 py-3 text-sm transition duration-200 {{ request()->routeIs('media.*') ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border-l-4 border-blue-500' : 'text-gray-300 hover:bg-gray-700/50 hover:text-white' }}">
+                                <i class="fas fa-download w-5 mr-3" aria-hidden="true"></i>Downloads
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Videos Dropdown -->
+                    <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                        <button @click="open = !open" class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 inline-flex items-center {{ request()->routeIs('videos.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                            <i class="fas fa-video mr-2" aria-hidden="true"></i>Videos
+                            <svg class="ml-2 h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute left-0 mt-2 w-56 rounded-xl bg-gray-800/95 backdrop-blur-md shadow-xl ring-1 ring-gray-700/50 py-2">
+                            <a href="{{ route('videos.ylyl') }}" class="flex items-center px-4 py-3 text-sm transition duration-200 {{ request()->routeIs('videos.ylyl') ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border-l-4 border-blue-500' : 'text-gray-300 hover:bg-gray-700/50 hover:text-white' }}">
+                                <i class="fas fa-laugh-squint w-5 mr-3" aria-hidden="true"></i>YLYL
+                            </a>
+                            <a href="{{ route('videos.clips') }}" class="flex items-center px-4 py-3 text-sm transition duration-200 {{ request()->routeIs('videos.clips') ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border-l-4 border-blue-500' : 'text-gray-300 hover:bg-gray-700/50 hover:text-white' }}">
+                                <i class="fas fa-tv w-5 mr-3" aria-hidden="true"></i>Streamers Clips
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Right side actions -->
+                <div class="hidden lg:flex lg:items-center lg:space-x-2">
+                    <!-- Search Button -->
+                    <button @click="$dispatch('open-search-modal')" class="p-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition duration-200" title="Search">
+                        <i class="fas fa-search text-lg" aria-hidden="true"></i>
+                    </button>
+
+                    <!-- Live Clock -->
+                    <div @click="toggleFormat()" title="Click to toggle 12/24 hour format" x-data="liveClock()" x-init="init()" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-800/50 text-sm font-medium text-gray-300 hover:bg-gray-800 transition duration-200 cursor-pointer">
+                        <i class="fas fa-clock" aria-hidden="true"></i>
+                        <span x-text="time"></span>
+                        <span class="text-xs text-gray-500" x-text="getFormatLabel()"></span>
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <button @click="darkMode = !darkMode" class="p-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition duration-200" :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+                        <i class="fas text-lg" :class="darkMode ? 'fa-sun' : 'fa-moon'" aria-hidden="true"></i>
+                    </button>
+
+                    @auth
+                        <!-- User Dropdown -->
+                        <div class="relative ml-3" x-data="{ open: false }" @click.away="open = false">
+                            <button @click="open = !open" class="flex items-center space-x-3 p-1.5 rounded-lg hover:bg-gray-800 transition duration-200">
+                                <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="h-8 w-8 rounded-full ring-2 ring-gray-700">
+                                <span class="text-sm font-medium text-gray-300 hidden xl:block">{{ auth()->user()->name }}</span>
+                                <svg class="h-4 w-4 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute right-0 mt-2 w-64 rounded-xl bg-gray-800/95 backdrop-blur-md shadow-xl ring-1 ring-gray-700/50 py-2">
+                                <!-- User Info Header -->
+                                <div class="px-4 py-3 border-b border-gray-700">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="h-12 w-12 rounded-full ring-2 ring-blue-500">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-semibold text-white truncate">{{ auth()->user()->name }}</p>
+                                            <p class="text-xs text-gray-400">Level {{ auth()->user()->level ?? 1 }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Menu Items -->
+                                <div class="py-2">
+                                    <a href="{{ route('messages.index') }}" class="flex items-center px-4 py-3 text-sm transition duration-200 {{ request()->routeIs('messages.*') ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border-l-4 border-blue-500' : 'text-gray-300 hover:bg-gray-700/50 hover:text-white' }}">
+                                        <i class="fas fa-envelope w-5 mr-3" aria-hidden="true"></i>Messages
+                                    </a>
+                                    <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-sm transition duration-200 {{ request()->routeIs('profile.edit') ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border-l-4 border-blue-500' : 'text-gray-300 hover:bg-gray-700/50 hover:text-white' }}">
+                                        <i class="fas fa-user-cog w-5 mr-3" aria-hidden="true"></i>Settings
+                                    </a>
+                                    <a href="{{ route('profile.show', auth()->user()) }}" class="flex items-center px-4 py-3 text-sm text-gray-300 hover:bg-gray-700/50 hover:text-white transition duration-200">
+                                        <i class="fas fa-user w-5 mr-3" aria-hidden="true"></i>My Profile
+                                    </a>
+                                </div>
+
+                                @if(auth()->user()->hasAnyRole(['admin', 'staff']))
+                                <div class="border-t border-gray-700 py-2">
+                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 text-sm text-purple-400 hover:bg-gray-700/50 hover:text-purple-300 transition duration-200">
+                                        <i class="fas fa-shield-alt w-5 mr-3" aria-hidden="true"></i>Admin Panel
+                                    </a>
+                                </div>
+                                @endif
+
+                                <div class="border-t border-gray-700 py-2">
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full flex items-center px-4 py-3 text-sm text-red-400 hover:bg-gray-700/50 hover:text-red-300 transition duration-200">
+                                            <i class="fas fa-sign-out-alt w-5 mr-3" aria-hidden="true"></i>Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endauth
+                    @guest
+                        <a href="{{ route('login') }}" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition duration-200">
+                            <i class="fas fa-sign-in-alt mr-2" aria-hidden="true"></i>Sign In
+                        </a>
+                    @endguest
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div x-data="{ mobileMenuOpen: false }" x-show="mobileMenuOpen" x-cloak @click.away="mobileMenuOpen = false" class="lg:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="{{ route('home') }}" class="block px-3 py-2 rounded-lg text-base font-medium {{ request()->routeIs('home') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <i class="fas fa-home mr-3" aria-hidden="true"></i>Home
+                </a>
+                
+                <!-- Mobile Radio Dropdown -->
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-base font-medium {{ request()->routeIs('schedule') || request()->routeIs('requests.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                        <span><i class="fas fa-radio mr-3" aria-hidden="true"></i>Radio</span>
+                        <svg class="h-5 w-5 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div x-show="open" x-cloak class="pl-6 space-y-1 mt-1">
+                        <a href="{{ route('schedule') }}" class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('schedule') ? 'bg-blue-600/20 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                            <i class="fas fa-calendar-alt mr-3" aria-hidden="true"></i>Schedule
+                        </a>
+                        <a href="{{ route('requests.index') }}" class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('requests.*') ? 'bg-blue-600/20 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                            <i class="fas fa-music mr-3" aria-hidden="true"></i>Requests
+                        </a>
+                    </div>
+                </div>
+
+                <a href="{{ route('news.index') }}" class="block px-3 py-2 rounded-lg text-base font-medium {{ request()->routeIs('news.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <i class="fas fa-newspaper mr-3" aria-hidden="true"></i>News
+                </a>
+                
+                <a href="{{ route('events.index') }}" class="block px-3 py-2 rounded-lg text-base font-medium {{ request()->routeIs('events.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <i class="fas fa-calendar-check mr-3" aria-hidden="true"></i>Events
+                </a>
+                
+                <a href="{{ route('polls.index') }}" class="block px-3 py-2 rounded-lg text-base font-medium {{ request()->routeIs('polls.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <i class="fas fa-poll mr-3" aria-hidden="true"></i>Polls
+                </a>
+
+                <!-- Mobile Games Dropdown -->
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-base font-medium {{ request()->routeIs('games.*') || request()->routeIs('media.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                        <span><i class="fas fa-gamepad mr-3" aria-hidden="true"></i>Games</span>
+                        <svg class="h-5 w-5 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div x-show="open" x-cloak class="pl-6 space-y-1 mt-1">
+                        <a href="{{ route('games.free') }}" class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('games.free') ? 'bg-blue-600/20 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                            <i class="fas fa-gift mr-3" aria-hidden="true"></i>Free Games
+                        </a>
+                        <a href="{{ route('games.deals') }}" class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('games.deals') ? 'bg-blue-600/20 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                            <i class="fas fa-tags mr-3" aria-hidden="true"></i>Game Deals
+                        </a>
+                        <a href="{{ route('media.index') }}" class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('media.*') ? 'bg-blue-600/20 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                            <i class="fas fa-download mr-3" aria-hidden="true"></i>Downloads
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile Videos Dropdown -->
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-base font-medium {{ request()->routeIs('videos.*') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                        <span><i class="fas fa-video mr-3" aria-hidden="true"></i>Videos</span>
+                        <svg class="h-5 w-5 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div x-show="open" x-cloak class="pl-6 space-y-1 mt-1">
+                        <a href="{{ route('videos.ylyl') }}" class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('videos.ylyl') ? 'bg-blue-600/20 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                            <i class="fas fa-laugh-squint mr-3" aria-hidden="true"></i>YLYL
+                        </a>
+                        <a href="{{ route('videos.clips') }}" class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('videos.clips') ? 'bg-blue-600/20 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                            <i class="fas fa-tv mr-3" aria-hidden="true"></i>Streamers Clips
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile Actions -->
+                <div class="pt-4 border-t border-gray-800 space-y-2">
+                    <button @click="$dispatch('open-search-modal')" class="w-full flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-white">
+                        <i class="fas fa-search mr-3" aria-hidden="true"></i>Search
+                    </button>
+                    <button @click="darkMode = !darkMode" class="w-full flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-white">
+                        <i class="fas mr-3" :class="darkMode ? 'fa-sun' : 'fa-moon'" aria-hidden="true"></i>
+                        <span x-text="darkMode ? 'Light Mode' : 'Dark Mode'"></span>
+                    </button>
+                    
+                    @auth
+                        <a href="{{ route('profile.show', auth()->user()) }}" class="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-white">
+                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="h-6 w-6 rounded-full mr-3">
+                            {{ auth()->user()->name }}
+                        </a>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full flex items-center px-3 py-2 rounded-lg text-base font-medium text-red-400 hover:bg-gray-800 hover:text-red-300">
+                                <i class="fas fa-sign-out-alt mr-3" aria-hidden="true"></i>Logout
+                            </button>
+                        </form>
+                    @endauth
+                    @guest
+                        <a href="{{ route('login') }}" class="block px-3 py-2 rounded-lg text-base font-medium text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700">
+                            <i class="fas fa-sign-in-alt mr-2" aria-hidden="true"></i>Sign In
+                        </a>
+                    @endguest
+                </div>
             </div>
         </div>
     </header>
