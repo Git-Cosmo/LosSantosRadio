@@ -314,8 +314,9 @@
         // Favorite system
         @auth
         async function toggleFavorite() {
+            const favoriteUrl = @js(route('media.favorite.toggle', [$mediaItem->category->slug, $mediaItem->subcategory->slug, $mediaItem]));
             try {
-                const response = await fetch('{{ route('media.favorite.toggle', [$mediaItem->category->slug, $mediaItem->subcategory->slug, $mediaItem]) }}', {
+                const response = await fetch(favoriteUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

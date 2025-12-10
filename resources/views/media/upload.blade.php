@@ -236,7 +236,7 @@
         // Subcategories data
         const subcategories = @json($categories->mapWithKeys(function($category) {
             return [$category->id => $category->subcategories];
-        }));
+        }), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
 
         // Category change handler
         document.getElementById('media_category_id').addEventListener('change', function() {
@@ -328,7 +328,11 @@
             dropzone.addEventListener('drop', function(e) {
                 const dt = e.dataTransfer;
                 const files = dt.files;
-                input.files = files;
+                
+                // Use DataTransfer API to properly set files
+                const newDt = new DataTransfer();
+                Array.from(files).forEach(file => newDt.items.add(file));
+                input.files = newDt.files;
                 
                 // Trigger change event
                 const event = new Event('change', { bubbles: true });
