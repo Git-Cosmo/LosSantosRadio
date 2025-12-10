@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
             EventSeeder::class,
             PollSeeder::class,
             RssFeedSeeder::class,
+            MediaCategorySeeder::class,
+            MediaItemSeeder::class,
         ]);
     }
 
