@@ -1504,21 +1504,29 @@ Los Santos Radio includes a **GameBanana-style downloads portal** powered by **S
 
 ### Features Overview
 
+✅ **Enhanced UI/UX** - Modern, feature-rich interface with hero search, stats dashboard, and filtering  
 ✅ **User Upload System** - Authenticated users can upload mods, maps, and content  
 ✅ **Admin Approval Workflow** - Content requires admin approval before going live  
 ✅ **Category & Subcategory Organization** - 8 game categories, 45+ subcategories  
-✅ **Search & Discovery** - Laravel Scout integration for fast searching  
+✅ **Search & Discovery** - Integrated hero search bar + Laravel Scout for fast searching  
+✅ **Advanced Filtering** - Sort by latest, popular, top-rated, or featured content  
+✅ **View Modes** - Grid and list view toggle with Alpine.js  
 ✅ **Download Tracking** - Track downloads, views, ratings, and favorites  
-✅ **Ratings & Favorites** - Community-driven content curation  
+✅ **Ratings & Favorites** - Community-driven content curation with interactive widgets  
+✅ **Comprehensive Seeding** - MediaItemSeeder with 120+ realistic demo items  
 ✅ **Automated Import** - Import content from CurseForge, Steam, Nexus Mods, GTA5-Mods  
 
 ### User Workflow
 
 **1. Browse Content**
-- Visit `/media` to see all categories
-- Browse by game category (CS2, Minecraft, GTA V, Skyrim, etc.)
+- Visit `/media` to see the enhanced downloads hub
+- Use the hero search bar for quick searches
+- View quick stats dashboard (total downloads, categories, featured items)
+- Browse by game category with detailed cards showing item counts
+- Sort content by: Latest, Most Downloads, Top Rated, or Featured
+- Toggle between grid and list views
 - Filter by subcategory (Maps, Skins, Mods, etc.)
-- Search globally across all content
+- Search globally across all content with Scout
 
 **2. Upload Content** (Requires Login)
 - Navigate to `/media/upload`
@@ -1571,6 +1579,42 @@ NEXUSMODS_API_KEY=      # For Skyrim mods
 # GTA5-Mods.com uses RSS (no key required)
 ```
 
+### Development & Seeding
+
+**Seeding Demo Data**
+
+The media portal includes a comprehensive seeder for development and testing:
+
+```bash
+# Seed categories and subcategories only
+php artisan db:seed --class=MediaCategorySeeder
+
+# Seed demo media items (120+ realistic items across all categories)
+php artisan db:seed --class=MediaItemSeeder
+
+# Seed everything (includes media portal)
+php artisan db:seed
+```
+
+**MediaItemSeeder Features:**
+- ✅ **120+ Demo Items** - Realistic mods, maps, and content across 8 game categories
+- ✅ **Smart Generation** - Varied titles, descriptions, versions, file sizes
+- ✅ **Random Stats** - Downloads (10-5000), views (50-10000), ratings (3.0-5.0)
+- ✅ **Featured Content** - 10% of items randomly marked as featured
+- ✅ **User Assignment** - Automatically creates sample users if needed
+- ✅ **Subcategory Coverage** - Items distributed across all 45+ subcategories
+- ✅ **DRY Design** - Single source of truth for game-specific content
+
+**Resetting Data:**
+```bash
+# Fresh migration and seed (WARNING: Destroys all data)
+php artisan migrate:fresh --seed
+
+# Or manually:
+php artisan migrate:fresh
+php artisan db:seed
+```
+
 ### File Storage
 
 By default, media files are stored locally using Laravel's default filesystem. For production:
@@ -1606,6 +1650,32 @@ Configure additional drivers in `config/filesystems.php`
 - Included in sitemap generation
 - Searchable via global search
 - Meta tags and Open Graph support ready
+
+### UI/UX Design Patterns
+
+**Downloads Index Page (`/media`)**
+- **Hero Section** - Gradient background with integrated search bar
+- **Stats Dashboard** - Real-time counts for downloads, categories, featured items
+- **Filter/Sort Controls** - Alpine.js-powered view toggle (grid/list) and sort dropdown
+- **Category Cards** - Large icons, descriptions, and item counts with hover effects
+- **Featured Section** - Prominently displayed featured content with badges
+- **Popular Downloads** - Most downloaded items in compact cards
+- **Recent Additions** - Latest uploads with timestamps
+- **Call-to-Action** - Contextual CTA for logged in users (upload) and guests (login)
+
+**CSS Architecture**
+- **Dedicated Stylesheet** - `resources/css/pages/media.css` for media-specific styles
+- **CSS Classes** - `.media-hero`, `.download-card`, `.media-controls`, `.section-header`
+- **Responsive Design** - Mobile-first with breakpoints at 768px and 1024px
+- **Theme Integration** - Uses CSS custom properties from site theme
+- **Hover Effects** - Smooth transitions on cards, buttons, and interactive elements
+
+**Interactive Features**
+- **Alpine.js Integration** - View mode toggle, dynamic sorting
+- **Smooth Animations** - Card hover lift, slide-in toasts, loading skeletons
+- **Search Functionality** - Hero search bar with icon button
+- **Toast Notifications** - For user actions (favorite, rate, download)
+- **Lightbox Gallery** - Click images to view full size (planned enhancement)
 
 ## 🔐 OAuth Configuration
 
