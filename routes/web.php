@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\DjController;
 use App\Http\Controllers\EventsController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\NewsController;
@@ -41,6 +42,9 @@ use Illuminate\Support\Facades\Route;
 
 // Main radio page
 Route::get('/', [RadioController::class, 'index'])->name('home');
+
+// New homepage (temporary test route)
+Route::get('/test', [HomeController::class, 'index'])->name('test.home');
 
 // Favorites page
 Route::get('/favorites', [RadioController::class, 'favorites'])->name('favorites');
@@ -137,7 +141,7 @@ Route::prefix('media')->name('media.')->group(function () {
     Route::get('/{category}/{subcategory}', [\App\Http\Controllers\MediaController::class, 'subcategory'])->name('subcategory');
     Route::get('/{category}/{subcategory}/{slug}', [\App\Http\Controllers\MediaController::class, 'show'])->name('show');
     Route::get('/{category}/{subcategory}/{slug}/download', [\App\Http\Controllers\MediaController::class, 'download'])->middleware('throttle:10,1')->name('download');
-    
+
     // Ratings and favorites (auth required)
     Route::post('/{category}/{subcategory}/{mediaItem}/rate', [\App\Http\Controllers\MediaItemRatingController::class, 'store'])->middleware('auth')->name('rate');
     Route::delete('/{category}/{subcategory}/{mediaItem}/rate', [\App\Http\Controllers\MediaItemRatingController::class, 'destroy'])->middleware('auth')->name('rate.destroy');
@@ -361,7 +365,7 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
     // Settings - Dashboard is now primary interface
     Route::get('/settings', [SettingController::class, 'dashboard'])->name('settings.index');
     Route::put('/settings/update-all', [SettingController::class, 'updateAll'])->name('settings.update-all');
-    
+
     // Advanced settings (key-value editor) - for power users
     Route::get('/settings/advanced', [SettingController::class, 'index'])->name('settings.advanced');
     Route::get('/settings/create', [SettingController::class, 'create'])->name('settings.create');
@@ -428,12 +432,12 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::put('/items/{mediaItem}', [\App\Http\Controllers\Admin\MediaItemController::class, 'update'])->name('items.update');
         Route::delete('/items/{mediaItem}', [\App\Http\Controllers\Admin\MediaItemController::class, 'destroy'])->name('items.destroy');
         Route::post('/items/{mediaItem}/toggle-approval', [\App\Http\Controllers\Admin\MediaItemController::class, 'toggleApproval'])->name('items.toggle-approval');
-        
+
         // Bulk actions
         Route::post('/items/bulk-approve', [\App\Http\Controllers\Admin\MediaItemController::class, 'bulkApprove'])->name('items.bulk-approve');
         Route::post('/items/bulk-reject', [\App\Http\Controllers\Admin\MediaItemController::class, 'bulkReject'])->name('items.bulk-reject');
         Route::post('/items/bulk-feature', [\App\Http\Controllers\Admin\MediaItemController::class, 'bulkFeature'])->name('items.bulk-feature');
-        
+
         // Categories CRUD
         Route::get('/categories', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'index'])->name('categories.index');
         Route::get('/categories/create', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'create'])->name('categories.create');
@@ -442,7 +446,7 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
         Route::put('/categories/{category}', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'update'])->name('categories.update');
         Route::delete('/categories/{category}', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'destroy'])->name('categories.destroy');
         Route::get('/categories/{category}/subcategories', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'subcategories'])->name('categories.subcategories');
-        
+
         // Subcategories management
         Route::post('/categories/{category}/subcategories', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'storeSubcategory'])->name('subcategories.store');
         Route::put('/subcategories/{subcategory}', [\App\Http\Controllers\Admin\MediaCategoryController::class, 'updateSubcategory'])->name('subcategories.update');
