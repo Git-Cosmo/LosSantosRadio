@@ -283,7 +283,7 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr]" style="gap: 1.5rem;">
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
         <!-- Main Content -->
         <div>
             <!-- Enhanced Now Playing Card -->
