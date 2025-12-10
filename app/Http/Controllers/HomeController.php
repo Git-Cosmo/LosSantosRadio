@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\AzuraCastException;
 use App\Models\Event;
 use App\Models\FreeGame;
 use App\Models\GameDeal;
@@ -28,19 +27,11 @@ class HomeController extends Controller
             $history = $this->azuraCast->getHistory(5);
             $station = $this->azuraCast->getStation();
             $streamStatus = $this->icecast->getStatus();
-        } catch (AzuraCastException $e) {
-            return view('home', [
-                'error' => 'Unable to connect to the radio station. Please try again later.',
-                'nowPlaying' => null,
-                'history' => collect(),
-                'station' => null,
-                'streamStatus' => $this->icecast->getStatus(),
-                'recentNews' => collect(),
-                'upcomingEvents' => collect(),
-                'activePolls' => collect(),
-                'topGameDeals' => collect(),
-                'freeGames' => collect(),
-            ]);
+        } catch (\Exception $e) {
+            $nowPlaying = null;
+            $history = collect();
+            $station = null;
+            $streamStatus = ['is_online' => false, 'peak_listeners' => 0];
         }
 
         // Fetch additional homepage content

@@ -35,15 +35,16 @@ class HomeControllerTest extends TestCase
         ]);
     }
 
-    public function test_home_displays_modal_showcase(): void
+    public function test_home_displays_content_sections(): void
     {
         $response = $this->get('/test');
 
         $response->assertStatus(200);
-        $response->assertSee('Modal Components Showcase');
-        $response->assertSee('Search Modal');
-        $response->assertSee('Listen Modal');
-        $response->assertSee('OAuth Login');
+        $response->assertSee('Latest News');
+        $response->assertSee('Upcoming Events');
+        $response->assertSee('Hot Deals');
+        $response->assertSee('Free Games');
+        $response->assertSee('Community Polls');
     }
 
     public function test_home_displays_welcome_message(): void
@@ -51,6 +52,7 @@ class HomeControllerTest extends TestCase
         $response = $this->get('/test');
 
         $response->assertStatus(200);
-        $response->assertSee('Welcome to Los Santos Radio');
+        $response->assertSee('Los Santos Radio');
+        $response->assertSee('Your 24/7 online radio station');
     }
 }
