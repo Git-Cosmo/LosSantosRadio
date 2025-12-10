@@ -312,10 +312,6 @@ class MediaItemSeeder extends Seeder
 
         if ($sizeInMB < 10) {
             return $sizeInMB.'.'.rand(0, 9).' MB';
-        } elseif ($sizeInMB >= 1000) {
-            $sizeInGB = $sizeInMB / 1024;
-
-            return round($sizeInGB, 2).' GB';
         }
 
         return $sizeInMB.' MB';

@@ -35,34 +35,12 @@
     </div>
 
     <!-- Filter/Sort Controls -->
-    <div class="media-controls" x-data="{ view: 'grid', sort: '{{ request('sort', 'latest') }}' }">
-        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-            <span style="font-weight: 600; color: var(--color-text-secondary); font-size: 0.875rem;">VIEW:</span>
-            <div style="display: flex; gap: 0.5rem;">
-                <button 
-                    @click="view = 'grid'"
-                    :class="view === 'grid' ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 text-gray-600'"
-                    style="padding: 0.5rem 1rem; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;"
-                    aria-label="Grid view"
-                >
-                    <i class="fas fa-th"></i>
-                </button>
-                <button 
-                    @click="view = 'list'"
-                    :class="view === 'list' ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 text-gray-600'"
-                    style="padding: 0.5rem 1rem; border: 2px solid; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;"
-                    aria-label="List view"
-                >
-                    <i class="fas fa-list"></i>
-                </button>
-            </div>
-        </div>
-
+    <div class="media-controls">
         <div style="display: flex; gap: 1rem; align-items: center;">
             <label for="sort-select" style="font-weight: 600; color: var(--color-text-secondary); font-size: 0.875rem;">SORT BY:</label>
             <select 
                 id="sort-select"
-                @change="window.location.href = '?sort=' + $event.target.value"
+                onchange="window.location.href = '?sort=' + this.value"
                 style="padding: 0.75rem 1rem; border: 2px solid var(--color-border); border-radius: 8px; background: var(--color-bg-primary); color: var(--color-text-primary); cursor: pointer; font-size: 0.9375rem;"
             >
                 <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Latest</option>
@@ -273,9 +251,7 @@
             Upload your mods, maps, and content to share with the community
         </p>
         <a href="{{ route('media.upload') }}" 
-           style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; background: white; color: var(--color-accent); border-radius: 8px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease;"
-           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)'"
-           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'">
+           class="cta-button cta-button-primary">
             <i class="fas fa-cloud-upload-alt"></i>
             Upload Content
         </a>
@@ -289,9 +265,7 @@
             Login to download content and upload your own creations
         </p>
         <a href="{{ route('login') }}" 
-           style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; background: var(--color-accent); color: white; border-radius: 8px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); transition: all 0.3s ease;"
-           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(99, 102, 241, 0.4)'"
-           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(99, 102, 241, 0.3)'">
+           class="cta-button cta-button-accent">
             <i class="fas fa-sign-in-alt"></i>
             Login Now
         </a>

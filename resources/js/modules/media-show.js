@@ -132,22 +132,21 @@ function openLightbox(imageUrl) {
         lightbox.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4';
         lightbox.style.display = 'none';
         
-        lightbox.innerHTML = `
-            <button 
-                onclick="closeLightbox()" 
-                class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors z-10"
-                aria-label="Close lightbox"
-            >
-                <i class="fas fa-times"></i>
-            </button>
-            <img 
-                id="lightbox-image" 
-                src="" 
-                alt="Full size image" 
-                class="max-w-full max-h-full object-contain"
-            />
-        `;
+        // Create close button
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'lightbox-close-btn absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors z-10';
+        closeBtn.setAttribute('aria-label', 'Close lightbox');
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtn.addEventListener('click', closeLightbox);
         
+        // Create image element
+        const img = document.createElement('img');
+        img.id = 'lightbox-image';
+        img.alt = 'Full size image';
+        img.className = 'max-w-full max-h-full object-contain';
+        
+        lightbox.appendChild(closeBtn);
+        lightbox.appendChild(img);
         document.body.appendChild(lightbox);
         
         // Close on click outside
@@ -229,10 +228,19 @@ function initFavorite() {
 function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-        <span>${message}</span>
-    `;
+    
+    // Create icon element
+    const icon = document.createElement('i');
+    const iconType = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+    icon.className = `fas fa-${iconType}`;
+    
+    // Create message span and set textContent for safety
+    const messageSpan = document.createElement('span');
+    messageSpan.textContent = message;
+    
+    // Append icon and message to toast
+    toast.appendChild(icon);
+    toast.appendChild(messageSpan);
     
     document.body.appendChild(toast);
     
